@@ -1,0 +1,35 @@
+<div class="outer">
+    <div class="sidebar">
+        <div *ngIf="_selectedTag != undefined">
+            <div class="menu-button">
+                <mat-icon (click)="menuSwitch()" class="noselect menu-button-style">close</mat-icon>
+            </div>
+            <div class="tag-name">{{_selectedTag.name}}</div>
+            <div *ngIf="!_hasSbContent" class="tag-description" [innerHTML]="_selectedTag.description | safeHtml"></div>
+            <div *ngIf="_hasSbContent" class="sidebar-content" [innerHTML]="_selectedTag.sidebar_content | safeHtml"></div>
+            <div class="locations">
+                <div class="locations-title" (click)="locationsSwitch()">
+                    Locations
+                    <div class="locations-button">
+                        <mat-icon class="noselect" [ngClass]="{'locations-turn': _locationsCollapsed}">expand_more</mat-icon>
+                    </div>
+                </div>
+                <div class="locations-table" [ngClass]="{'hide': _locationsCollapsed}">
+                    <table style="border-collapse: collapse; width: 100%;">
+                        <tbody>
+                            <tr *ngFor="let item of _selectedLocations; let i = index">
+                                <td style="width: 48.9042%;" *ngIf="i % 2 == 0 && _selectedLocations[i+1]">{{_selectedLocations[i].name}}</td>
+                                <td style="width: 48.9042%;" *ngIf="i % 2 == 0 && _selectedLocations[i+1]">{{_selectedLocations[i+1].name}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style="border-collapse: collapse; width: 100%;" *ngIf="_selectedLocations.length % 2 != 0">
+                        <tbody>
+                            <tr><td style="width: 100%; border-top:none !important;" >{{_selectedLocations[_selectedLocations.length-1].name}}</td></tr>
+                        </tbody>
+                    </table>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Variables
+DB_CONTAINER_NAME=""  # Replace with the name of your PostgreSQL container
+DB_NAME=""                     # Replace with your database name
+DB_USER=""                   # Replace with your database user
+
+# Timestamp for backup file
+BACKUP_FILENAME="backup_$(date +"%Y%m%d_%H%M%S").dump"
+
+# Execute backup command inside the container
+docker exec -t "$DB_CONTAINER_NAME" bash -c "pg_dump -Fc -U $DB_USER > /$BACKUP_FILENAME"
+docker cp "$DB_CONTAINER_NAME":/"$BACKUP_FILENAME" "./$BACKUP_FILENAME"
+
+echo "Backup completed: ./$BACKUP_FILENAME"

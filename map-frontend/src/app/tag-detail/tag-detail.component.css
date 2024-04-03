@@ -1,0 +1,16 @@
+.header {
+    padding: 0.6vw 3vw;
+    display: inline-block;
+}
+
+#description {
+    padding: 1vw 3vw;
+    position: absolute;
+    top: 85px;
+    min-width: -moz-available;
+    min-width: -webkit-fill-available;
+    min-width: fill-available;
+    border-top: 1px solid darkgray;
+    background: #efefef92;
+    bottom: 0;
+}

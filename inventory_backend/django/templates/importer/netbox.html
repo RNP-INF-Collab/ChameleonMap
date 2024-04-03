@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Netbox</title>
+</head>
+<body>
+    <h1>Modified Menus</h1>
+    {% if menus %}
+    <ul>
+        {% for menu in menus %}
+        <li>Id: {{ menu.id }}, Name: {{ menu.name }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No modified menus.</p>
+    {% endif %}
+
+    <h1>Non-Modified Menus</h1>
+    {% if unmodmenus %}
+    <ul>
+        {% for menu in unmodmenus %}
+        <li>Id: {{ menu.id }}, Name: {{ menu.name }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No non-modified menus.</p>
+    {% endif %}
+
+    <h1>Modified Tags</h1>
+    {% if tags %}
+    <ul>
+        {% for tag in tags %}
+        <li>Id: {{ tag.id }}, Name: {{ tag.name }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No modified tags.</p>
+    {% endif %}
+
+    <h1>Non-Modified Tags</h1>
+    {% if unmodtags %}
+    <ul>
+        {% for tag in unmodtags %}
+        <li>Id: {{ tag.id }}, Name: {{ tag.name }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No non-modified tags.</p>
+    {% endif %}
+
+    <h1>Modified Locations</h1>
+    {% if locations %}
+    <ul>
+        {% for loc in locations %}
+        <li>Id: {{ loc.id }}, Name: {{ loc.name }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No modified Locations.</p>
+    {% endif %}
+
+    <h1>Non-Modified Locations</h1>
+    {% if unmodlocations %}
+    <ul>
+        {% for loc in unmodlocations %}
+        <li>Id: {{ loc.id }}, Name: {{ loc.name }}</li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>No non-modified Locations.</p>
+    {% endif %}
+
+    <h1>Modified tag_related_locations</h1>
+    {% if device_length %}
+    <ul>
+        <li>Amount: {{device_length}}</li>
+    </ul>
+    {% else %}
+        <p>No modified tag_related_locations.</p>
+    {% endif %}
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+{% load static %}
+{% load importer_tags %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'import/css/diff.css' %}" media="screen" />
+    <script src="https://use.fontawesome.com/195a536412.js"></script>
+    <title>Diff page</title>
+</head>
+
+<body>
+    <header>
+        <div id="page-info">
+            <a href="/admin/" style="color: white; text-decoration: none;">Map Administration</a>
+        </div>
+        <div id="system-info">
+            Merge imported data
+        </div>
+    </header>
+    <div id="form-frame">
+        <form action="/import/replace/" method="post">{% csrf_token %}
+
+            {% for model_name, object in models.items %}
+            {% if object.added|length > 0 or object.edited|length > 0 or object.removed|length > 0 %}
+            <div class="model-frame">
+
+                <div class="model-header">
+                    {{model_name}} <i id="{{model_name}}-icon" class="fa fa-chevron-up"
+                        onclick="hide('{{model_name}}')"></i>
+                </div>
+
+                <div id={{model_name}}>
+                    <!-- Added Items -->
+                    {% if object.added|length > 0 %}
+                    <div class="model-changes">
+                        <div class="model-change-header">
+                            Added items <i id="{{model_name}}-added-icon" class="fa fa-chevron-down"
+                                onclick="hide('{{model_name}}-added')"></i>
+                        </div>
+
+                        <div class="collapsed" id={{model_name}}-added>
+                            {% for element in object.added %}
+                            <div class="element-changed-frame">
+                                <div class="element-header">
+                                    {{element.name}} <i id="{{model_name}}-{{element.id}}-icon"
+                                        class="fa fa-chevron-up" onclick="hide('{{model_name}}-{{element.id}}')"></i>
+                                </div>
+                                <div class="element-expansion" id="{{model_name}}-{{element.id}}">
+                                    <div class="fields-frame">
+                                        {% for attr_name, value in element.items %}
+                                        {% if attr_name != "id" and attr_name != "name" %}
+                                        <div class="field-row">
+                                            <div class="field-label">
+                                                <label for="fname">{{attr_name}}</label>
+                                            </div>
+                                            <div class="field-input">
+                                                {% if not attr_name == "active" %}
+                                                <input disabled class="line-text" type="text" value={{value}}>
+                                                {% elif value == True %}
+                                                <input disabled class="element-active" type="checkbox" checked>
+                                                {% else %}
+                                                <input disabled class="element-active" type="checkbox">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="approve-change-frame">
+                                        Apply Changes
+                                        <input type="checkbox" name="{{model_name}}-{{element.id}}" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    {% endif %}
+                    <!-- Edited Items -->
+                    {% if object.edited|length > 0 %}
+                    <div class="model-changes">
+                        <div class="model-change-header">
+                            Edited items <i id="{{model_name}}-edited-icon" class="fa fa-chevron-down"
+                                onclick="hide('{{model_name}}-edited')"></i>
+                        </div>
+
+                        <div class="collapsed" id={{model_name}}-edited>
+                            {% for element in object.edited %}
+                            <div class="element-changed-frame">
+                                <div class="element-header edited">
+                                    {{element.name}} <i id="{{model_name}}-{{element.id}}-icon"
+                                        class="fa fa-chevron-down" onclick="hide('{{model_name}}-{{element.id}}')"></i>
+                                </div>
+                                <div class="element-expansion edited" id="{{model_name}}-{{element.id}}">
+                                    <div class="fields-frame edited">
+                                        {% for attr_name, valueDiff in element.items %}
+                                        {% if attr_name != "id" and attr_name != "name" %}
+                                        <div class="field-row edited">
+                                            <div class="field-label">
+                                                <label for="fname">{{attr_name}}</label>
+                                            </div>
+                                            <div class="field-input">
+                                                {% if attr_name != "active"%}
+                                                {% if valueDiff.old != valueDiff.new %}
+                                                <input disabled class="line-text old" type="text" value='{{valueDiff.old}}'>
+                                                {% else %}
+                                                <input disabled class="line-text" type="text" value='{{valueDiff.old}}'>
+                                                {% endif %}
+                                                {% elif valueDiff.old == True %}
+                                                <input disabled class="element-active" type="checkbox" checked>
+                                                {% else %}
+                                                <input disabled class="element-active" type="checkbox">
+                                                {% endif %}
+                                            </div>
+                                            <div class="field-input">
+                                                {% if attr_name != "active" %}
+                                                {% if valueDiff.old != valueDiff.new %}
+                                                <input disabled class="line-text new" type="text" value='{{valueDiff.new}}''>
+                                                {% else %}
+                                                <input disabled class="line-text" type="text" value='{{valueDiff.new}}''>
+                                                {% endif %}
+                                                {% elif valueDiff.new == True %}
+                                                <input disabled class="element-active" type="checkbox" checked>
+                                                {% else %}
+                                                <input disabled class="element-active" type="checkbox">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="approve-change-frame">
+                                        Apply Changes
+                                        <input type="checkbox" name="{{model_name}}-{{element.id}}" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    {% endif %}
+                    <!-- Removed Items -->
+                    {% if object.removed|length > 0 %}
+                    <div class="model-changes">
+                        <div class="model-change-header">
+                            Removed items <i id="{{model_name}}-removed-icon" class="fa fa-chevron-down"
+                                onclick="hide('{{model_name}}-removed')"></i>
+                        </div>
+
+                        <div class="collapsed" id={{model_name}}-removed>
+                            {% for element in object.removed %}
+                            <div class="element-changed-frame">
+                                <div class="element-header removed">
+                                    {{element.name}} <i id="{{model_name}}-{{element.id}}-icon"
+                                        class="fa fa-chevron-down" onclick="hide('{{model_name}}-{{element.id}}')"></i>
+                                </div>
+                                <div class="element-expansion removed" id="{{model_name}}-{{element.id}}">
+                                    <div class="fields-frame">
+                                        {% for attr_name, value in element.items %}
+                                        {% if attr_name != "id" and attr_name != "name" %}
+                                        <div class="field-row">
+                                            <div class="field-label">
+                                                <label for="fname">{{attr_name}}</label>
+                                            </div>
+                                            <div class="field-input">
+                                                {% if not attr_name == "active" %}
+                                                <input disabled class="line-text" type="text" value='{{value}}'>
+                                                {% elif value == True %}
+                                                <input disabled class="element-active" type="checkbox" checked>
+                                                {% else %}
+                                                <input disabled class="element-active" type="checkbox">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="approve-change-frame">
+                                        Apply Changes
+                                        <input type="checkbox" name="{{model_name}}-{{element.id}}" checked>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <div class="submit-frame">
+                <input type="submit" value="Apply Changes" id="submit-btn">
+            </div>
+
+        </form>
+    </div>
+</body>
+
+<script>
+    function hide(id) {
+        let div = document.getElementById(id)
+        let icon = document.getElementById(id + '-icon')
+        if (isNotCollapsed(div)) {
+            /* Collapse */
+            div.classList.add('collapsed')
+            icon.classList.add('fa-chevron-down')
+            icon.classList.remove('fa-chevron-up')
+        } else {
+            /* Expand */
+            div.classList.remove('collapsed')
+            icon.classList.add('fa-chevron-up')
+            icon.classList.remove('fa-chevron-down')
+        }
+    }
+
+    function isNotCollapsed(div) {
+        return !div.classList.contains('collapsed')
+    }
+</script>

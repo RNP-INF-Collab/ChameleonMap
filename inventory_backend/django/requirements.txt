@@ -1,0 +1,7 @@
+Django>=3.0,<4.0
+psycopg2-binary>=2.8
+django-colorfield==0.4.2
+djangorestframework==3.12.4
+django-cors-headers==3.7.0
+django-tinymce==3.4.0
+requests>=2.27.1

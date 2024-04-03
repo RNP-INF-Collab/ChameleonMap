@@ -1,0 +1,41 @@
+version: "3.7"
+   
+services:
+
+  backend:
+    build:
+      context: ./inventory_backend/django
+      target: deployment
+    volumes:
+      - static_volume:/home/dpdadm/web/staticfiles
+    expose:
+      - 8000
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  nginx:
+    build: ./nginx
+    depends_on: 
+      - backend
+    volumes:
+      - static_volume:/home/dpdadm/web/staticfiles
+
+  frontend:
+    build:
+      context: ./map-frontend
+      target: deployment
+    volumes:
+      - ./map-frontend:/usr/src/app
+    expose:
+      - 80
+    depends_on:
+      - backend
+
+volumes:
+    postgres_data:
+    static_volume:

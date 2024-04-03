@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Variables
+CONTAINER_NAME="inventory-map_db_1"
+DB_NAME="postgres"                     # Replace with your database name
+DB_USER="postgres"                   # Replace with your database user
+BACKUP_DIR="." # Replace with the directory containing the backup file
+BACKUP_FILE=$1
+
+# Execute restore command inside the container
+
+docker cp "$BACKUP_FILE" "$CONTAINER_NAME":/"$BACKUP_FILE"
+docker exec -ti "$CONTAINER_NAME" pg_restore -U "$DB_USER" -c -d "$DB_NAME" "$BACKUP_FILE"
+
+echo "Database restored from: $BACKUP_DIR/$BACKUP_FILE"

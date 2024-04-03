@@ -1,0 +1,10 @@
+<div class='sub-map-container'>
+    <div class='sub-map-frame'>
+        <div id="sub-map"></div>
+        <div class='phantom-content-container'>
+            <div id="phantom-popup-content" #phantom_popup_content></div>
+        </div>
+    </div>
+</div>
+<app-atlas [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById" [defaultSubMapCenterCoordinates]="defaultSubMapCenterCoordinates"></app-atlas>
+<!-- <app-atlas [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById" [restoreDefaultScreenView]="restoreDefaultScreenView" [defaultSubMapCenterCoordinates]="defaultSubMapCenterCoordinates"></app-atlas> -->

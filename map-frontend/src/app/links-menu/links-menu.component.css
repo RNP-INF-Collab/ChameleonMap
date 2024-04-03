@@ -1,0 +1,166 @@
+mat-expansion-panel  {
+    background-color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+    width: 300px;
+    opacity: 100% !important;
+  }
+  
+  .mat-icon {
+    font-size: 17px;
+    position:absolute;
+      right:10px;
+  }
+  
+  .mat-side{
+    font-size: 30px;
+    position: relative !important;
+    margin-top: 60px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    transition: all 0.5s;
+    cursor: pointer;
+  }
+  
+  .noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+  }
+  
+  .mat-side-rot{
+    transform: rotate(180deg) !important;
+  }
+  
+  .mat-expansion-panel-body{
+    transition: all 0.5s;
+  }
+  
+  .mat-icon:hover {
+    color: RoyalBlue;
+  }
+  
+  .menu-name{
+    width: 100%;
+  }
+  
+  .menu-header {
+    background-color: rgba(214, 214, 214, 0.26);
+    width: 130%; 
+    margin-left: -25px; 
+    cursor: pointer;
+    border-bottom: 0.5px solid rgba(214, 214, 214, 0.363);
+    margin-bottom: -1px;
+  }
+  
+  .menu-header:hover {
+    background-color: rgba(168, 177, 189, 0.212) !important;
+  }
+  
+  .menu-text {
+    color: black !important;
+    margin-left: 15px;
+  }
+  
+  .menu-text-position {
+    margin-left: -25px;
+  }
+  
+  .tag-list {
+    margin-bottom: 0px; 
+    margin-top: 12px; 
+    cursor: pointer;
+  
+    /* display flex */
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+  
+    align-items: center;
+  }
+  
+  .tag-name {
+    display: inline;
+    margin-left: 23px;
+    margin-right: 20px;
+    letter-spacing: 0.3px;
+    word-spacing: 2px;
+    color:rgb(0, 0, 0);
+  }
+  
+  .tag-name-disabled {
+    color:gray;
+  }
+  
+  #tag-color-icon {
+    width: 13px;
+    height: 2px;
+    margin-bottom: 3px;
+    position: absolute;
+    border: 1px solid #FFFFFF;
+  }
+  
+  #tag-color-icon:hover {
+    width:14px;
+    height: 4px;
+  }
+  
+  .white-circle {
+    height: 5px;
+    width: 5px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    margin-left: 25%;
+    margin-top: 25%;
+  }
+  
+  .eye {
+    margin-top: 3px;
+  }
+  .eye-off {
+    width: 19px;
+    height: 19px;
+    margin-left: -1px;
+    fill: currentColor;
+    overflow: hidden;
+  }
+  
+  .scrollbar-box {
+    position: absolute;
+    z-index: 400;
+    top: 75px;
+    left: 15px;
+    max-height: calc(100% - 100px);
+    width: 312px;
+    scrollbar-color: rgba(148, 143, 0, 0) rgba(255, 255, 255, 0);
+    float: left;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .scrollbar-box:hover {
+    scrollbar-color: rgb(161, 161, 156) rgba(255, 255, 255, 0);
+  }
+  
+  /* For Google Chrome */
+  .scrollbar-box-chrome::-webkit-scrollbar-thumb {
+    background: transparent;
+    border: 0px solid transparent;
+    border-radius: 100px;
+  }
+  
+  .scrollbar-box-chrome:hover::-webkit-scrollbar-thumb {
+    background: rgb(161, 161, 156);
+  }
+  
+  .scrollbar-box-chrome::-webkit-scrollbar-thumb:hover {
+    background: rgb(119, 119, 118);
+  }
+  
