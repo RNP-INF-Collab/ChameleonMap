@@ -1,0 +1,32 @@
+{% extends "admin/index.html" %}
+{% load importer_tags %}
+
+
+{% block sidebar %}
+{{ block.super }}
+{% if 'AVAILABLE_IMPORTS'|env == 'infradpdi' %}
+<div class="background-no-go" id="bg"></div>
+<div class="spinner" id="spinner"></div>
+<div class="spinner-text" id="text">Loading, please wait...</div>
+<div class="app-administration module">
+    <table>
+        <caption>
+            <a class="section" title="Import data from an API">Import data</a>
+        </caption>
+        <tbody>
+            <tr class="model-menu">
+                <th scope="row"><a href="/import/netbox/" onclick="showSpinner()">Import data from Netbox</a></th>
+                <td><a href="/import/netbox/" class="addlink" onclick="showSpinner()">Import</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<script>
+    function showSpinner(){
+        document.getElementById('text').style.display = 'block';
+        document.getElementById('bg').style.display = 'block';
+        document.getElementById('spinner').style.display = 'block';
+    }
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+version: "3.7"
+   
+services:
+
+  backend:
+    volumes:
+      - ./inventory_backend/django:/home/dpdadm/web/
+    build: 
+      target: development
+    env_file: ./env/.env.dev
+    restart: unless-stopped
+
+  db:
+    env_file:
+      - ./env/.env.dev
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    volumes:
+      - ./inventory_backend/django/staticfiles/:/home/dpdadm/web/staticfiles
+
+  web_static_collector:
+    # Mount the entire django directory so that code edits are reflected in the container
+    volumes:
+      - ./inventory_backend/django:/home/dpdadm/web/
+    build:
+      context: ./inventory_backend/django
+      target: development
+    entrypoint: ./collect_static.sh
+    env_file:
+      - ./env/.env.dev
+    restart: unless-stopped
+
+  pg-admin:
+    image: dpage/pgadmin4
+    ports:
+      - "8001:80"
+    env_file:
+      - ./env/.env.dev
+
+  frontend:
+    image: map_frontend
+    build:
+      context: ./map-frontend
+      target: development
+    volumes:
+      - ./map-frontend:/usr/src/app
+    expose:
+      - 4200

@@ -1,0 +1,84 @@
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'import/css/logs.css' %}" media="screen" />
+    <script src="https://use.fontawesome.com/195a536412.js"></script>
+    <title>Import logs</title>
+</head>
+
+<body>
+    <header>
+        <div id="page-info">
+            <a href="/admin/" style="color: white; text-decoration: none;">Map Administration</a>
+        </div>
+        <div id="system-info">
+            Import logs
+        </div>
+    </header>
+
+    <div id="form-frame">
+        <div id="status-msg">{{status.status}}</div>
+        {% for logTypeName, logValues in status.logs.items %}
+            <div class="model-frame">
+
+                <div class="model-header" onclick="hide('{{logTypeName}}')">
+                    {{logTypeName|capfirst}} ({{logValues|length }})
+                    {% if logValues|length > 0 %}
+                        <i id="{{logTypeName}}-icon" class="fa fa-chevron-down" ></i>
+                    {% endif %}
+                </div>
+
+                <div class="collapsed" id={{logTypeName}}>
+                    {% for logText in logValues %}
+                        {% if logValues|length > 0 %}
+                            <div class="log-text">
+                                {% if logTypeName == "success" %}
+                                <div id=bullet-point style="background-color: green;"></div> 
+                                {% elif logTypeName == "warnings" %}
+                                <div id=bullet-point style="background-color: orange;"></div> 
+                                {% else %}
+                                <div id=bullet-point style="background-color: red;"></div> 
+                                {% endif %}
+                                {{logText}}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+            </div>
+        {% endfor %}
+
+        <div class="submit-frame">
+            <a href="/admin">
+                <input type="button" value="Go home" id="submit-btn">
+            </a>
+        </div>
+        
+    </div>
+</body>
+
+
+<script>
+    function hide(id) {
+        let div = document.getElementById(id)
+        let icon = document.getElementById(id + '-icon')
+        if (isNotCollapsed(div)) {
+            /* Collapse */
+            div.classList.add('collapsed')
+            icon.classList.add('fa-chevron-down')
+            icon.classList.remove('fa-chevron-up')
+        } else {
+            /* Expand */
+            div.classList.remove('collapsed')
+            icon.classList.add('fa-chevron-up')
+            icon.classList.remove('fa-chevron-down')
+        }
+    }
+
+    function isNotCollapsed(div) {
+        return !div.classList.contains('collapsed')
+    }
+</script>

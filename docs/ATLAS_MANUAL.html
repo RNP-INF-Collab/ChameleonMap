@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>ATLAS Manual</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      h1 {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+      }
+      h2 {
+        font-size: 18px;
+        font-weight: bold;
+      }
+      p {
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><strong>ATLAS</strong>: Automated Topology LAnguage with Slicing</h1>
+    <h2>User Manual:</h2>
+    <p>This manual will help you get started with the language and understand all of its commands.</p>
+    <h2>Commands:</h2>
+    
+    <h3>ADD_NODE (Alias: NODE, ADDNODE)</h3>
+    <p>Syntax: ADD_NODE node_name xPos yPos [tag]</p>
+    <p>This command adds a node to the topology.</p>
+    <p>Example: ADD_NODE Node1 0 0</p>
+    <p>Example: NODE Node2 10 10 tag1</p>
+    
+    <h3>ADD_LINK (Alias: LINK, ADDLINK)</h3>
+    <p>Syntax: ADD_LINK srcNode tgtNode [--color -weight -- opacity --dashed-line --dhased-line2 --dotted-line --rectlinear --srcAnchor --tgtAnchor]</p>
+    <p>This command adds a link between two nodes in the topology.</p>
+    <p>Example: ADD_LINK Node1 Node2 --color=red -weight=2</p>
+    <p>Example: LINK Node3 Node4 --opacity=0.5 --dashed-line</p>
+    
+    <h3>PUSH_POPUP (Alias: PUSHPOPUP)</h3>
+    <p>Syntax: PUSH_POPUP nodeName content</p>
+    <p>This command pushs content in the popup of a specified node in the topology.</p>
+    <p>Example: PUSH_POPUP Node1 "This is the content of the popup"</p>
+    <p>Example: PUSHPOPUP Node2 "This is the content of the second popup"</p>
+
+    <h3>SET_ICON (Alias: ICON)</h3>
+    <p>Syntax: SET_ICON nodeName iconSource [flags]</p>
+    <p>This command sets an icon for a node in the topology.</p>
+    <p>Example: SET_ICON Node1 Icon1.jpg</p>
+    <p>Example: ICON Node2 --default-icon --size=small</p>
+    
+    <h3>ADD_BUTTON (Alias: BUTTON)</h3>
+    <p>Syntax: ADD_BUTTON button_name x y commands [buttonLegend] [flags]</p>
+    <p>This command adds a button</p>
+    <p>Example: ADD_BUTTON Button1 0 0 "alert('Hello World!')"</p>
+    <p>Example: BUTTON Window2 Button2 10 10 "alert('Goodbye World!')" --color=red</p>
+    
+    <h3>RM_POPUP (Alias: RMPOPUP)</h3>
+    <p>Syntax: RM_POPUP window_name</p>
+    <p>This command removes the popup  of a node.</p>
+    <p>Example: RM_POPUP node1</p>
+    
+    <h3>ADD_SMART_LINK (Alias: SMART_LINK)</h3>
+    <p>Syntax: ADD_SMART_LINK srcNode tgtNode [--color -weight -- opacity --dashed-line --dhased-line2 --dotted-line --rectlinear --srcAnchor --tgtAnchor]</p>
+    <p>This command adds a smart link between two nodes in the topology. This is a special type of link that can be used to create relationships between nodes.</p>
+    <p>Example: ADD_SMART_LINK Node1 Node2 --color=red -weight=2</p>
+    <p>Example: SMART_LINK Node3 Node4 --opacity=0.5 --dashed-line</p>
+    
+    <h3>HIGHLIGHT (Alias: HIGHLIGHT)</h3>
+    <p>Syntax: HIGHLIGHT elementType elementName</p>
+    <p>This command highlights a specified element in the topology. This will change the color of the element making it more visible.</p>
+    <p>Example: HIGHLIGHT node Node1</p>
+    <p>Example: HIGHLIGHT link Link2</p>
+    
+    <h3>FADE (Alias: FADE)</h3>
+    <p>Syntax: FADE elementType elementName</p>
+    <p>This command fades a specified element in the topology. This will change the color of the element making it less visible.</p>
+    <p>Example: FADE node Node1</p>
+    <p>Example: FADE link Link2</p>  </body>
+</html>

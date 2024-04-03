@@ -1,0 +1,15 @@
+inventory_backend/django/staticfiles
+env/
+*.swp
+*node_modules
+*package-lock.json
+map-frontend/src/index.html
+map-frontend/package-lock.json
+docker-up.sh
+up*
+run*
+restart*
+inventory_backend/django/staticfiles/admin/css/base.css
+up.bat
+backups/*.dump
+*.DS_Store

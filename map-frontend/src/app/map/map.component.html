@@ -1,0 +1,10 @@
+<div class="map-container">
+  <div class="map-frame">
+    <div id="map"></div>
+    <app-menu-chooser *ngIf="mapSetting.link_feature" (buttonClicked)="onButtonClicked($event)"></app-menu-chooser>
+    <app-filter-menu [menus]="menus" [tags]="tags" [locations]="locations" [selectedTagsMenuId]="defaultMenuId" [currentMenu]="currentMenu" [linksActive]="mapSetting.link_feature" (menuCliked)="onMenuCliked($event)" (tagRemoval)="onTagRemoval($event)" (tagReactivated)="onTagReactivated($event)" ></app-filter-menu>
+    <app-links-menu *ngIf="mapSetting.link_feature" [linkGroups]="linksGroup" [currentMenu]="currentMenu" (linkRemoval)="onLinkRemoval($event)" (linkReactivated)="onLinkReactivated($event)"></app-links-menu>
+    <app-collapser></app-collapser>
+  </div>
+</div>
+<app-overlayed-popup [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById"></app-overlayed-popup>
