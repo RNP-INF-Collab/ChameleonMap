@@ -4,13 +4,14 @@ ChameleonMap is a tool for creating and visualizing interactive maps. It allows 
 
 For more information about ChameleonMap, please consult the following resources:
 - **Manuals and documentation:** https://github.com/RNP-INF-Collab/ChameleonMap-guide
-- **Installation and functionalities**: https://youtu.be/f8eMwwNLlmk
+- **Installation, functionalities & intended demonstration**: https://youtu.be/f8eMwwNLlmk
 
 ## Installation
 
 ### Requirements:
 * <a href="https://docs.docker.com/install">Docker</a>
 * <a href="https://docs.docker.com/compose/install">Docker Compose</a>
+* Any computer with Linux, Windows, Mac or another OS that can run Docker, and, at least, 2GB Free HDD & 4GB RAM
 
 
 ### Instructions to run:
