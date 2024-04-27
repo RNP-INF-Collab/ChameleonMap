@@ -3,8 +3,8 @@
 ChameleonMap is a tool for creating and visualizing interactive maps. It allows users to easily explore and understand the network infrastructure, making it easier to identify resources and manage the network inventory.
 
 For more information about ChameleonMap, please consult the following resources:
-- **Manuals and documentation:** https://github.com/RNP-INF-Collab/ChameleonMap-guide
-- **Installation, functionalities & intended demonstration**: https://youtu.be/f8eMwwNLlmk
+- **Manuals and documentation:** [https://rnp-inf-collab.github.io/ChameleonMap-guide/](https://rnp-inf-collab.github.io/ChameleonMap-guide/)
+- **Installation, functionalities & intended demonstration**: [https://youtu.be/f8eMwwNLlmk](https://youtu.be/f8eMwwNLlmk)
 
 ## Installation
 
@@ -140,7 +140,5 @@ to
 
 To finish, use the command **Production mode with ssl** describe on the first section of this readme
 
-
-
 ## Extended Guide
-An extended user/admin manual can be found in the following url: git@github.com:RNP-INF-Collab/ChameleonMap-guide.git
+An extended user/admin manual can be found in the following url: [https://github.com/RNP-INF-Collab/ChameleonMap-guide](https://github.com/RNP-INF-Collab/ChameleonMap-guide)
