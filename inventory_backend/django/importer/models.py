@@ -57,7 +57,7 @@ class LocationsType:
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 class TagsType:
-    def __init__(self, id, name, parent_menu, color, description, sidebar_content, related_locations, active):
+    def __init__(self, id, name, parent_menu, color, description, sidebar_content, related_locations, active, atlas_feature_active):
         self.id = id
         self.name = name
         self.parent_menu = parent_menu
@@ -66,6 +66,7 @@ class TagsType:
         self.sidebar_content = sidebar_content
         self.related_locations = related_locations
         self.active = active
+        self.atlas_feature_active = atlas_feature_active
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
@@ -100,5 +101,6 @@ class EditedTagsType:
         self.sidebar_content = EditedDataDiff(old.sidebar_content, new.sidebar_content)
         self.related_locations = EditedDataDiff(old.related_locations, new.related_locations)
         self.active = EditedDataDiff(old.active, new.active)
+        self.atlas_feature_active = EditedDataDiff(old.active, new.active)
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)

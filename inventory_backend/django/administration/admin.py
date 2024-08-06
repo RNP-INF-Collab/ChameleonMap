@@ -23,7 +23,7 @@ class TagAdmin(admin.ModelAdmin):
     inlines = [
         Tag_relationshipInline,
     ]
-    list_display = ("name", "parent_menu", "active")
+    list_display = ("name", "parent_menu", "active", "atlas_feature_active")
     filter_horizontal = ('related_locations',)
     list_filter = ("parent_menu",)
     search_fields = ['name']
