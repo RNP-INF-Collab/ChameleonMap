@@ -10,7 +10,7 @@ class MenuAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "latitude", "longitude", "active")
+    list_display = ("name", "latitude", "longitude", "active", "atlas_feature_active")
     search_fields = ['name']
 
 class Tag_relationshipInline(admin.TabularInline):

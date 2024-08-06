@@ -44,13 +44,15 @@ class MenusType:
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
 class LocationsType:
-    def __init__(self, id, name, description, latitude, longitude, active):
+    def __init__(self, id, name, description, latitude, longitude, active, atlas_feature_active):
         self.id = id
         self.name = name
         self.description = description
         self.latitude = latitude
         self.longitude = longitude
         self.active = active
+        self.atlas_feature_active = atlas_feature_active
+
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
@@ -84,6 +86,7 @@ class EditedLocationsType:
         self.latitude = EditedDataDiff(old.latitude, new.latitude)
         self.longitude = EditedDataDiff(old.longitude, new.longitude)
         self.active = EditedDataDiff(old.active, new.active)
+        self.atlas_feature_active = EditedDataDiff(old.atlas_feature_active, new.atlas_feature_active)
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
