@@ -36,6 +36,7 @@ declare global {
     readonly description: string;
     readonly overlayed_popup_content: string;
     readonly active: boolean;
+    readonly atlas_feature_active: boolean;
 
     onMap: boolean;
     activeColors: Array<string>;

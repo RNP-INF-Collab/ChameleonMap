@@ -24,7 +24,7 @@ def requestAll(storedData):
     auxiliar = auxiliar[0]
     for storedLocation in auxiliar:
         location = serial(storedLocation)
-        storedData.locations.append(LocationsType(location['id'], location['name'], location['description'], location['latitude'], location['longitude'], location['active']))
+        storedData.locations.append(LocationsType(location['id'], location['name'], location['description'], location['latitude'], location['longitude'], location['active'], location['atlas_feature_active']))
     #Tag request
     auxiliar = []
     auxiliar.append(list(Tag.objects.all()))

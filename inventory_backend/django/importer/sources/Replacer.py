@@ -122,6 +122,7 @@ def editElement(element, modelText):
             locationRecord.latitude = element['latitude']['new']
             locationRecord.longitude = element['longitude']['new']
             locationRecord.active = element['active']['new']
+            locationRecord.atlas_feature_active = element['atlas_feature_active']['new']
             locationRecord.save()
 
         elif(modelText == 'Tags'):
