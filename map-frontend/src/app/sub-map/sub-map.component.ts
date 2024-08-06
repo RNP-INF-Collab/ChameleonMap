@@ -75,7 +75,12 @@ export class SubMapComponent implements OnInit {
       this._keeperContentMarker.removeFrom(this.subMap);
     this.restoreDefaultScreenView();
 
-    if(!this.ATLAS.isATLASscript(this._keeper.overlayed_popup_content)){
+    let isAtlasScript: Boolean = keeper.atlas_feature_active
+    if(isAtlasScript){
+      isAtlasScript = this.ATLAS.isATLASscript(this._keeper.overlayed_popup_content)
+    }
+
+    if(!isAtlasScript){
       // Add html content marker
       this._keeperContentMarker = L.marker( this.defaultSubMapCenterCoordinates ,  {
         draggable: false,
