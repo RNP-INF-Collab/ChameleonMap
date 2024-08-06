@@ -122,6 +122,7 @@ def editElement(element, modelText):
             locationRecord.latitude = element['latitude']['new']
             locationRecord.longitude = element['longitude']['new']
             locationRecord.active = element['active']['new']
+            locationRecord.atlas_feature_active = element['atlas_feature_active']['new']
             locationRecord.save()
 
         elif(modelText == 'Tags'):
@@ -130,6 +131,7 @@ def editElement(element, modelText):
             tagRecord.description = element['description']['new']
             tagRecord.sidebar_content = element['sidebar_content']['new']
             tagRecord.active = element['active']['new']
+            tagRecord.atlas_feature_active = element['atlas_feature_active']['new']
 
             if(element['parent_menu']['old'] != element['parent_menu']['new']):
                 tagRecord.parent_menu = Menu.objects.get(pk=element['parent_menu']['new'])
