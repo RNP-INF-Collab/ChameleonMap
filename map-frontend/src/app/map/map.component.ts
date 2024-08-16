@@ -189,6 +189,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
       this._links.forEach((link: Link) => {
         const loc1 = this.getLocationById(link.location_1);
         const loc2 = this.getLocationById(link.location_2);
+        const dashed = link.dashed;
         const linkgroup = this.getLinksGroupById(link.links_group);
         if (loc1 && loc2 && linkgroup) {
           linkgroup.visibility = true;
@@ -229,8 +230,15 @@ export class MapComponent implements AfterViewChecked, OnInit {
               weight: 3, //link.weight;
               opacity: linkgroup.opacity, //link.opacity;
               smoothFactor: 1,
-              stroke: true
+              stroke: true,
+              dashArray:'',
+              dashOffset: ''
             };
+            if(dashed){
+              pathOptions.dashArray = '10, 10';
+              pathOptions.dashOffset = '10';
+              pathOptions.weight = 6;
+            }
 
             link.line = L.curve(
               [
@@ -532,7 +540,12 @@ export class MapComponent implements AfterViewChecked, OnInit {
         });
       }
     });
-    if (this.mapSetting.link_feature) this.insertLinks();
+    if(selectedTagsMenuId === 5 || selectedTagsMenuId === 0){
+      if (this.mapSetting.link_feature ) this.insertLinks();
+    }else{
+      this.resetlinks();
+    }
+    
   }
 
   private isTagInactive(tag: Tag) {

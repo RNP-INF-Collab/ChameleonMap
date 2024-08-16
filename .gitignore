@@ -13,3 +13,6 @@ inventory_backend/django/staticfiles/admin/css/base.css
 up.bat
 backups/*.dump
 *.DS_Store
+dump_2024-08-14_11_25_41.sql
+.gitignore
+dump_2024-08-15_17_15_20.sql

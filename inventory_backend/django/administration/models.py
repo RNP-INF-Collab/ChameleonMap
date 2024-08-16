@@ -93,6 +93,7 @@ class Link(models.Model):
     location_2 = models.ForeignKey('Location', null=True, on_delete=models.CASCADE, related_name="location_2")
     links_group = models.ForeignKey('Links_group', null=True, on_delete=models.SET_NULL)
     invert_link = models.BooleanField(default=False, help_text="This field, when active, will invert the curvature of the link.")
+    dashed = models.BooleanField(default=False, help_text="This field, when active, will make the link stroke dashed.")
     class Meta:
         db_table = 'link'
 
