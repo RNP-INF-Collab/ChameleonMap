@@ -36,6 +36,10 @@ export class MapComponent implements AfterViewChecked, OnInit {
   private map: L.Map;
   private locationHeaderSize = 0;
   private mapLoaded = false;
+  private linksLoaded = false;
+  private locationsLoaded = false;
+  private tagsLoaded = false;
+  private markersLoaded = false;
   private mapInitialized = false;
   private markerClusterGroup: L.MarkerClusterGroup;
   public currentMenu = 1;
@@ -148,12 +152,14 @@ export class MapComponent implements AfterViewChecked, OnInit {
       this.initLocations();
       this.insertTagRelations();
       this.markerPreConfigure();
-      if (this.mapSetting.link_feature) this.insertLinks();
     }
+    if (!this.linksLoaded && this.mapSetting.link_feature){
+      this.insertLinks();
+    } 
   }
 
   private initLocations() {
-    if (this._locations) {
+    if (this._locations && !this.locationsLoaded) {
       this._locations.forEach((location: Location) => {
         location.onMap = false;
         location.activeColors = [];
@@ -162,6 +168,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
           "<div style='max-height:calc(100vh - 500px); min-height: 180px; overflow:scroll; overflow-x:hidden; margin-top: 20px; margin-right:0px; margin-left: 10px; text-align: justify;'>";
         this.locationHeaderSize = location.popup.length;
       });
+      this.locationsLoaded = true;
     }
   }
 
@@ -255,6 +262,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
           }
         }
       });
+      this.linksLoaded = true;
     }
   }
 
@@ -362,7 +370,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
   }
 
   private markerPreConfigure() {
-    if (this._tags) {
+    if (this._tags && !this.markersLoaded && this.tagsLoaded) {
       this._tags.forEach((tag: Tag) => {
         if (tag.active) {
           tag.currentColor = tag.color;
@@ -577,7 +585,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
           if (location) {
             if (location.active) {
               this.insertLocationOnMap(location, tag.currentColor);
-              this.checkLinksOnMap(location);
+              if(this.selectedTagMenu === 5 || this.selectedTagMenu === 0) this.checkLinksOnMap(location);
             }
           }
         });
@@ -640,7 +648,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
   }
 
   private insertTagRelations() {
-    if (this._tagRelationships) {
+    if (this._tagRelationships && !this.tagsLoaded && this.locationsLoaded) {
       this._tagRelationships.forEach((relation: TagRelationship) => {
         this._tags.forEach((tag: Tag) => {
           if (!tag.child_tags) {
@@ -656,6 +664,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
           }
         });
       });
+      this.tagsLoaded = true;
     }
   }
 
@@ -820,6 +829,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
   }
 
   private resetlinks() {
+    console.log('reset')
     for (const link of this._links) {
       if (link.line != null) {
         link.line.remove(this.map);
@@ -828,7 +838,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
   }
 
   private insertLinkByLinkGroup(lg: LinksGroup) {
-    if (lg) {
+    if (lg && (this.selectedTagMenu === 0 || this.selectedTagMenu === 5)) {
       lg.visibility = true;
       for (const link of this._links) {
         if (link.links_group == lg.id) {
