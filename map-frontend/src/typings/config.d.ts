@@ -60,6 +60,7 @@ declare global {
     readonly links_group: number;
     readonly curvature: number;
     readonly invert_link: boolean;
+    readonly dashed: boolean;
     line: any;
   }
 
