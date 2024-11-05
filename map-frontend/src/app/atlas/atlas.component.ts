@@ -122,7 +122,6 @@ export class ATLASComponent implements OnInit {
 
     // alert(script)
     lines.forEach(line => {
-      console.log(line)
       tokens = this.tokenize(line);
       if(tokens[0][0] !== '#'){
         switch(tokens[0].toUpperCase()){
@@ -436,8 +435,6 @@ export class ATLASComponent implements OnInit {
   }
 
   private highlightInstruction(tokens: Array<string>){
-    console.log(">>> ");
-    console.log(this.slices);
     const slice = this.getSliceByName(tokens[1]);
 
     if(slice !== null){

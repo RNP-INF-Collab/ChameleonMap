@@ -35,8 +35,9 @@ mat-expansion-panel  {
   transform: rotate(180deg) !important;
 }
 
-.mat-expansion-panel-body{
+.mat-expansion-panel-body {
   transition: all 0.5s;
+  padding: 0px 24px 0px !important;
 }
 
 .mat-icon:hover {
@@ -58,6 +59,10 @@ mat-expansion-panel  {
 
 .menu-header:hover {
   background-color: rgba(168, 177, 189, 0.212) !important;
+}
+
+.menu-body {
+  padding-bottom: 20px;
 }
 
 .menu-text {
@@ -106,6 +111,14 @@ mat-expansion-panel  {
   border: 1px solid #FFFFFF;
 }
 
+#kml-color-icon {
+  width: 13px;
+  height: 2px;
+  margin-bottom: 3px;
+  position: absolute;
+  border: 1px solid #FFFFFF;
+}
+
 #tag-color-icon:hover {
   width:14px;
   height: 14px;
@@ -137,7 +150,7 @@ mat-expansion-panel  {
   z-index: 400;
   top: 15px;
   left: 15px;
-  max-height: calc(100% - 40px);
+  max-height: calc(100% - 70px);
   width: 312px;
   scrollbar-color: rgba(148, 143, 0, 0) rgba(255, 255, 255, 0);
   float: left;
@@ -146,7 +159,18 @@ mat-expansion-panel  {
   transition: all 0.3s ease;
 }
 
-.links_true{
+@media (max-width: 500px) {
+  .scrollbar-box {
+    width: 280px;
+  }
+
+  mat-expansion-panel  {
+    width: 285px;
+  }
+}
+
+
+.has-tabs{
   top: 75px;
   max-height: calc(100% - 100px);
 }

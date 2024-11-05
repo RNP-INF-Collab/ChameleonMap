@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from .models import *
 
+class MenuGroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MenuGroup
+        fields = '__all__'
 
 class MenuSerializer(serializers.ModelSerializer):
 
@@ -36,6 +41,12 @@ class Links_groupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Links_group
+        fields = '__all__'
+
+class Kml_shapeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Kml_shape
         fields = '__all__'
 
 class Map_configurationSerializer(serializers.ModelSerializer):
