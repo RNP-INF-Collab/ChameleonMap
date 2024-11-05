@@ -18,6 +18,7 @@ import { ApiService } from '../api.service';
 import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.component';
 import { forkJoin } from 'rxjs';
 import { kml } from '@tmcw/togeojson';
+import { TooltipComponent } from '../tooltip/tooltip.component';
 
 @Component({
   selector: 'app-map',
@@ -26,6 +27,7 @@ import { kml } from '@tmcw/togeojson';
 })
 export class MapComponent implements OnInit {
   @ViewChild(OverlayedPopupComponent) overlayedPopup: OverlayedPopupComponent;
+  @ViewChild(TooltipComponent) onboardingComponent: TooltipComponent;
 
   private _locations: Array<Location>;
   public _menugroups: Array<MenuGroup>;
@@ -451,6 +453,12 @@ export class MapComponent implements OnInit {
     this.addHoverFunction(this.markerClusterGroup);
 
     this.footerUrl = this.mapSetting.footer_file;
+
+    let mapName = "ChameleonMap"
+    if (this.mapSetting && this.mapSetting.map_name) {
+      mapName = this.mapSetting.map_name;
+    }
+    this.onboardingComponent.showOnboardingIfNeeded(mapName);
   }
 
   private getFirstMenuId() {
@@ -652,7 +660,8 @@ export class MapComponent implements OnInit {
   private insertKmlShapes(menu_id: number) {
     this._kmlShapes.forEach(shape => {
       if (shape.parent_menu == menu_id) {
-        this.insertKmlLayer(shape.id);
+        if (shape.visibility)
+          this.insertKmlLayer(shape.id);
       } else {
         this.removeKmlLayer(shape.id);
       }

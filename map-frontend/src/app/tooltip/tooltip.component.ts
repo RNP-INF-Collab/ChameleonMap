@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import * as L from 'leaflet';
 
 @Component({
@@ -7,7 +7,7 @@ import * as L from 'leaflet';
   styleUrls: ['./tooltip.component.css']
 })
 
-export class TooltipComponent implements OnInit {
+export class TooltipComponent {
   // Onboarding steps
   private hasShownTabsTooltip = false;
   private hasShownMenusTooltip = false;
@@ -31,16 +31,16 @@ export class TooltipComponent implements OnInit {
 
   @Input() map: L.Map;
 
-  ngOnInit(): void {
+  public showOnboardingIfNeeded(mapName: String) {
     // Check if the user has visited before using localStorage
     if (localStorage.getItem('firstVisit') == null && window.innerWidth > 500) {
-      this.askToStartOnboarding();
+      this.askToStartOnboarding(mapName);
       localStorage.setItem('firstVisit', 'no');
     }
   }
 
-  askToStartOnboarding() {
-    this.centeredTooltipText = 'Bem-vindo ao mapa interativo de doações para o Rio Grande do Sul (RS). Esta iniciativa foi criada com o objetivo de facilitar o acesso a informações e otimizar a logística das entregas de doações, garantindo que a ajuda chegue de maneira mais eficiente a quem precisa. Para começar o tutorial, clique em Continuar.'
+  askToStartOnboarding(mapName: String) {
+    this.centeredTooltipText = `Bem-vindo ao ${mapName}. Para iniciar o tutorial, clique em Continuar.`
     this.centeredTooltipEnabled = true;
   }
 
@@ -58,66 +58,84 @@ export class TooltipComponent implements OnInit {
 
   continueOnboarding() {
     this.map.dragging.disable();
+    /* Menu tabs */
     if (!this.hasShownTabsTooltip) {
-      // Tabs
-      const tabs = document.getElementById('menu-groups-tabs') as HTMLDivElement;
+      let tabs = document.getElementById('menu-groups-tabs') as HTMLDivElement;
+      if (tabs != null) {
+        this.quoteCentered = false;
+        this.addTooltipNextTo(
+          tabs,
+          'No topo esquerdo, encontram-se os <b>Grupos de Menus</b>. Tratam-se de abas contendo diferentes contextos de visualização. <br>Selecione uma aba, e note que diferentes menus serão exibidos abaixo.',
+          0
+        );
+        this.hasShownTabsTooltip = true;
+        return;
+      }
+      this.hasShownTabsTooltip = true;
+      this.continueOnboarding();
+      return;
+    }
+    /* Menus */
+    if (!this.hasShownMenusTooltip) {
+      let menus = document.getElementById('menu-button-expand') as HTMLDivElement;
       this.quoteCentered = false;
       this.addTooltipNextTo(
-        tabs, 
-        'No topo esquerdo, encontram-se as <b>Prioridades de Doação</b>. <br>Ao selecionar uma aba, é possível notar que diferentes items serão exibidos abaixo.',
-        0
-      );
-      this.hasShownTabsTooltip = true;
-    } else if (!this.hasShownMenusTooltip) {
-      // Menus
-      const menus = document.getElementById('menu-button-expand') as HTMLDivElement;
-      this.addTooltipNextTo(
-        menus, 
-        'Cada painel retangular à esquerda representa uma <b>Categoria de Suprimentos</b>. Cada categoria pode conter diversos suprimentos.<br>Ao selecionar uma categoria, os suprimentos correspondentes serão exibidos.<br>A categoria ativa terá uma cor mais escura que as outras.<br>Para ocultar todos os suprimentos de uma categoria, clique no ícone de olho ao lado do nome da categoria.'
+        menus,
+        'Cada painel retangular à esquerda constitui um <b>Menu</b>. Trata-se de um agrupamento de itens (tags) relacionados. <br>Os menus podem ser selecionados, habilitando a visualização dos itens relacionados àquele Menu no mapa. <br>O Menu selecionado possuirá uma cor mais escura que os demais.<br>Para ocultar a visibilidade de todos os elementos em menu, pode-se clicar no ícone de olho.'
       );
       this.hasShownMenusTooltip = true;
-    } else if (!this.hasShownTagsTooltip) {
-      // Tags
-      this.quoteCentered = true;
-      const tags = document.getElementById('eye') as HTMLDivElement;
+      return;
+    }
+    /* Tags */
+    if (!this.hasShownTagsTooltip) {
+      this.quoteCentered = false;
+      let tags = document.getElementById('eye') as HTMLDivElement;
       this.addTooltipNextTo(
-        tags, 
-        'Aqui, você pode visualizar os <b>Suprimentos</b>, identificados por suas cores específicas. Cada suprimento está associado a um ou mais abrigos/Centros de Coletas no mapa.<br>No mapa, é possível verificar as cores distribuídas no mapa para identificar os suprimentos necessários.<br>Para ocultar um suprimento específico, clique no ícone de olho ao lado do nome do suprimento.'
+        tags,
+        'Cada Menu contém elementos geolocalizados, conhecidos como <b>Tags</b>, que são identificados por sua cor.<br>Cada tag está relacionada com uma ou mais localizações no mapa. Podemos identificar a distribuição das tags no mapa por sua cor.<br>Pode-se também ocultar a visibilidade de uma tag específica ao clicar no ícone de olho ao lado da mesma.'
       );
       this.hasShownTagsTooltip = true;
-    } else if (!this.hasShownLocationTooltip) {
-      // Location
-      const location = this.getLocationOnMap();
-      if (location) { this.selectedLocation = location }
-      this.addTooltipNextTo(
-        location, 
-        'No mapa, encontram-se distribuídos os <b>Abrigos e Centros de Coletas</b>.<br>Através das cores, é possível identificar a necessidade de <i>Suprimentos</i> identificados por sua respectiva cor.<br>Ao clicar em um Abrigo/Centro de Coleta, um <b>Pop-up</b> será exibido com mais detalhes sobre as necessidades e informações adicionais.'
-      );
-      this.hasShownLocationTooltip = true;
-    } else if (!this.hasShownPopupTooltip) {
-      // Popup
-      const pos = this.selectedLocation.getBoundingClientRect()
+      return;
+    }
+    /* Location */
+    if (!this.hasShownLocationTooltip) {
+      let location = this.getLocationOnMap();
+      if (location) {
+        this.selectedLocation = location;
+        this.addTooltipNextTo(
+          location,
+          'No mapa estarão distribuídos pontos geolocalizados, chamados <b>Localizações</b>.<br>Através das cores, pode-se compreender a distribuição das <i>tags</i> no mapa.<br>Ao clicar em uma localização, será aberto um <b>popup</b> com mais detalhes.'
+        );
+        this.hasShownLocationTooltip = true;
+      }
+      return;
+    }
+    /* Popup */
+    if (!this.hasShownPopupTooltip) {
+      let pos = this.selectedLocation.getBoundingClientRect();
       this.click(pos.x, pos.y);
-      const popup = document.getElementsByClassName('opp-expand-icon')[0] as HTMLDivElement;
+      let popup = document.getElementsByClassName('opp-expand-icon')[0] as HTMLDivElement;
       this.expandPopup = popup;
       this.addTooltipNextTo(
-        popup, 
-        'Através do <b>Pop-up</b>, podemos identificar uma descrição mais detalhada do Abrigo/Centro de Coleta e das prioridades e suprimentos necessários.<br>Para uma descrição ainda mais detalhada e interativa, pode-se clicar no ícone <img src="assets/expand-icon.png" class="opp-open-button opp-open-button-for-location opp-expand-icon">'
-        );
+        popup,
+        'Através do <b>Popup</b>, podemos identificar uma descrição mais detalhada da localização e das respectivas tags representadas neste ponto.<br>Para uma descrição ainda mais detalhada e interativa, em uma maior escala, pode-se clicar no ícone <img src="assets/expand-icon.png" class="opp-open-button opp-open-button-for-location opp-expand-icon">'
+      );
       this.hasShownPopupTooltip = true;
-    } else if (!this.hasShownOverlayedPopupTooltip) {
-      // Overlayed Popup
-      const pos = this.expandPopup.getBoundingClientRect()
+      return;
+    }
+    /* Overlayed Popup */
+    if (!this.hasShownOverlayedPopupTooltip) {
+      let pos = this.expandPopup.getBoundingClientRect();
       this.click(pos.x, pos.y);
-      const popup = document.getElementsByClassName('overlayed-popup-title')[0] as HTMLDivElement;
+      let popup = document.getElementsByClassName('overlayed-popup-title')[0] as HTMLDivElement;
       this.isLastTooltip = true;
       this.continueText = "Finalizar tutorial";
       this.addTooltipNextTo(
-        popup, 
-        'Por fim, apresentamos o <b>Pop-up Estendido</b>, que oferece uma visão ampla e detalhada das informações sobre o Abrigo/Centro de Coleta selecionado.<br><br>Obrigado por utilizar nosso sistema e vamos todos juntos ajudar o RS!', 
+        popup,
+        'Por fim, este é o <b>Popup Estendido</b>, onde podemos visualizar de forma ampla e detalhada informações sobre a localização desejada.<br>Obrigado por utilizar nosso sistema!',
         null,
         false
-        );
+      );
       this.hasShownOverlayedPopupTooltip = true;
       this.map.dragging.enable();
     }
