@@ -9,7 +9,7 @@ import {
 import { EventEmitterService } from '../event-emitter.service';
 import { TagSidebarComponent } from './tag-sidebar/tag-sidebar.component';
 
-enum TagsMenuButtonBehavior{
+enum TagsMenuButtonBehavior {
   CloseAllEyes,
   OpenAllEyes
 }
@@ -19,242 +19,191 @@ enum TagsMenuButtonBehavior{
   templateUrl: './filter-menu.component.html',
   styleUrls: ['./filter-menu.component.css']
 })
-export class FilterMenuComponent {
+export class FilterMenuComponent implements OnInit {
   @ViewChild(TagSidebarComponent) tagSidebar: TagSidebarComponent;
 
-  private _menus: Array<Menu>;
-  private _tags: Array<Tag>;
-  public _locations: Array<Location>;
-  public _selectedTagsMenuId: number;
-  public headerStyle: 'background:red';
-  public isCollapsed = false;
-  public _currentMenusPallete = 1;
-  public _linksActive: boolean;
-  public currentBehaviorOfMultipleTagsVisibilityButton: TagsMenuButtonBehavior = TagsMenuButtonBehavior.CloseAllEyes;
-  tagsMenuButtonBehavior = TagsMenuButtonBehavior;
-
-  @Input()
-  get menus() {
-    return this._menus;
+  @Input() set menugroups(value: Array<MenuGroup>) {
+    this._menugroups = value;
+    if (this._menus?.length) {
+      this.activeMenus = this.getActiveMenus();
+    }
   }
-  set menus(value) {
-    this._menus = value;
+  @Input() set menus(value: Array<Menu>) {
+    this._menus = value ?? [];
+    this.activeMenus = this.getActiveMenus();
   }
-
-  @Input()
-  get tags() {
-    return this._tags;
-  }
-  set tags(value) {
+  @Input() set tags(value: Array<Tag>) {
     this._tags = value;
   }
-
-  @Input()
-  get locations() {
-    return this._locations;
+  @Input() set linkGroups(value: Array<LinksGroup>) {
+    this._linkGroups = value;
   }
-  set locations(value) {
+  @Input() set kmlShapes(value: Array<KmlShape>) {
+    this._kmlShapes = value;
+  }
+  @Input() set locations(value: Array<Location>) {
     this._locations = value;
   }
-
-  @Input()
-  get selectedTagsMenuId() {
-    return this._selectedTagsMenuId;
-  }
-  set selectedTagsMenuId(value) {
+  @Input() set selectedTagsMenuId(value: number) {
     this._selectedTagsMenuId = value;
   }
-
-  @Input()
-  get currentMenu() {
-    return this._currentMenusPallete;
+  @Input() set currentMenu(value: string) {
+    this._currentMenusPallete = value ?? '';
+    if (this._menus?.length) {
+      this.activeMenus = this.getActiveMenus();
+    }
   }
-  set currentMenu(value) {
-    this._currentMenusPallete = value;
-  }
-
-  @Input()
-  get linksActive() {
-    return this._linksActive;
-  }
-  set linksActive(value) {
+  @Input() set linksActive(value: boolean) {
     this._linksActive = value;
   }
+  @Input() insertMarkersByMenu: any;
 
-  @Input()
-  insertMarkersByMenu: any;
+  @Output() linkRemoval = new EventEmitter();
+  @Output() linkReactivated = new EventEmitter();
+  @Output() menuClicked = new EventEmitter();
+  @Output() tagRemoval = new EventEmitter();
+  @Output() tagReactivated = new EventEmitter();
+  @Output() shapeRemoval = new EventEmitter();
+  @Output() shapeReactivated = new EventEmitter();
 
-  @Output()
-  menuCliked = new EventEmitter();
+  private _menugroups: Array<MenuGroup> = [];
+  private _menus: Array<Menu> = [];
+  private _tags: Array<Tag> = [];
+  private _kmlShapes: Array<KmlShape> = [];
+  private _linkGroups: Array<LinksGroup> = [];
+  private _locations: Array<Location> = [];
+  private _selectedTagsMenuId: number;
+  private _currentMenusPallete: string;
+  private _linksActive: boolean;
 
-  @Output()
-  tagRemoval = new EventEmitter();
-
-  @Output()
-  tagReactivated = new EventEmitter();
+  public isCollapsed = false;
+  public activeMenus: Array<Menu> = [];
+  public currentBehaviorOfMultipleTagsVisibilityButton: TagsMenuButtonBehavior = TagsMenuButtonBehavior.CloseAllEyes;
 
   constructor(private eventEmitterService: EventEmitterService) {}
 
   ngOnInit() {
-    if (this.eventEmitterService.subsVar == undefined) {
-      this.eventEmitterService.subsVar =
-        this.eventEmitterService.invokeFirstComponentFunction.subscribe(
-          (name: string) => {
-            this.menuCollapse();
-          }
-        );
+    if (!this.eventEmitterService.subsVar) {
+      this.eventEmitterService.subsVar = this.eventEmitterService.invokeFirstComponentFunction.subscribe(() => {
+        this.toggleMenuCollapse();
+      });
     }
   }
 
-  menuClick(menu: Menu) {
-    if (this.selectedTagsMenuId !== menu.id) {
-      this.selectedTagsMenuId = menu.id;
-      this.currentBehaviorOfMultipleTagsVisibilityButton = TagsMenuButtonBehavior.CloseAllEyes;
-      this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
-      this.checkActiveMenuTagsVisibilityStatus()
+  handleMenuClick(menu: Menu) {
+    if (this._selectedTagsMenuId !== menu.id) {
+      this.updateSelectedMenu(menu);
+      this.menuClicked.emit({ selectedTagsMenuId: this._selectedTagsMenuId });
+      this.updateVisibilityStatus();
     }
   }
 
-  closeAllEyes(menu: Menu, item: any, event: any) {
-    for(let i = 0 ; i < this._tags.length ; i++){
-      if(this._tags[i].parent_menu == menu.id){
-        if(this._tags[i].visibility == true){
-          this.visibilityClick(this._tags[i], event)
-        }
-      }
-    }
+  toggleVisibilityForAll(menu: Menu, close: boolean) {
+    this._tags
+      .filter(tag => tag.parent_menu === menu.id && tag.visibility === !close)
+      .forEach(tag => this.toggleTagVisibility(tag));
     
-    this.currentBehaviorOfMultipleTagsVisibilityButton = TagsMenuButtonBehavior.OpenAllEyes;
+    this._kmlShapes
+      .filter(shape => shape.parent_menu === menu.id && shape.visibility === !close)
+      .forEach(shape => this.toggleKmlVisibility(shape));
+
+    this.currentBehaviorOfMultipleTagsVisibilityButton = close ? TagsMenuButtonBehavior.OpenAllEyes : TagsMenuButtonBehavior.CloseAllEyes;
   }
 
-  openAllEyes(menu: Menu, item: any, event: any) {
-    for(let i = 0 ; i < this._tags.length ; i++){
-      if(this._tags[i].parent_menu == menu.id){
-        if(this._tags[i].visibility == false){
-          this.visibilityClick(this._tags[i], event)
-        }
-      }
-    }
-
-    this.currentBehaviorOfMultipleTagsVisibilityButton = TagsMenuButtonBehavior.CloseAllEyes;
-  }
-
-  menuSwitch(menu: Menu, item: any, event: any) {
-    menu.expanded = !menu.expanded;
+  handleVisibilityToggle(tag: Tag, event: Event) {
     event.stopPropagation();
-    const thisCell = item.closest('.mat-expansion-panel-body');
-    if (menu.expanded === false) {
-      thisCell.style = 'padding: 0 24px 0;';
+    if (tag.parent_menu !== this._selectedTagsMenuId) {
+      const prevMenuId = this._selectedTagsMenuId;
+      this.updateSelectedMenuId(tag.parent_menu);
+      this.toggleTagVisibility(tag);
+      this.updateSelectedMenuId(prevMenuId);
     } else {
-      thisCell.style = 'padding: 0 24px 16px;';
+      this.toggleTagVisibility(tag);
     }
+    this.updateVisibilityStatus();
   }
 
-  menuCollapse() {
-    this.isCollapsed = !this.isCollapsed;
-    const menufilter = document.querySelectorAll<HTMLElement>('.scrollbar-box');
-    for (let i = 0, len = menufilter.length; i < len; i++) {
-      if (this.isCollapsed) {
-        menufilter[i].setAttribute('style', 'left: -312px;');
-      } else {
-        menufilter[i].setAttribute('style', 'left: 15px;');
-      }
-    }
-  }
-
-  visibilityClick(tag: any, event: any) {
-    // Added in need for the sidebar button not to open
+  handleKmlVisibilityToggle(kmlShape: KmlShape, event: Event) {
     event.stopPropagation();
-
-    if (tag.parent_menu !== this.selectedTagsMenuId) {
-      const beforeState = this.selectedTagsMenuId;
-      this.selectedTagsMenuId = tag.parent_menu;
-      this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
-      this.switchVisibility(tag);
-      this.selectedTagsMenuId = beforeState;
-      this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
-    } else this.switchVisibility(tag);
-
-    if(tag.parent_menu === this.selectedTagsMenuId)
-      this.checkActiveMenuTagsVisibilityStatus()
+    this.toggleKmlVisibility(kmlShape);
+    this.updateVisibilityStatus();
   }
 
-  pinClick(tag: any, event: any) {
-    // Added in need for the sidebar button not to open
+  handlePinClick(tag: Tag, event: Event) {
     event.stopPropagation();
-
-    if (tag.currentColor === tag.color) {
-      tag.currentColor = '#AFBAC4';
-    } else {
-      tag.currentColor = tag.color;
-    }
-    this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
+    tag.currentColor = tag.currentColor === tag.color ? '#AFBAC4' : tag.color;
+    this.menuClicked.emit({ selectedTagsMenuId: this._selectedTagsMenuId });
   }
 
-  getLocationById(location_id: number) {
-    for (const location of this._locations) {
-      if (location.id === location_id) {
-        return location;
-      }
-    }
-    return null;
+  private toggleTagVisibility(tag: Tag) {
+    tag.visibility = !tag.visibility;
+    tag.visibility ? this.insertMarkersByTag(tag) : this.removeMarkersByTag(tag);
   }
 
-  invokeTagSidebar(tag: Tag) {
-    const _selectedLocations = Array<Location>();
-    tag.related_locations.forEach((location_id: number) => {
-      const location: any = this.getLocationById(location_id);
-      _selectedLocations.push(location);
-    });
-    this.tagSidebar.selectTag(tag, _selectedLocations);
+  private toggleKmlVisibility(kmlShape: KmlShape) {
+    kmlShape.visibility = !kmlShape.visibility;
+    kmlShape.visibility ? this.shapeReactivated.emit({ shape: kmlShape }) : this.shapeRemoval.emit({ shape: kmlShape });
   }
 
-  checkActiveMenuTagsVisibilityStatus(){
-    let allTagsAreClosed: Boolean = true;
-    let allTagsAreOpened: Boolean = true;
-    
-    this.tags.forEach(tag => {
-      if( tag.parent_menu === this._selectedTagsMenuId){
-        if(tag.visibility)
-          allTagsAreClosed = false;
-        else
-          allTagsAreOpened = false;
-      }
-    })
-
-    if(allTagsAreClosed)
-      this.currentBehaviorOfMultipleTagsVisibilityButton = TagsMenuButtonBehavior.OpenAllEyes;
-    else if(allTagsAreOpened)
-      this.currentBehaviorOfMultipleTagsVisibilityButton = TagsMenuButtonBehavior.CloseAllEyes;
+  private updateSelectedMenu(menu: Menu) {
+    const previousMenu = this.getMenuById(this._selectedTagsMenuId);
+    if (previousMenu) previousMenu.expanded = false;
+    menu.expanded = true;
+    this._selectedTagsMenuId = menu.id;
   }
 
-  switchVisibility(tag: any) {
-    if (tag.dependenciesActive) {
-      if (tag.visibility) {
-        tag.visibility = false;        
-        this.removeMarkersByTag(tag);
-      } else {
-        if (tag.parent_menu === this.selectedTagsMenuId) {
-          tag.visibility = true;
-          this.insertMarkersByTag(tag);
-        }
-      }
-    }
+  private updateSelectedMenuId(menuId: number) {
+    this._selectedTagsMenuId = menuId;
+    this.menuClicked.emit({ selectedTagsMenuId: this._selectedTagsMenuId });
   }
 
-  removeMarkersByTag(tag: Tag) {
+  private updateVisibilityStatus() {
+    const isAllClosed = this.checkVisibilityStatus(false);
+    const isAllOpened = this.checkVisibilityStatus(true);
+    this.currentBehaviorOfMultipleTagsVisibilityButton = isAllClosed
+      ? TagsMenuButtonBehavior.OpenAllEyes
+      : isAllOpened
+      ? TagsMenuButtonBehavior.CloseAllEyes
+      : this.currentBehaviorOfMultipleTagsVisibilityButton;
+  }
+
+  private checkVisibilityStatus(expectedStatus: boolean) {
+    return [...this._tags, ...this._kmlShapes].every(item =>
+      item.parent_menu === this._selectedTagsMenuId ? item.visibility === expectedStatus : true
+    );
+  }
+
+  private getMenuById(id: number): Menu | null {
+    return this._menus.find(menu => menu.id === id) || null;
+  }
+
+  private getLocationById(id: number): Location | null {
+    return this._locations.find(location => location.id === id) || null;
+  }
+
+  private getActiveMenus(): Array<Menu> {
+    if (this._currentMenusPallete === 'Links') return [];
+    const activeMenus = this._menus.filter(menu => menu.active && menu.group === this.getGroupNameId(this._currentMenusPallete));
+    if (activeMenus.length) this.handleMenuClick(activeMenus[0]);
+    return activeMenus;
+  }
+
+  private getGroupNameId(name: string): number | null {
+    return this._menugroups.find(group => group.name === name)?.id ?? null;
+  }
+
+  private removeMarkersByTag(tag: Tag) {
     this.tagRemoval.emit({ selectedTag: tag });
   }
 
-  insertMarkersByTag(tag: any) {
-    this.tagReactivated.emit({ tag: tag });
+  private insertMarkersByTag(tag: Tag) {
+    this.tagReactivated.emit({ tag });
   }
 
-  checkMenuActivated(menu: Menu) {
-    return menu.active;
-  }
-
-  capitalizeFirstLetter(str: string) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+  toggleMenuCollapse() {
+    this.isCollapsed = !this.isCollapsed;
+    document.querySelectorAll<HTMLElement>('.scrollbar-box').forEach(el => {
+      el.style.left = this.isCollapsed ? '-312px' : '15px';
+    });
   }
 }

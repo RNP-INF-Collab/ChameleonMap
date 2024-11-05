@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { EventEmitterService } from '../event-emitter.service';
 
 @Component({
@@ -14,6 +14,9 @@ export class CollapserComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  @Input()
+  public hasTabs: boolean
+
   collapseToggle(item: any, event: any) {
     this.collapsed = !this.collapsed;
     this.eventEmitterService.onFirstComponentButtonClick();
@@ -22,17 +25,12 @@ export class CollapserComponent implements OnInit {
       thisCell.style = 'left: 0;';
       this.arrowIcon = 'arrow_right';
     } else {
-      thisCell.style = 'left: 325px;';
+      if (window.innerWidth < 500) {
+        thisCell.style = 'left: 300px;';
+      } else {
+        thisCell.style = 'left: 325px;';
+      }
       this.arrowIcon = 'arrow_left';
     }
-    /*var menufilter = document.getElementsByClassName('.scrollbar-box');
-    if(this.collapsed){
-      for (var i = 0; i < menufilter.length; i++) {
-        menufilter[i].style = 'red';
-      }
-      menufilter[0].style = 'left: -312;';
-    }else{
-      menufilter[0].style = 'left: 312;'
-    }    */
   }
 }

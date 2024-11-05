@@ -1,10 +1,20 @@
 <div class="map-container">
   <div class="map-frame">
+    <div *ngIf="showRotateMessage" class="rotate-device">
+      <button class="close-button" (click)="closeMessage()">&times;</button>
+      <div class="rotate-animation">
+        <i class="fas fa-mobile-alt"></i> <!-- ícone do celular -->
+      </div>
+      <p>Para uma melhor experiência, por favor gire seu dispositivo para o modo paisagem.</p>
+    </div>
     <div id="map"></div>
-    <app-menu-chooser *ngIf="mapSetting.link_feature" (buttonClicked)="onButtonClicked($event)"></app-menu-chooser>
-    <app-filter-menu [menus]="menus" [tags]="tags" [locations]="locations" [selectedTagsMenuId]="defaultMenuId" [currentMenu]="currentMenu" [linksActive]="mapSetting.link_feature" (menuCliked)="onMenuCliked($event)" (tagRemoval)="onTagRemoval($event)" (tagReactivated)="onTagReactivated($event)" ></app-filter-menu>
-    <app-links-menu *ngIf="mapSetting.link_feature" [linkGroups]="linksGroup" [currentMenu]="currentMenu" (linkRemoval)="onLinkRemoval($event)" (linkReactivated)="onLinkReactivated($event)"></app-links-menu>
-    <app-collapser></app-collapser>
+    <app-menu-chooser id="app-menu-chooser" [linksFeatureOn]="linksFeatureOn" [menugroups]="menugroups" (buttonClicked)="onButtonClicked($event)"></app-menu-chooser>
+    <app-filter-menu id="app-filter-menu" [menugroups]="menugroups" [menus]="menus" [tags]="tags" [kmlShapes]="kmlShapes" [locations]="locations" [selectedTagsMenuId]="defaultMenuId" [currentMenu]="currentMenu" [linksActive]="linksFeatureOn" [linkGroups]="linksGroup" (menuCliked)="onMenuCliked($event)" (tagRemoval)="onTagRemoval($event)" (tagReactivated)="onTagReactivated($event)" (shapeRemoval)="onShapeRemoval($event)" (shapeReactivated)="onShapeReactivated($event)" (linkRemoval)="onLinkRemoval($event)" (linkReactivated)="onLinkReactivated($event)"></app-filter-menu>
+    <app-links-menu *ngIf="linksFeatureOn" [linkGroups]="linksGroup" [currentMenu]="currentMenu" (linkRemoval)="onLinkRemoval($event)" (linkReactivated)="onLinkReactivated($event)"></app-links-menu>
+    <app-collapser id="app-collapser" [hasTabs]="linksFeatureOn || (_menugroups && _menugroups.length > 0)"></app-collapser>
   </div>
 </div>
 <app-overlayed-popup [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById"></app-overlayed-popup>
+<app-help-button [locations]="locations" (howToHelpClickEvent)="showHowToHelpMessage($event)"></app-help-button>
+<app-tooltip [map]="map"></app-tooltip>
+<app-footer [footerUrl]="footerUrl"></app-footer>
