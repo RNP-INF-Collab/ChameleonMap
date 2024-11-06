@@ -29,6 +29,7 @@ export class FilterMenuComponent {
   private _linkGroups: Array<LinksGroup>;
   public _locations: Array<Location>;
   public _selectedTagsMenuId: number;
+  private _selectedMenusByGroup: { [key: string]: number } ;
   public headerStyle: 'background:red';
   public isCollapsed = false;
   public _currentMenusPallete: string;
@@ -98,6 +99,14 @@ export class FilterMenuComponent {
   }
   set selectedTagsMenuId(value) {
     this._selectedTagsMenuId = value;
+  }
+
+  @Input()
+  get selectedMenusByGroup() {
+    return this._selectedMenusByGroup;
+  }
+  set selectedMenusByGroup(value) {
+    this._selectedMenusByGroup = value;
   }
 
   @Input()
@@ -406,7 +415,8 @@ export class FilterMenuComponent {
         return menu.active && menuGroupSelected;
       });
       if (activeMenus.length > 0) {
-        this.menuClick(activeMenus[0]);
+        let newSelectedMenu = this.getMenuById(this.selectedMenusByGroup[this._currentMenusPallete]) || activeMenus[0];
+        this.menuClick(newSelectedMenu);
       }
       return activeMenus;
     } else {

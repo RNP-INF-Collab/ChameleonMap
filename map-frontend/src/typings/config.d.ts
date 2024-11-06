@@ -5,6 +5,7 @@ declare global {
   export interface MenuGroup {
     readonly id: number;
     readonly name: string;
+    readonly simultaneous_context: boolean;
   }
 
   export interface Menu {
