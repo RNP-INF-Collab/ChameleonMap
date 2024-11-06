@@ -5,19 +5,10 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
-export class FooterComponent implements OnInit {
-
-  isVisible = true;
+export class FooterComponent {
 
   constructor() { }
 
   @Input() footerUrl: string;
-
-  ngOnInit(): void {
-  }
-
-  closeFooter() {
-    this.isVisible = false;
-  }
 
 }

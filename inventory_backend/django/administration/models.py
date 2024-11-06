@@ -7,6 +7,8 @@ from tinymce.models import HTMLField
 
 class MenuGroup(models.Model):
     name = models.CharField(max_length=25)
+    simultaneous_context = models.BooleanField(default=False, help_text="When checked, this menu group context will remain active even when other menu groups are seleceted.")
+
     class Meta:
         db_table = 'menugroup'
         verbose_name_plural = "    Menu Groups" 

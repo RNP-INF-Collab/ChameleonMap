@@ -44,9 +44,17 @@ export class MapComponent implements OnInit {
   private mapLoaded = false;
   private mapInitialized = false;
   private markerClusterGroup: L.MarkerClusterGroup;
-  public currentMenu: string;
+  public currentMenuGroup: string;
   private error: any;
-  public selectedTagMenu: number;
+  public selectedMenusByGroup: { [key: string]: number } = {};
+  private _selectedMenu: number;
+  public get selectedMenu(): number {
+    return this._selectedMenu;
+  }
+  public set selectedMenu(value: number) {
+    this._selectedMenu = value;
+    this.selectedMenusByGroup[this.currentMenuGroup] = value;
+  }
   public defaultMenuId: number;
 
   public footerUrl = ""
@@ -81,7 +89,7 @@ export class MapComponent implements OnInit {
   set menugroups(value) {
     this._menugroups = value;
     if (this._menugroups.length > 0) {
-      this.currentMenu = this._menugroups[0].name;
+      this.currentMenuGroup = this._menugroups[0].name;
     }
   }
 
@@ -156,7 +164,7 @@ export class MapComponent implements OnInit {
       next: (results) => {
         this.menugroups = results.menugroups;
         if (this.menugroups.length > 0) {
-          this.currentMenu = this.menugroups[0].name;
+          this.currentMenuGroup = this.menugroups[0].name;
         }
   
         this.menus = results.menus;
@@ -195,56 +203,97 @@ export class MapComponent implements OnInit {
     }
   }
   
-  private async loadKML() {
+  private async loadKMLs() {
     const parser = new DOMParser();
+    const kmlLoadPromises = this._kmlShapes.map(async (storedKml) => {
+      try {
+        const kmlData = await this.loadKMLData(storedKml.kml_file);
+        const kmlDoc = parser.parseFromString(kmlData, 'text/xml');
+        const geoJsonData = kml(kmlDoc);
   
-    for (const storedKml of this._kmlShapes) {
-      storedKml.currentColor = storedKml.links_color;
-      storedKml.visibility = true;
-      
-      this.api.getKml(storedKml.kml_file).subscribe(
-        (kmlData) => {
-          const kmlDoc = parser.parseFromString(kmlData, 'text/xml');
-          const geoJsonData = kml(kmlDoc);
-          // Customize KML location markers
-          const geojsonMarkerOptions = {
-            radius: 2,
-            fillColor: '#000000',
-            color: "#000000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 1
-          };
-          const polygonStyle = {
-            "color": storedKml.links_color,
-            "weight": 3,
-            "opacity": storedKml.opacity
-          };
-          const geoJsonTooltip = L.tooltip({ 'sticky': true });
-          geoJsonTooltip.setContent(storedKml.name);
-          const geoJsonLayer = L.geoJSON(geoJsonData, {
-            pointToLayer: function (feature, latlng) {
-              const tooltip = L.tooltip({ 'sticky': true });
-              tooltip.setContent(storedKml.name + " - " + feature.properties['name']);
-              tooltip.on('add', function() { geoJsonTooltip.setOpacity(0); });
-              tooltip.on('remove', function() { geoJsonTooltip.setOpacity(1); });
-              return L
-                .circleMarker(latlng, geojsonMarkerOptions)
-                .bindTooltip(tooltip);
-            },
-            style: polygonStyle
-          }).bindTooltip(geoJsonTooltip);
+        this.createAndAddGeoJsonLayer(storedKml, geoJsonData);
+      } catch (error) {
+        console.error('Error loading KML file:', error);
+      }
+    });
   
-          // Store the layer using the storedKml.id as the key
-          this.kmlLayers[storedKml.id] = geoJsonLayer;
-          if (storedKml.parent_menu == this.selectedTagMenu)
-            this.kmlLayers[storedKml.id].addTo(this.map);
-        },
-        (error) => {
-          console.error('Error loading KML file:', error);
-        }
+    await Promise.all(kmlLoadPromises);
+  }
+  
+  private loadKMLData(kmlFile: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.api.getKml(kmlFile).subscribe(
+        (kmlData) => resolve(kmlData),
+        (error) => reject(error)
       );
+    });
+  }
+  
+  private createAndAddGeoJsonLayer(storedKml: any, geoJsonData: any) {
+    storedKml.currentColor = storedKml.links_color;
+    storedKml.visibility = true;
+    
+    const geojsonMarkerOptions = {
+      radius: 2,
+      fillColor: '#000000',
+      color: "#000000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 1
+    };
+  
+    const polygonStyle = {
+      "color": storedKml.links_color,
+      "weight": 3,
+      "opacity": storedKml.opacity
+    };
+  
+    const geoJsonTooltip = L.tooltip({ 'sticky': true });
+    geoJsonTooltip.setContent(storedKml.name);
+  
+    const geoJsonLayer = L.geoJSON(geoJsonData, {
+      pointToLayer: (feature, latlng) => {
+        const tooltip = L.tooltip({ 'sticky': true });
+        tooltip.setContent(storedKml.name + " - " + feature.properties['name']);
+        tooltip.on('add', () => geoJsonTooltip.setOpacity(0));
+        tooltip.on('remove', () => geoJsonTooltip.setOpacity(1));
+  
+        return L.circleMarker(latlng, geojsonMarkerOptions).bindTooltip(tooltip);
+      },
+      style: polygonStyle
+    }).bindTooltip(geoJsonTooltip);
+  
+    this.kmlLayers[storedKml.id] = geoJsonLayer;
+    if (this.shouldLoadKML(storedKml)) {
+      this.kmlLayers[storedKml.id].addTo(this.map);
     }
+  }
+
+  private shouldLoadKML(kmlShape: KmlShape): boolean {
+    let parent_menu = this.getMenuById(kmlShape.parent_menu)
+    if (!parent_menu) {
+      console.warn("Parent menu not found");
+      return false;
+    }
+    let inCurrentMenu = parent_menu.id === this.selectedMenu;
+    let menu_group = this.getMenuGroup(parent_menu.group);
+    if (!menu_group) {
+      console.warn("menu_group not found");
+      return false;
+    }
+    let inCurrentMenuGroup = menu_group.name == this.currentMenuGroup;
+    let shouldLoadSimultaneously = !inCurrentMenuGroup && this.isMenuSimultaneousAndSelectedInItsMenuGroup(parent_menu.id, menu_group);
+    return inCurrentMenu || shouldLoadSimultaneously;
+  }
+
+  private isMenuSimultaneousAndSelectedInItsMenuGroup(menu_id: number, menu_group: MenuGroup | undefined = undefined) {
+    if (!menu_group) {
+      let parent_menu_group_id = this.getMenuById(menu_id)?.group;
+      if (!parent_menu_group_id) return false;
+      menu_group = this.getMenuGroup(parent_menu_group_id)
+    }
+    if (!menu_group) return false;
+    return menu_group.simultaneous_context && this.selectedMenusByGroup[menu_group.name] == menu_id;
   }
 
   private initLocations() {
@@ -258,7 +307,7 @@ export class MapComponent implements OnInit {
         this.locationHeaderSize = location.popup.length;
       });
     }
-    this.loadKML()
+    this.loadKMLs()
   }
 
   private getOriginAndDestiny(
@@ -287,7 +336,7 @@ export class MapComponent implements OnInit {
         const loc1 = this.getLocationById(link.location_1);
         const loc2 = this.getLocationById(link.location_2);
         const linkgroup = this.getLinksGroupById(link.links_group);
-        if (linkgroup?.parent_menu == this.selectedTagMenu){
+        if (linkgroup?.parent_menu == this.selectedMenu){
           if (loc1 && loc2 && linkgroup) {
             linkgroup.visibility = true;
             let pointA;
@@ -467,7 +516,7 @@ export class MapComponent implements OnInit {
     } else {
       this.defaultMenuId = 0;
     }
-    this.selectedTagMenu = this.defaultMenuId;
+    this.selectedMenu = this.defaultMenuId;
   }
 
   private markerPreConfigure() {
@@ -598,14 +647,29 @@ export class MapComponent implements OnInit {
     return false;
   }
 
+  private getMenuGroup(id: number): MenuGroup | undefined {
+    for (const group of this.menugroups) {
+      if (group.id === id) {
+        return group;
+      }
+    }
+    return undefined;
+  }
+
   private insertMarkersByMenu(selectedTagsMenuId: number) {
     if (!this._locations || !this._tags) {
       return
     }
 
+    let selectedMenu = this.getMenuById(this.selectedMenu);
+    if (!selectedMenu) {
+      return
+    }
+    let selectedMenuGroup = this.getMenuGroup(selectedMenu.group)
+
     this.resetMarkers();
 
-    this.selectedTagMenu = selectedTagsMenuId;
+    this.selectedMenu = selectedTagsMenuId;
     const menuHierarchy = this.getMenuById(selectedTagsMenuId)?.hierarchy_level;
     const otherMenuTags = this._tags.filter((currentTag: Tag) => {
       const currentTagHierarchy = this.getMenuById(
@@ -627,11 +691,12 @@ export class MapComponent implements OnInit {
     });
 
     this._tags.forEach((tag: Tag) => {
+      let isMenuShown = tag.parent_menu === selectedTagsMenuId || this.isMenuSimultaneousAndSelectedInItsMenuGroup(tag.parent_menu);
       if (
         tag.active &&
         tag.dependenciesActive &&
         tag.visibility &&
-        tag.parent_menu === selectedTagsMenuId
+        isMenuShown
       ) {
         tag.related_locations.forEach((location_id: number) => {
           const location: any = this.getLocationById(location_id);
@@ -654,12 +719,12 @@ export class MapComponent implements OnInit {
       }
     });
     if (this.mapSetting.link_feature) this.insertLinks();
-    if (this._kmlShapes.length) this.insertKmlShapes(selectedTagsMenuId);
+    if (this._kmlShapes.length) this.insertKmlShapes();
   }
 
-  private insertKmlShapes(menu_id: number) {
+  private insertKmlShapes() {
     this._kmlShapes.forEach(shape => {
-      if (shape.parent_menu == menu_id) {
+      if (this.shouldLoadKML(shape)) {
         if (shape.visibility)
           this.insertKmlLayer(shape.id);
       } else {
@@ -972,7 +1037,7 @@ export class MapComponent implements OnInit {
         const location = this.getLocationById(relatedLocationId);
         if (location) {
           if (
-            tag.parent_menu == this.selectedTagMenu &&
+            tag.parent_menu == this.selectedMenu &&
             this.locationIsShowingTag(location, tag)
           ) {
             this.removeColorFromLocationMarker(location, tag.color);
@@ -1061,9 +1126,6 @@ export class MapComponent implements OnInit {
     const layer = this.kmlLayers[kmlID];
     if (layer) {
       this.map.removeLayer(layer);
-      console.log(`Layer with ID ${kmlID} removed.`);
-    } else {
-      console.warn(`Layer with ID ${kmlID} not found.`);
     }
   }
 
@@ -1071,9 +1133,6 @@ export class MapComponent implements OnInit {
     const layer = this.kmlLayers[kmlID];
     if (layer) {
       this.map.addLayer(layer);
-      console.log(`Layer with ID ${kmlID} removed.`);
-    } else {
-      console.warn(`Layer with ID ${kmlID} not found.`);
     }
   }
 
@@ -1157,7 +1216,7 @@ export class MapComponent implements OnInit {
   }
 
   public onButtonClicked(event: any) {
-    this.currentMenu = event.clickedMenu;
+    this.currentMenuGroup = event.clickedMenu;
   }
 
   public showHowToHelpMessage(id: number) {
