@@ -280,7 +280,7 @@ export class MapComponent implements OnInit {
       return false;
     }
     let inCurrentMenuGroup = menu_group.name == this.currentMenuGroup;
-    let shouldLoadSimultaneously = this.isMenuSimultaneousAndSelectedInItsMenuGroup(parent_menu.id, menu_group);
+    let shouldLoadSimultaneously = !inCurrentMenuGroup && this.isMenuSimultaneousAndSelectedInItsMenuGroup(parent_menu.id, menu_group);
     return inCurrentMenu || shouldLoadSimultaneously;
   }
 
@@ -290,8 +290,13 @@ export class MapComponent implements OnInit {
       if (!parent_menu_group_id) return false;
       menu_group = this.getMenuGroup(parent_menu_group_id)
     }
-    if (!menu_group) return false;
-    return menu_group.simultaneous_context && this.selectedMenusByGroup[menu_group.name] == menu_id;
+    if (!menu_group || !menu_group.simultaneous_context) return false;
+    if (!this.selectedMenusByGroup[menu_group.name]) {
+      // If no menu is selected in that menu group yet, then select it
+      this.selectedMenusByGroup[menu_group.name] = menu_id;
+      return true;
+    }
+    return this.selectedMenusByGroup[menu_group.name] == menu_id;
   }
 
   private initLocations() {
@@ -515,6 +520,9 @@ export class MapComponent implements OnInit {
       this.defaultMenuId = 0;
     }
     this.selectedMenu = this.defaultMenuId;
+    let chosenMenu = this.getMenuById(this.selectedMenu)
+    if (!chosenMenu) { return; }
+    chosenMenu.expanded = true;
   }
 
   private markerPreConfigure() {
