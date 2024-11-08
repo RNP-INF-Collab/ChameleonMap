@@ -280,7 +280,7 @@ export class MapComponent implements OnInit {
       return false;
     }
     let inCurrentMenuGroup = menu_group.name == this.currentMenuGroup;
-    let shouldLoadSimultaneously = !inCurrentMenuGroup && this.isMenuSimultaneousAndSelectedInItsMenuGroup(parent_menu.id, menu_group);
+    let shouldLoadSimultaneously = this.isMenuSimultaneousAndSelectedInItsMenuGroup(parent_menu.id, menu_group);
     return inCurrentMenu || shouldLoadSimultaneously;
   }
 
