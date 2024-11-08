@@ -272,13 +272,11 @@ export class MapComponent implements OnInit {
   private shouldLoadKML(kmlShape: KmlShape): boolean {
     let parent_menu = this.getMenuById(kmlShape.parent_menu)
     if (!parent_menu) {
-      console.warn("Parent menu not found");
       return false;
     }
     let inCurrentMenu = parent_menu.id === this.selectedMenu;
     let menu_group = this.getMenuGroup(parent_menu.group);
     if (!menu_group) {
-      console.warn("menu_group not found");
       return false;
     }
     let inCurrentMenuGroup = menu_group.name == this.currentMenuGroup;

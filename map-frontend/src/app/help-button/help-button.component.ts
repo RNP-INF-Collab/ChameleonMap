@@ -60,9 +60,7 @@ export class HelpButtonComponent implements OnInit {
     this.locations.forEach(location => {
       if (location.name === "Sobre este mapa" || location.name === "About this map") {
         id = location.id;
-        console.warn("Found!")
       }
-      console.warn("does not math", location.name);
     });
     return id;
   }
