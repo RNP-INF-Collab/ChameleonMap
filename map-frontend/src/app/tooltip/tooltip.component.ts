@@ -48,6 +48,10 @@ export class TooltipComponent {
     this.centeredTooltipEnabled = false;
     this.currentStepTooltipEnabled = false;
     this.continueOnboarding();
+    console.warn("onContinueClick")
+    if (!this.currentStepTooltipEnabled && !this.centeredTooltipEnabled) {
+      this.map.dragging.enable();
+    }
   }
 
   onSkipClick() {
@@ -99,6 +103,7 @@ export class TooltipComponent {
     }
     /* Location */
     if (!this.hasShownLocationTooltip) {
+      console.warn("Location onboarding")
       let location = this.getLocationOnMap();
       if (location) {
         this.selectedLocation = location;
@@ -114,7 +119,11 @@ export class TooltipComponent {
     if (!this.hasShownPopupTooltip) {
       let pos = this.selectedLocation.getBoundingClientRect();
       this.click(pos.x, pos.y);
-      let popup = document.getElementsByClassName('opp-expand-icon')[0] as HTMLDivElement;
+      let popup = this.getOpenOverlayedPopupIcon();
+      if (!popup) {
+        this.onSkipClick();
+        return;
+      }
       this.expandPopup = popup;
       this.addTooltipNextTo(
         popup,
@@ -181,7 +190,7 @@ export class TooltipComponent {
     this.currentStepTooltipEnabled = true;
   }
 
-  private getLocationOnMap(): HTMLDivElement|null {
+  private getLocationOnMap(): HTMLDivElement|undefined {
     const locations = document.getElementsByClassName('custom-pin');
     for (let i = 0; i < locations.length; i++) {
       const pos = locations[i].getBoundingClientRect();
@@ -189,6 +198,14 @@ export class TooltipComponent {
         return locations[i] as HTMLDivElement;
       }
     }
-    return null;
+    return;
+  }
+
+  private getOpenOverlayedPopupIcon(): HTMLDivElement|undefined {
+    let popupIcon = document.getElementsByClassName('opp-expand-icon opp-open-button !hidden');
+    if (!popupIcon || !popupIcon.length) { 
+      return; 
+    }
+    return popupIcon[0] as HTMLDivElement;;
   }
 }

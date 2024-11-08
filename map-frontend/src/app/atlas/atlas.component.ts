@@ -920,6 +920,8 @@ export class ATLASComponent implements OnInit {
   private recalculeScreenSizeReferences(){
     // Screen coordinates [Pixels, Pixels]
     // Ratio between virtual to screen sizes
+    if (!this.topologyMap) { return; }
+
     this.virtualCoordToScreenCoordRatio = new L.Point(
       this.topologyMap.getSize().x / this.horizontalDivisions,
       this.topologyMap.getSize().y / this.verticalDivisions
@@ -935,22 +937,24 @@ export class ATLASComponent implements OnInit {
   private recalculeGeoSizeReferences(){
         // Geo coordinates [lat, lng]
         // Topology map Geo size
-        const mapGeoSize: L.Point = new L.Point(
-          this.topologyMap.getBounds().getEast() - this.topologyMap.getBounds().getWest(),
-          this.topologyMap.getBounds().getNorth() - this.topologyMap.getBounds().getSouth()
-        )
-        
-        // Ratio between virtual to geo sizes
-        this.virtualCoordToGeoCoordRatio = new L.Point(
-          mapGeoSize.x / this.horizontalDivisions,
-          mapGeoSize.y / this.verticalDivisions
-        );
-          
-        // Node geo sizes
-        this.nodeGeoSize = new L.Point(
-          this.cellIconRatio * this.virtualCoordToGeoCoordRatio.x,
-          this.cellIconRatio * this.virtualCoordToGeoCoordRatio.y,
-        )
+    if (!this.topologyMap) { return; }
+    
+    const mapGeoSize: L.Point = new L.Point(
+      this.topologyMap.getBounds().getEast() - this.topologyMap.getBounds().getWest(),
+      this.topologyMap.getBounds().getNorth() - this.topologyMap.getBounds().getSouth()
+    )
+    
+    // Ratio between virtual to geo sizes
+    this.virtualCoordToGeoCoordRatio = new L.Point(
+      mapGeoSize.x / this.horizontalDivisions,
+      mapGeoSize.y / this.verticalDivisions
+    );
+      
+    // Node geo sizes
+    this.nodeGeoSize = new L.Point(
+      this.cellIconRatio * this.virtualCoordToGeoCoordRatio.x,
+      this.cellIconRatio * this.virtualCoordToGeoCoordRatio.y,
+    )
   }
 
 

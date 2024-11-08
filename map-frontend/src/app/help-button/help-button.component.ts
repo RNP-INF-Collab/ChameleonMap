@@ -57,6 +57,7 @@ export class HelpButtonComponent implements OnInit {
 
   private getHowToHelpLocationId(): number | undefined {
     let id;
+    if (!this.locations)  { return undefined; }
     this.locations.forEach(location => {
       if (location.name === "Sobre este mapa" || location.name === "About this map") {
         id = location.id;
