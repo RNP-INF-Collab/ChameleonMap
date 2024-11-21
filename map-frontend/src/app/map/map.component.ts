@@ -1223,7 +1223,39 @@ export class MapComponent implements OnInit {
   }
 
   public onMenuCliked(event: any) {
-    this.insertMarkersByMenu(event.selectedTagsMenuId);
+    this.onMenuIdClicked(event.selectedTagsMenuId)
+  }
+
+  private onMenuIdClicked(menuId: number) {
+    let menu = this.getMenuById(menuId);
+    if (!menu) return
+    this.specialMenuClickRules(menu);
+    this.insertMarkersByMenu(menuId);
+  }
+
+  private specialMenuClickRules(selectedMenu: Menu) {
+    if (selectedMenu.name.includes("Ipê")) {
+      this._menus.forEach((menu) => {
+        if (menu.name.includes("Ipê") && selectedMenu.id != menu.id) {
+          let menuGroup = this.getMenuGroup(menu.group)
+          if (!menuGroup) return;
+          this.selectedMenusByGroup[menuGroup.name] = menu.id;
+          this.insertMarkersByMenu(menu.id);
+          return;
+        }
+      })
+    }
+    else if (selectedMenu.name.includes("pesquisa avançada")) {
+      this._menus.forEach((menu) => {
+        if (menu.name.includes("pesquisa avançada") && selectedMenu.id != menu.id) {
+          let menuGroup = this.getMenuGroup(menu.group)
+          if (!menuGroup) return;
+          this.selectedMenusByGroup[menuGroup.name] = menu.id;
+          this.insertMarkersByMenu(menu.id);
+          return;
+        }
+      })
+    } 
   }
 
   public onTagRemoval(event: any) {
