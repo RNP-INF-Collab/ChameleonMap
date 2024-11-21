@@ -293,8 +293,10 @@ export class MapComponent implements OnInit {
   }
 
   private isMenuSimultaneousAndSelectedInItsMenuGroup(menu_id: number, menu_group: MenuGroup | undefined = undefined) {
+    let menu = this.getMenuById(menu_id);
+    if (!menu) return false;
     if (menu_group == undefined) {
-      let parent_menu_group_id = this.getMenuById(menu_id)?.group;
+      let parent_menu_group_id = menu?.group;
       if (parent_menu_group_id == undefined) return false;
       menu_group = this.getMenuGroup(parent_menu_group_id)
     }
@@ -302,9 +304,26 @@ export class MapComponent implements OnInit {
     if (this.selectedMenusByGroup[menu_group.name] == undefined) {
       // If no menu is selected in that menu group yet, then select it
       this.selectedMenusByGroup[menu_group.name] = menu_id;
-      return true;
+      return this.validateSpecialMenuRules(menu);
     }
-    return this.selectedMenusByGroup[menu_group.name] == menu_id;
+    let isSelectedInItsGroup = this.selectedMenusByGroup[menu_group.name] == menu_id;
+    if (!isSelectedInItsGroup) return false;
+
+    return this.validateSpecialMenuRules(menu);
+  }
+
+  // Temporary
+  private validateSpecialMenuRules(validatingMenu: Menu): boolean {
+    let selectedMenu = this.getMenuById(this.selectedMenu);
+    if (!selectedMenu) return false;
+
+    if (validatingMenu.name.includes("Ipê")) {
+      return selectedMenu.name.includes("Ipê");
+    } else if (validatingMenu.name.includes("pesquisa avançada")) {
+      return selectedMenu.name.includes("pesquisa avançada");
+    }
+
+    return true;
   }
 
   private initLocations() {
