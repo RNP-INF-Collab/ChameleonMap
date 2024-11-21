@@ -175,6 +175,7 @@ export class MapComponent implements OnInit {
         this.menus.forEach(menu => {
           if (menu.group == this.menugroups[0].id) {
             this.selectedMenu = menu.id;
+            this.defaultMenuId = menu.id;
             return;
           }
         });
