@@ -285,13 +285,13 @@ export class MapComponent implements OnInit {
   }
 
   private isMenuSimultaneousAndSelectedInItsMenuGroup(menu_id: number, menu_group: MenuGroup | undefined = undefined) {
-    if (!menu_group) {
+    if (menu_group == undefined) {
       let parent_menu_group_id = this.getMenuById(menu_id)?.group;
-      if (!parent_menu_group_id) return false;
+      if (parent_menu_group_id == undefined) return false;
       menu_group = this.getMenuGroup(parent_menu_group_id)
     }
-    if (!menu_group || !menu_group.simultaneous_context) return false;
-    if (!this.selectedMenusByGroup[menu_group.name]) {
+    if (menu_group == undefined || !menu_group.simultaneous_context) return false;
+    if (this.selectedMenusByGroup[menu_group.name] == undefined) {
       // If no menu is selected in that menu group yet, then select it
       this.selectedMenusByGroup[menu_group.name] = menu_id;
       return true;
@@ -339,8 +339,10 @@ export class MapComponent implements OnInit {
         const loc1 = this.getLocationById(link.location_1);
         const loc2 = this.getLocationById(link.location_2);
         const linkgroup = this.getLinksGroupById(link.links_group);
-        if (linkgroup?.parent_menu == this.selectedMenu){
-          if (loc1 && loc2 && linkgroup) {
+        if (linkgroup == undefined) return;
+        let isSimultaneous = this.isMenuSimultaneousAndSelectedInItsMenuGroup(linkgroup.parent_menu);
+        if (linkgroup.parent_menu == this.selectedMenu || isSimultaneous){
+          if (loc1 && loc2) {
             linkgroup.visibility = true;
             let pointA;
             let pointB;
@@ -350,7 +352,7 @@ export class MapComponent implements OnInit {
             pointB = values[1];
   
             const pointList = [pointA, pointB];
-            if (loc1.onMap && loc2.onMap) {
+            if (isSimultaneous || (loc1.onMap && loc2.onMap)) {
               const latlngs = [];
   
               const latlng1 = [pointA.lat, pointA.lng],
@@ -712,9 +714,9 @@ export class MapComponent implements OnInit {
               const tagMenu = this.getMenuById(tag.parent_menu);
               if (tagMenu) {
                 if (tagMenu.hierarchy_level > 1) {
-                  if (allOtherMenuLocations.includes(location.id)) {
-                    this.insertLocationOnMap(location, tag.currentColor);
-                  }
+                  // if (allOtherMenuLocations.includes(location.id)) {
+                  this.insertLocationOnMap(location, tag.currentColor);
+                  // }
                 } else {
                   this.insertLocationOnMap(location, tag.currentColor);
                 }
@@ -1025,7 +1027,9 @@ export class MapComponent implements OnInit {
     if (lg) {
       lg.visibility = true;
       for (const link of this._links) {
-        if (link.links_group == lg.id) {
+        const elementLinksGroup = this.getLinksGroupById(link.links_group);
+        if (!elementLinksGroup) return;
+        if (link.links_group == lg.id || this.isMenuSimultaneousAndSelectedInItsMenuGroup(elementLinksGroup.parent_menu)) {
           const loc1 = this.getLocationById(link.location_1);
           const loc2 = this.getLocationById(link.location_2);
           if (loc1 && loc2 && loc1.onMap && loc2.onMap) {
