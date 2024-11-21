@@ -173,6 +173,7 @@ mat-expansion-panel  {
 .has-tabs{
   top: 75px;
   max-height: calc(100% - 100px);
+  padding-bottom: 10px;
 }
 
 .scrollbar-box:hover {
