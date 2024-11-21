@@ -162,7 +162,8 @@ export class MapComponent implements OnInit {
       kmlShapes: this.api.getKmlShapes()
     }).subscribe({
       next: (results) => {
-        this.menugroups = results.menugroups;
+        this.menugroups = results.menugroups.sort((a: MenuGroup, b: MenuGroup) => a.id - b.id);
+
         if (this.menugroups.length > 0) {
           this.currentMenuGroup = this.menugroups[0].name;
         }
@@ -170,6 +171,12 @@ export class MapComponent implements OnInit {
         this.menus = results.menus;
         this.menus.forEach(menu => {
           menu.expanded = this.menus.length < 3;
+        });
+        this.menus.forEach(menu => {
+          if (menu.group == this.menugroups[0].id) {
+            this.selectedMenu = menu.id;
+            return;
+          }
         });
   
         this.locations = results.locations;
@@ -516,15 +523,15 @@ export class MapComponent implements OnInit {
   }
 
   private getFirstMenuId() {
-    if (!isNaN(this._menus[0].id)) {
-      this.defaultMenuId = this._menus[0].id;
-    } else {
-      this.defaultMenuId = 0;
-    }
-    this.selectedMenu = this.defaultMenuId;
-    let chosenMenu = this.getMenuById(this.selectedMenu)
-    if (!chosenMenu) { return; }
-    chosenMenu.expanded = true;
+    // if (!isNaN(this._menus[0].id)) {
+    //   this.defaultMenuId = this._menus[0].id;
+    // } else {
+    //   this.defaultMenuId = 0;
+    // }
+    // this.selectedMenu = this.defaultMenuId;
+    // let chosenMenu = this.getMenuById(this.selectedMenu)
+    // if (!chosenMenu) { return; }
+    // chosenMenu.expanded = true;
   }
 
   private markerPreConfigure() {
