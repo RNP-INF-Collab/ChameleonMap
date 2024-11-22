@@ -173,12 +173,14 @@ export class MapComponent implements OnInit {
           menu.expanded = this.menus.length < 3;
         });
         this.menus.forEach(menu => {
-          if (menu.group == this.menugroups[0].id) {
+          if (menu.group == this.menugroups[0].id && (menu.id == 5)) {
             this.selectedMenu = menu.id;
             this.defaultMenuId = menu.id;
             return;
           }
         });
+        //temporary
+        
   
         this.locations = results.locations;
         this.tags = results.tags;
@@ -208,6 +210,7 @@ export class MapComponent implements OnInit {
         this.insertLinks();
       }
       this.mapLoaded = true;
+      this.onMenuIdClicked(5);
     }
   }
   
@@ -543,6 +546,7 @@ export class MapComponent implements OnInit {
   }
 
   private getFirstMenuId() {
+    return 5;
     // if (!isNaN(this._menus[0].id)) {
     //   this.defaultMenuId = this._menus[0].id;
     // } else {
