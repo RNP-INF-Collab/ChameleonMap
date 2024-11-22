@@ -5,6 +5,7 @@ env/
 *package-lock.json
 map-frontend/src/index.html
 map-frontend/package-lock.json
+map-frontend/.angular
 docker-up.sh
 up*
 run*
