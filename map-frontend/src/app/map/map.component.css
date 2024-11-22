@@ -6,10 +6,54 @@
     bottom: 0;
   }
   
-  .map-frame {
-    height: 100%;
-  }
+.map-frame {
+  height: 100%;
+}
   
-  #map {
-    height: 100%;
-  }
+#map {
+  height: 100%;
+}
+
+.rotate-device {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 1.5rem;
+  z-index: 77780;
+  text-align: center;
+}
+
+.rotate-animation {
+  font-size: 4rem;
+  animation: rotate-phone 3s infinite alternate;
+}
+
+@keyframes rotate-phone {
+  0% { transform: rotate(0); }
+  50% { transform: rotate(-90deg); }
+  100% { transform: rotate(0); }
+}
+
+.fa-mobile-alt {
+  display: inline-block;
+  animation: flip-phone 3s infinite alternate;
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 3rem;
+  cursor: pointer;
+}

@@ -2,9 +2,13 @@ from django.contrib import admin
 from .models import *
 from django.utils.html import format_html
 
+@admin.register(MenuGroup)
+class MenuGroupAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
-    list_display = ("name", "hierarchy_level", "active")
+    list_display = ("name", "group", "hierarchy_level", "active")
     list_filter = ("hierarchy_level",)
     search_fields = ['name']
 
@@ -36,6 +40,12 @@ class LinkAdmin(admin.ModelAdmin):
 
 @admin.register(Links_group)
 class Links_groupAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    list_filter = ("name",)
+    search_fields = ['name']
+
+@admin.register(Kml_shape)
+class Kml_shapeAdmin(admin.ModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']

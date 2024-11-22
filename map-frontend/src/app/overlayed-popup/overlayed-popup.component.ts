@@ -1,8 +1,8 @@
 import { identifierModuleUrl } from '@angular/compiler';
-import { 
-  Component, 
-  Inject, 
-  OnInit, 
+import {
+  Component,
+  Inject,
+  OnInit,
   ViewChild,
   ElementRef,
   Type,
@@ -31,69 +31,89 @@ export class OverlayedPopupComponent {
 
   // Control
   private _isActive: boolean;
-  
+
   // Parent Methods
   @Input() locations: any;
   @Input() tags: any;
   @Input() getLocationById: any;
   @Input() getTagById: any;
 
-  constructor(){
+  constructor() {
     this._isActive = false;
   }
 
-  get isActive(){
+  get isActive() {
     return this._isActive;
   }
-  
-  ngOnChanges(){
+
+  ngOnChanges() {
     this._locations = this.locations;
     this._tags = this.tags;
   }
-  
-  public activate(buttonClickedEvent: any){    
+
+  public activate(buttonClickedEvent: any) {
     const buttonId: string = buttonClickedEvent.id;
 
     this.setCurrentKeeperByButtonId(buttonId);
     this.setNewTabButtonLink();
-    
+
     this.overlayedPopupContainer.nativeElement.classList.remove('hidden');
     this._isActive = true;
   }
-  
-  public desactivate(){
+
+  public activateByLocation(location: Location | null) {
+    if (location !== null) {
+      this._currentKeeperType = 'location';
+      this._currentKeeper = this.getLocationById(location.id);
+
+      this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${this.getPopupTitle()}</div>`;
+      this.subMap.keeper = this._currentKeeper;
+
+      this.setNewTabButtonLink();
+
+      this.overlayedPopupContainer.nativeElement.classList.remove('hidden');
+      this._isActive = true;
+    }
+  }
+
+  public desactivate() {
     this.overlayedPopupContainer.nativeElement.classList.add('hidden');
     this._isActive = false;
   }
 
 
-  private setCurrentKeeperByButtonId(buttonId: string){
-    if(buttonId.includes('location')){
+  private setCurrentKeeperByButtonId(buttonId: string) {
+    if (buttonId.includes('location')) {
       this._currentKeeperType = 'location';
       this._currentKeeper = this.getLocationById(this.getLocationIdByButtonHtmlId(buttonId));
-    }else if(buttonId.includes('tag')){
+    } else if (buttonId.includes('tag')) {
       this._currentKeeperType = 'tag';
       this._currentKeeper = this.getTagById(this.getTagIdByButtonHtmlId(buttonId));
     }
 
     // Set title
-    this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${this._currentKeeper.name}</div>`;
+    this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${this.getPopupTitle()} <span style="font-size: smaller; font-weight: normal;">(Dados obtidos de: <a href="https://sos-rs.com/">SOS-RS</a>)</span></div>`;
 
     // Set Content
     this.subMap.keeper = this._currentKeeper;
   }
-  
+
+  private getPopupTitle(): string {
+    const name = this._currentKeeper.name;
+    return name;
+  }
+
   private setNewTabButtonLink(type: string = this._currentKeeperType, id: number = this._currentKeeper.id) {
     this.newtabButton.nativeElement.setAttribute('routerLink', `${type}/detail/${id}`)
     this.newtabButton.nativeElement.setAttribute('href', `${type}/detail/${id}`)
   }
 
-  private getLocationIdByButtonHtmlId(buttonId: string): number{
-    return parseInt( buttonId.replace('opp-location-', '') );
+  private getLocationIdByButtonHtmlId(buttonId: string): number {
+    return parseInt(buttonId.replace('opp-location-', ''));
   }
-  
-  private getTagIdByButtonHtmlId(buttonId: string): number{
-    return parseInt( buttonId.replace('opp-tag-', '') );
+
+  private getTagIdByButtonHtmlId(buttonId: string): number {
+    return parseInt(buttonId.replace('opp-tag-', ''));
   }
 
   public refactorHTMLStringWithQuotes(HTMLstring: string) {

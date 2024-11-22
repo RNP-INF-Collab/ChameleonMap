@@ -13,7 +13,7 @@ import {
 })
 export class LinksMenuComponent {
   private _linkGroups: Array<LinksGroup>;
-  public _currentMenu = 1;
+  public _currentMenu: string;
 
   @Input()
   get linkGroups() {
