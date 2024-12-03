@@ -1,0 +1,27 @@
+#info-icon{
+  position: fixed;
+  z-index: 777;
+  font-size: 40px;
+  color: #9b9b9b;
+  cursor: pointer;
+  display: flex;    
+  align-items: center;   
+  justify-content: center;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  top: 12px;
+  right: 12px;
+}
+
+#info-icon:hover {
+  color: royalblue;
+}
+
+@media (max-width: 978px) {
+  #info-icon{
+    font-size: 30px;
+    width: 30px;   
+    height: 30px; 
+  }
+}

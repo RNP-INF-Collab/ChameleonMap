@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Variables
-DB_CONTAINER_NAME=""  # Replace with the name of your PostgreSQL container
-DB_NAME=""                     # Replace with your database name
-DB_USER=""                   # Replace with your database user
+DB_CONTAINER_NAME="map-db-1"  # Replace with the name of your PostgreSQL container
+DB_NAME="postgres"                     # Replace with your database name
+DB_USER="postgres"                   # Replace with your database user
 
 # Timestamp for backup file
 BACKUP_FILENAME="backup_$(date +"%Y%m%d_%H%M%S").dump"

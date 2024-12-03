@@ -1,83 +1,104 @@
 mat-expansion-panel  {
-    background-color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 4px;
-    width: 295px;
-    opacity: 100% !important;
-  }
-  
-  .mat-icon {
-    font-size: 17px;
-    position:absolute;
-      right:10px;
-  }
-  
-  .mat-side{
-    font-size: 30px;
-    position: relative !important;
-    margin-top: 10px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    transition: all 0.5s;
-  }
-  
-  .noselect {
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Old versions of Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome, Edge, Opera and Firefox */
-  }
-  
-  .mat-side-rot{
-    transform: rotate(180deg) !important;
-  }
-  
-  .mat-expansion-panel-body{
-    transition: all 0.5s;
-    padding: 0 !important;
-  }
-  
-  .mat-icon:hover {
-    color: RoyalBlue;
-  }
-  
-  .menu-name{
-    width: 100%;
-  }
+  background-color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 4px;
+  width: 295px;
+  opacity: 100% !important;
+}
 
-  .dark{
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  
-  .menu-header {
-    background-color: rgba(214, 214, 214, 0.26);
-    width: 130%; 
-    margin-left: -25px; 
-    border-bottom: 0.5px solid rgba(214, 214, 214, 0.363);
-    margin-bottom: -1px;
-  }
-  
-  .menu-header:hover {
-    background-color: rgba(168, 177, 189, 0.35) !important;
-  }
-  
-  .menu-text {
-    color: black !important;
-    margin-left: 15px;
-  }
-  
-  .menu-text-position {
-    margin-left: -25px;
-  }
-  
+mat-panel-title {
+  margin-right: 0 !important;
+}
+
+.mat-icon {
+  font-size: 17px;
+  position:absolute;
+    right:10px;
+}
+
+.mat-side{
+  font-size: 30px;
+  position: relative !important;
+  margin-top: 10px;
+  /* padding-right: 5px; */
+  padding-bottom: 5px;
+  transition: all 0.5s;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+      -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.mat-side-rot{
+  transform: rotate(180deg) !important;
+}
+
+.mat-expansion-panel-body{
+  transition: all 0.5s;
+  padding: 0 !important;
+}
+
+.mat-icon:hover {
+  color: RoyalBlue;
+}
+
+.menu-name {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-around;
+  display: flex;
+  align-items: center;
+}
+
+.dark{
+  background-color: rgba(55, 60, 79, 0.35);
+}
+
+.menu-header {
+  background-color: rgba(214, 214, 214, 0.26);
+  width: 130%; 
+  margin-left: -25px; 
+  border-bottom: 0.5px solid rgba(214, 214, 214, 0.363);
+  margin-bottom: -1px;
+}
+
+.menu-header:hover {
+  background-color: rgba(168, 177, 189, 0.35) !important;
+}
+
+.menu-text {
+  color: black !important;
+  margin-left: 15px;
+}
+
+.menu-text-position {
+  margin-left: -25px;
+}
+
+.button {
+  display: inline-block;
+  text-align: center;
+  color: black;
+  cursor: pointer;
+  padding: 15px 10px; 
+  width: inherit;   
+  align-content: center;
+}
+
+.button:hover:not(.dark) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
   .tag-list {
     margin-bottom: 0px; 
     margin-top: 12px; 
     cursor: pointer;
   
-    /* display flex */
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
@@ -133,15 +154,6 @@ mat-expansion-panel  {
     fill: currentColor;
     overflow: hidden;
   }
-
-  .button{
-    display: inline-block;
-    width: 42%;
-    text-align: center;
-    color: black;
-    cursor: pointer;
-    padding: 15px 0 15px 0;    
-  }
   
   .scrollbar-box {
     position: absolute;
@@ -160,7 +172,6 @@ mat-expansion-panel  {
     scrollbar-color: rgb(161, 161, 156) rgba(255, 255, 255, 0);
   }
   
-  /* For Google Chrome */
   .scrollbar-box-chrome::-webkit-scrollbar-thumb {
     background: transparent;
     border: 0px solid transparent;
