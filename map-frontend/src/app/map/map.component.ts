@@ -13,7 +13,6 @@ import {
 import * as L from 'leaflet';
 import 'leaflet-responsive-popup';
 import '@elfalem/leaflet-curve';
-import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
 import { ApiService } from '../api.service';
 import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.component';
 import { forkJoin } from 'rxjs';

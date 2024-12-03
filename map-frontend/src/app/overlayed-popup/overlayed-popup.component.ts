@@ -1,8 +1,7 @@
-import { identifierModuleUrl } from '@angular/compiler';
-import {
-  Component,
-  Inject,
-  OnInit,
+import { 
+  Component, 
+  Inject, 
+  OnInit, 
   ViewChild,
   ElementRef,
   Type,
