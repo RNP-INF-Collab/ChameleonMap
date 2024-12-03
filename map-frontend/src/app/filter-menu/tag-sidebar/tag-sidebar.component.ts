@@ -6,7 +6,7 @@ import {
   EventEmitter,
   AfterViewInit
 } from '@angular/core';
-import { _MatOptgroupBase } from '@angular/material/core';
+import { MatOptgroup } from '@angular/material/core';
 import { EventEmitterService } from '../../event-emitter.service';
 
 @Component({

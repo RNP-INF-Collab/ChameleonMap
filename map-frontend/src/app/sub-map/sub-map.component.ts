@@ -1,4 +1,3 @@
-import { Reference } from '@angular/compiler/src/render3/r3_ast';
 import { 
   Component, 
   OnInit, 
@@ -7,7 +6,6 @@ import {
   HostListener,
   Input,
 } from '@angular/core';
-import { ɵBrowserAnimationBuilder } from '@angular/platform-browser/animations';
 import * as L from 'leaflet';
 import { LeafletMouseEvent } from 'leaflet';
 import { ATLASComponent } from '../atlas/atlas.component';

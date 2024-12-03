@@ -1,13 +1,13 @@
 ###########
 # BUILDER #
 ###########
-FROM node:16-alpine3.13 as builder
+FROM node:20-alpine as builder
 WORKDIR /app
 COPY ./package*.json /app/
 RUN npm install
 COPY . /app
 ARG configuration=production
-RUN npm run build -- --outputPath=./dist/out --configuration $configuration
+RUN npm run build -- --output-path=./dist/out --configuration $configuration
 
 ##############
 # DEPLOYMENT #
@@ -19,7 +19,7 @@ COPY --from=builder /app/dist/out/ /usr/local/apache2/htdocs
 ###############
 # DEVELOPMENT #
 ###############
-FROM node:16-alpine3.13 as development
+FROM node:20-alpine as development
 
 WORKDIR /usr/src/app
 
