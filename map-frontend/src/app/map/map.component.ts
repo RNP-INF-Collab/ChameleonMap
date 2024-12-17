@@ -13,6 +13,7 @@ import {
 import * as L from 'leaflet';
 import 'leaflet-responsive-popup';
 import '@elfalem/leaflet-curve';
+import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
 import { ApiService } from '../api.service';
 import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.component';
 import { forkJoin } from 'rxjs';
@@ -172,14 +173,12 @@ export class MapComponent implements OnInit {
           menu.expanded = this.menus.length < 3;
         });
         this.menus.forEach(menu => {
-          if (menu.group == this.menugroups[0].id && (menu.id == 5)) {
+          if (menu.group == this.menugroups[0].id) {
             this.selectedMenu = menu.id;
             this.defaultMenuId = menu.id;
             return;
           }
         });
-        //temporary
-        
   
         this.locations = results.locations;
         this.tags = results.tags;
@@ -209,7 +208,6 @@ export class MapComponent implements OnInit {
         this.insertLinks();
       }
       this.mapLoaded = true;
-      this.onMenuIdClicked(5);
     }
   }
   
@@ -306,26 +304,9 @@ export class MapComponent implements OnInit {
     if (this.selectedMenusByGroup[menu_group.name] == undefined) {
       // If no menu is selected in that menu group yet, then select it
       this.selectedMenusByGroup[menu_group.name] = menu_id;
-      return this.validateSpecialMenuRules(menu);
+      return true;
     }
-    let isSelectedInItsGroup = this.selectedMenusByGroup[menu_group.name] == menu_id;
-    if (!isSelectedInItsGroup) return false;
-
-    return this.validateSpecialMenuRules(menu);
-  }
-
-  // Temporary
-  private validateSpecialMenuRules(validatingMenu: Menu): boolean {
-    let selectedMenu = this.getMenuById(this.selectedMenu);
-    if (!selectedMenu) return false;
-
-    if (validatingMenu.name.includes("Ipê")) {
-      return selectedMenu.name.includes("Ipê");
-    } else if (validatingMenu.name.includes("pesquisa avançada")) {
-      return selectedMenu.name.includes("pesquisa avançada");
-    }
-
-    return true;
+    return this.selectedMenusByGroup[menu_group.name] == menu_id;
   }
 
   private initLocations() {
@@ -545,7 +526,6 @@ export class MapComponent implements OnInit {
   }
 
   private getFirstMenuId() {
-    return 5;
     // if (!isNaN(this._menus[0].id)) {
     //   this.defaultMenuId = this._menus[0].id;
     // } else {
@@ -1226,39 +1206,7 @@ export class MapComponent implements OnInit {
   }
 
   public onMenuCliked(event: any) {
-    this.onMenuIdClicked(event.selectedTagsMenuId)
-  }
-
-  private onMenuIdClicked(menuId: number) {
-    let menu = this.getMenuById(menuId);
-    if (!menu) return
-    this.specialMenuClickRules(menu);
-    this.insertMarkersByMenu(menuId);
-  }
-
-  private specialMenuClickRules(selectedMenu: Menu) {
-    if (selectedMenu.name.includes("Ipê")) {
-      this._menus.forEach((menu) => {
-        if (menu.name.includes("Ipê") && selectedMenu.id != menu.id) {
-          let menuGroup = this.getMenuGroup(menu.group)
-          if (!menuGroup) return;
-          this.selectedMenusByGroup[menuGroup.name] = menu.id;
-          this.insertMarkersByMenu(menu.id);
-          return;
-        }
-      })
-    }
-    else if (selectedMenu.name.includes("pesquisa avançada")) {
-      this._menus.forEach((menu) => {
-        if (menu.name.includes("pesquisa avançada") && selectedMenu.id != menu.id) {
-          let menuGroup = this.getMenuGroup(menu.group)
-          if (!menuGroup) return;
-          this.selectedMenusByGroup[menuGroup.name] = menu.id;
-          this.insertMarkersByMenu(menu.id);
-          return;
-        }
-      })
-    } 
+    this.insertMarkersByMenu(event.selectedTagsMenuId);
   }
 
   public onTagRemoval(event: any) {
