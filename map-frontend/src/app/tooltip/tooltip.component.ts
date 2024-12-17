@@ -48,7 +48,6 @@ export class TooltipComponent {
     this.centeredTooltipEnabled = false;
     this.currentStepTooltipEnabled = false;
     this.continueOnboarding();
-    console.warn("onContinueClick")
     if (!this.currentStepTooltipEnabled && !this.centeredTooltipEnabled) {
       this.map.dragging.enable();
     }
@@ -103,7 +102,6 @@ export class TooltipComponent {
     }
     /* Location */
     if (!this.hasShownLocationTooltip) {
-      console.warn("Location onboarding")
       let location = this.getLocationOnMap();
       if (location) {
         this.selectedLocation = location;
