@@ -16,12 +16,18 @@
 .outer{
   position: absolute;
   z-index: 400;
-  top: 15px;
+  top: 100px;
   right: 15px;
   max-height: calc(100% - 100px);
   overflow-x: hidden;  
   scrollbar-width: none;
   padding: 3px;
+}
+
+.collapsed {
+  pointer-events: none;
+  height: 0px;
+  display: none;
 }
 
 /* For Google Chrome */

@@ -2,7 +2,7 @@
     <div id="fade-background"></div>
     <div id="overlayed-popup">
         <button type="button" id="opp-close-button" class="corner-button" (click)="this.desactivate()"><i class="fa fa-close"></i></button>
-        <a id="newtab-button" #newtab_button class="corner-button" routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" target="_blank"><i class="fa fa-external-link"></i></a>
+        <a id="newtab-button" #newtab_button class="corner-button" routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" target="_blank"><img src="assets/expand-icon.png" class="opp-open-button opp-open-button-for-location opp-expand-icon"></a>
         
         <div class="overlayed-popup-title">
             <p id = "opp-title" #opp_title></p>
@@ -12,6 +12,5 @@
             <div id = "opp-content" #opp_content></div>
         </div>
         <app-sub-map [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById"></app-sub-map>
-        
     </div>
 </div>

@@ -1,24 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ApiService {
   constructor(private http: HttpClient) {}
 
-  getMenus() {
-    return this.http.get('/menu/');
+  getMenuGroups(): Observable<MenuGroup[]> {
+    return this.http.get<MenuGroup[]>('/menugroup/');
+  }
+
+  getMenus(): Observable<Menu[]> {
+    return this.http.get<Menu[]>('/menu/');
   }
 
   getTags() {
-    return this.http.get('/tag/');
+    return this.http.get<Tag[]>('/tag/');
   }
 
   getLocations() {
-    return this.http.get('/location/');
+    return this.http.get<Location[]>('/location/');
   }
 
   getTagRelationships() {
-    return this.http.get('/tagrelationship/');
+    return this.http.get<TagRelationship[]>('/tagrelationship/');
   }
 
   getSettings() {
@@ -26,18 +31,26 @@ export class ApiService {
   }
 
   getLinks() {
-    return this.http.get('/link/');
+    return this.http.get<Link[]>('/link/');
   }
 
   getLinkGroups() {
-    return this.http.get('/linksgroup/');
+    return this.http.get<LinksGroup[]>('/linksgroup/');
   }
 
   getTag(id: number) {
-    return this.http.get(`/tag/${id}/`);
+    return this.http.get<Tag>(`/tag/${id}/`);
   }
 
   getLocation(id: number) {
-    return this.http.get(`/location/${id}/`);
+    return this.http.get<Location>(`/location/${id}/`);
+  }
+
+  getKml(url: string) {
+    return this.http.get(url, { responseType: 'text' })
+  }
+
+  getKmlShapes() {
+    return this.http.get<KmlShape[]>('/kmlshape/');
   }
 }

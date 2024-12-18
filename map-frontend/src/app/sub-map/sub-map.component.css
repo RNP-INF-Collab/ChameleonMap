@@ -1,6 +1,6 @@
 .sub-map-container {
     position: absolute;
-    top: 55px;
+    top: 70px;
     left: 0;
     right: 0;
     bottom: 0;
@@ -17,6 +17,7 @@
     z-index: 7774;
     border-top-left-radius: 0px ;
     border-top-right-radius: 0px ;
+    display: flex;
   }
   
   #sub-map {
@@ -51,3 +52,6 @@
     left: 0;
   }
   
+  #sub-map {
+    overflow-y: scroll;
+  }

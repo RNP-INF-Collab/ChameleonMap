@@ -1,0 +1,17 @@
+<div class="centered-tooltip" [ngClass]="{ 'enabled': centeredTooltipEnabled }">
+    <div class="tooltip-text">
+        {{centeredTooltipText}}
+    </div>
+    <div class="tooltip-buttons">
+        <button class="skip" (click)="onSkipClick()">Pular</button>
+        <button class="continue" (click)="onContinueClick()">Continuar</button>
+    </div>
+</div>
+
+<div class="step-tooltip" [ngClass]="{ 'enabled': currentStepTooltipEnabled, 'quote-centered': quoteCentered }">
+    <div class="tooltip-text"></div>
+    <div class="tooltip-buttons" >
+        <button *ngIf="!isLastTooltip" class="skip" (click)="onSkipClick()">Pular</button>
+        <button class="continue" (click)="onContinueClick()">{{ continueText }}</button>
+    </div>
+</div>
