@@ -1,9 +1,17 @@
 export {};
 
 declare global {
+
+  export interface MenuGroup {
+    readonly id: number;
+    readonly name: string;
+    readonly simultaneous_context: boolean;
+  }
+
   export interface Menu {
     readonly id: number;
     readonly name: string;
+    readonly group: number;
     readonly hierarchy_level: number;
     readonly active: boolean;
     expanded: boolean;
@@ -62,6 +70,9 @@ declare global {
     readonly links_group: number;
     readonly curvature: number;
     readonly invert_link: boolean;
+    readonly straight_link: boolean;
+    readonly dashed: boolean;
+    readonly weight: number;
     line: any;
   }
 
@@ -71,6 +82,18 @@ declare global {
     readonly links_color: string;
     readonly sidebar_content: string;
     readonly opacity: number;
+    readonly parent_menu: number;
     visibility: boolean;
+  }
+
+  export interface KmlShape {
+    readonly id: number;
+    readonly name: string;
+    readonly parent_menu: number;
+    readonly links_color: string;
+    readonly kml_file: string;
+    readonly opacity: number;
+    visibility: boolean;
+    currentColor: string;
   }
 }

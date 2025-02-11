@@ -16,38 +16,64 @@ import '@elfalem/leaflet-curve';
 import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
 import { ApiService } from '../api.service';
 import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.component';
+import { forkJoin } from 'rxjs';
+import { kml } from '@tmcw/togeojson';
+import { TooltipComponent } from '../tooltip/tooltip.component';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements AfterViewChecked, OnInit {
+export class MapComponent implements OnInit {
   @ViewChild(OverlayedPopupComponent) overlayedPopup: OverlayedPopupComponent;
+  @ViewChild(TooltipComponent) onboardingComponent: TooltipComponent;
 
   private _locations: Array<Location>;
+  public _menugroups: Array<MenuGroup>;
   private _menus: Array<Menu>;
   private _tags: Array<Tag>;
   private _tagRelationships: Array<TagRelationship>;
   private _mapSettings: any;
   private _links: Array<Link>;
   private _linksGroup: Array<LinksGroup>;
-  public mapSetting: any;
-  private map: L.Map;
+  private _kmlShapes: Array<KmlShape>;
+  public mapSetting: any = null;
+  public map: L.Map;
   private locationHeaderSize = 0;
   private mapLoaded = false;
   private mapInitialized = false;
   private markerClusterGroup: L.MarkerClusterGroup;
-  public currentMenu = 1;
+  public currentMenuGroup: string;
   private error: any;
-  public selectedTagMenu: number;
+  public selectedMenusByGroup: { [key: string]: number } = {};
+  private _selectedMenu: number;
+  public get selectedMenu(): number {
+    return this._selectedMenu;
+  }
+  public set selectedMenu(value: number) {
+    this._selectedMenu = value;
+    this.selectedMenusByGroup[this.currentMenuGroup] = value;
+  }
   public defaultMenuId: number;
 
-  @HostListener('document:click', ['$event']) 
-  clickout(event:any){ 
-    if(event.target.classList.contains("opp-open-button")){
+  public footerUrl = ""
+
+  public linksFeatureOn = false;
+  showRotateMessage = false;
+
+  private kmlLayers: { [key: number]: L.Layer } = {};
+
+  @HostListener('document:click', ['$event'])
+  clickout(event: any) {
+    if (event.target.classList.contains("opp-open-button")) {
       this.overlayedPopup.activate(event.target);
     }
+  }
+
+  @HostListener('window:orientationchange')
+  onOrientationChange() {
+    this.checkOrientation();
   }
 
   get locations() {
@@ -55,6 +81,16 @@ export class MapComponent implements AfterViewChecked, OnInit {
   }
   set locations(value) {
     this._locations = value;
+  }
+
+  get menugroups() {
+    return this._menugroups;
+  }
+  set menugroups(value) {
+    this._menugroups = value;
+    if (this._menugroups.length > 0) {
+      this.currentMenuGroup = this._menugroups[0].name;
+    }
   }
 
   get menus() {
@@ -102,54 +138,175 @@ export class MapComponent implements AfterViewChecked, OnInit {
     this._linksGroup = value;
   }
 
-  constructor(private api: ApiService) {}
-  
-  ngOnInit() {
-    this.api.getMenus().subscribe(
-      (menus: any) => {
-        this.menus = menus;
-        this.menus.forEach(menu => {
-          menu.expanded = true;
-        })
-      },
-      (error: any) => (this.error = error)
-    );
-    this.api.getLocations().subscribe(
-      (locations: any) => (this.locations = locations),
-      (error: any) => (this.error = error)
-    );
-    this.api.getTags().subscribe(
-      (tags: any) => (this.tags = tags),
-      (error: any) => (this.error = error)
-    );
-
-    this.api.getTagRelationships().subscribe(
-      (tagRelationships: any) => (this.tagRelationships = tagRelationships),
-      (error: any) => (this.error = error)
-    );
-    this.api.getSettings().subscribe(
-      (mapSettings: any) => (this.mapSettings = mapSettings),
-      (error: any) => (this.error = error)
-    );
-    this.api.getLinks().subscribe(
-      (links: any) => (this.links = links),
-      (error: any) => (this.error = error)
-    );
-    this.api.getLinkGroups().subscribe(
-      (linksGroup: any) => (this.linksGroup = linksGroup),
-      (error: any) => (this.error = error)
-    );
-
+  get kmlShapes() {
+    return this._kmlShapes;
   }
+  set kmlShapes(value) {
+    this._kmlShapes = value;
+  }
+
+  constructor(private api: ApiService) {
+    this.checkOrientation();
+  }
+
+  ngOnInit() {
+    forkJoin({
+      menugroups: this.api.getMenuGroups(),
+      menus: this.api.getMenus(),
+      locations: this.api.getLocations(),
+      tags: this.api.getTags(),
+      tagRelationships: this.api.getTagRelationships(),
+      mapSettings: this.api.getSettings(),
+      links: this.api.getLinks(),
+      linksGroup: this.api.getLinkGroups(),
+      kmlShapes: this.api.getKmlShapes()
+    }).subscribe({
+      next: (results) => {
+        this.menugroups = results.menugroups.sort((a: MenuGroup, b: MenuGroup) => a.id - b.id);
+
+        if (this.menugroups.length > 0) {
+          this.currentMenuGroup = this.menugroups[0].name;
+        }
   
-  ngAfterViewChecked(): void {
-    if (!this.mapInitialized && this.mapSetting) this.initializeMapOptions();
-    if (!this.mapLoaded && this.mapInitialized) {
+        this.menus = results.menus;
+        this.menus.forEach(menu => {
+          menu.expanded = this.menus.length < 3;
+        });
+        this.menus.forEach(menu => {
+          if (menu.group == this.menugroups[0].id) {
+            this.selectedMenu = menu.id;
+            this.defaultMenuId = menu.id;
+            return;
+          }
+        });
+  
+        this.locations = results.locations;
+        this.tags = results.tags;
+        this.tagRelationships = results.tagRelationships;
+        this.mapSettings = results.mapSettings;
+        this.links = results.links;
+        this.linksGroup = results.linksGroup;
+        this.kmlShapes = results.kmlShapes;
+  
+        // After all data is set, initialize the map
+        this.initializeMap();
+      },
+      error: (error) => {
+        this.error = error;
+        console.error('Error loading data:', error);
+      }
+    });
+  }
+
+  private initializeMap(): void {
+    if (this.mapSetting) {
+      this.initializeMapOptions();
       this.initLocations();
       this.insertTagRelations();
       this.markerPreConfigure();
-      if (this.mapSetting.link_feature) this.insertLinks();
+      if (this.mapSetting.link_feature) {
+        this.insertLinks();
+      }
+      this.mapLoaded = true;
     }
+  }
+  
+  private async loadKMLs() {
+    const parser = new DOMParser();
+    const kmlLoadPromises = this._kmlShapes.map(async (storedKml) => {
+      try {
+        const kmlData = await this.loadKMLData(storedKml.kml_file);
+        const kmlDoc = parser.parseFromString(kmlData, 'text/xml');
+        const geoJsonData = kml(kmlDoc);
+  
+        this.createAndAddGeoJsonLayer(storedKml, geoJsonData);
+      } catch (error) {
+        console.error('Error loading KML file:', error);
+      }
+    });
+  
+    await Promise.all(kmlLoadPromises);
+  }
+  
+  private loadKMLData(kmlFile: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.api.getKml(kmlFile).subscribe(
+        (kmlData) => resolve(kmlData),
+        (error) => reject(error)
+      );
+    });
+  }
+  
+  private createAndAddGeoJsonLayer(storedKml: any, geoJsonData: any) {
+    storedKml.currentColor = storedKml.links_color;
+    storedKml.visibility = true;
+    
+    const geojsonMarkerOptions = {
+      radius: 2,
+      fillColor: '#000000',
+      color: "#000000",
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 1
+    };
+  
+    const polygonStyle = {
+      "color": storedKml.links_color,
+      "weight": 3,
+      "opacity": storedKml.opacity
+    };
+  
+    const geoJsonTooltip = L.tooltip({ 'sticky': true });
+    geoJsonTooltip.setContent(storedKml.name);
+  
+    const geoJsonLayer = L.geoJSON(geoJsonData, {
+      pointToLayer: (feature, latlng) => {
+        const tooltip = L.tooltip({ 'sticky': true });
+        tooltip.setContent(storedKml.name + " - " + feature.properties['name']);
+        tooltip.on('add', () => geoJsonTooltip.setOpacity(0));
+        tooltip.on('remove', () => geoJsonTooltip.setOpacity(1));
+  
+        return L.circleMarker(latlng, geojsonMarkerOptions).bindTooltip(tooltip);
+      },
+      style: polygonStyle
+    }).bindTooltip(geoJsonTooltip);
+  
+    this.kmlLayers[storedKml.id] = geoJsonLayer;
+    if (this.shouldLoadKML(storedKml)) {
+      this.kmlLayers[storedKml.id].addTo(this.map);
+    }
+  }
+
+  private shouldLoadKML(kmlShape: KmlShape): boolean {
+    let parent_menu = this.getMenuById(kmlShape.parent_menu)
+    if (!parent_menu) {
+      return false;
+    }
+    let inCurrentMenu = parent_menu.id === this.selectedMenu;
+    let menu_group = this.getMenuGroup(parent_menu.group);
+    if (!menu_group) {
+      return false;
+    }
+    let inCurrentMenuGroup = menu_group.name == this.currentMenuGroup;
+    let shouldLoadSimultaneously = !inCurrentMenuGroup && this.isMenuSimultaneousAndSelectedInItsMenuGroup(parent_menu.id, menu_group);
+    return inCurrentMenu || shouldLoadSimultaneously;
+  }
+
+  private isMenuSimultaneousAndSelectedInItsMenuGroup(menu_id: number, menu_group: MenuGroup | undefined = undefined) {
+    let menu = this.getMenuById(menu_id);
+    if (!menu) return false;
+    if (menu_group == undefined) {
+      let parent_menu_group_id = menu?.group;
+      if (parent_menu_group_id == undefined) return false;
+      menu_group = this.getMenuGroup(parent_menu_group_id)
+    }
+    if (menu_group == undefined || !menu_group.simultaneous_context) return false;
+    if (this.selectedMenusByGroup[menu_group.name] == undefined) {
+      // If no menu is selected in that menu group yet, then select it
+      this.selectedMenusByGroup[menu_group.name] = menu_id;
+      return true;
+    }
+    return this.selectedMenusByGroup[menu_group.name] == menu_id;
   }
 
   private initLocations() {
@@ -163,6 +320,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
         this.locationHeaderSize = location.popup.length;
       });
     }
+    this.loadKMLs()
   }
 
   private getOriginAndDestiny(
@@ -185,65 +343,80 @@ export class MapComponent implements AfterViewChecked, OnInit {
 
   private insertLinks() {
     this.resetlinks();
-    if (this._linksGroup && this._links) {
+    if (this._linksGroup && this._links && this._links.length > 0) {
+      this.linksFeatureOn = true;
       this._links.forEach((link: Link) => {
         const loc1 = this.getLocationById(link.location_1);
         const loc2 = this.getLocationById(link.location_2);
         const linkgroup = this.getLinksGroupById(link.links_group);
-        if (loc1 && loc2 && linkgroup) {
-          linkgroup.visibility = true;
-          let pointA;
-          let pointB;
-          let values;
-          values = this.getOriginAndDestiny(loc1, loc2, link.invert_link);
-          pointA = values[0];
-          pointB = values[1];
-
-          const pointList = [pointA, pointB];
-          if (loc1.onMap && loc2.onMap) {
-            const latlngs = [];
-
-            const latlng1 = [pointA.lat, pointA.lng],
-              latlng2 = [pointB.lat, pointB.lng];
-
-            const offsetX = latlng2[1] - latlng1[1],
-              offsetY = latlng2[0] - latlng1[0];
-
-            const r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2)),
-              theta = Math.atan2(offsetY, offsetX);
-
-            const thetaOffset = 3.14 / 10;
-
-            const r2 = r / 2 / Math.cos(thetaOffset),
-              theta2 = theta + thetaOffset;
-
-            const midpointX = (r2 * Math.cos(theta2)) / 1.5 + latlng1[1],
-              midpointY = (r2 * Math.sin(theta2)) / 1.5 + latlng1[0];
-
-            const midpointLatLng = [midpointY, midpointX];
-
-            latlngs.push(latlng1, midpointLatLng, latlng2);
-
-            const pathOptions = {
-              color: linkgroup.links_color,
-              weight: 3, //link.weight;
-              opacity: linkgroup.opacity, //link.opacity;
-              smoothFactor: 1,
-              stroke: true
-            };
-
-            link.line = L.curve(
-              [
-                'M',
-                [latlng1[0], latlng1[1]],
-                'S',
-                [midpointLatLng[0], midpointLatLng[1]],
-                [latlng2[0], latlng2[1]]
-              ],
-              pathOptions
-            );
-            link.line.bindTooltip(linkgroup.name);
-            link.line.addTo(this.map);
+        if (linkgroup == undefined) return;
+        let isSimultaneous = this.isMenuSimultaneousAndSelectedInItsMenuGroup(linkgroup.parent_menu);
+        if (linkgroup.parent_menu == this.selectedMenu || isSimultaneous){
+          if (loc1 && loc2) {
+            linkgroup.visibility = true;
+            let pointA;
+            let pointB;
+            let values;
+            values = this.getOriginAndDestiny(loc1, loc2, link.invert_link);
+            pointA = values[0];
+            pointB = values[1];
+  
+            const pointList = [pointA, pointB];
+            if (isSimultaneous || (loc1.onMap && loc2.onMap)) {
+              const latlngs = [];
+  
+              const latlng1 = [pointA.lat, pointA.lng],
+                latlng2 = [pointB.lat, pointB.lng];
+  
+              const offsetX = latlng2[1] - latlng1[1],
+                offsetY = latlng2[0] - latlng1[0];
+  
+              const r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2)),
+                theta = Math.atan2(offsetY, offsetX);
+  
+              const thetaOffset = 3.14 / 10;
+  
+              const r2 = r / 2 / Math.cos(thetaOffset),
+                theta2 = theta + thetaOffset;
+  
+              const midpointX = (r2 * Math.cos(theta2)) / 1.5 + latlng1[1],
+                midpointY = (r2 * Math.sin(theta2)) / 1.5 + latlng1[0];
+  
+              const midpointLatLng = [midpointY, midpointX];
+  
+              latlngs.push(latlng1, midpointLatLng, latlng2);
+  
+              const pathOptions = {
+                color: linkgroup.links_color,
+                weight: link.weight,
+                opacity: linkgroup.opacity, //link.opacity;
+                smoothFactor: 1,
+                stroke: true,
+                dashArray:'',
+                dashOffset: ''
+              };
+              if(link.dashed){
+                pathOptions.dashArray = '10, 10';
+                pathOptions.dashOffset = '10';
+              }
+              if(link.straight_link){
+                link.line = new L.Polyline([pointA, pointB], pathOptions);
+              }else{
+                link.line = L.curve(
+                  [
+                    'M',
+                    [latlng1[0], latlng1[1]],
+                    'S',
+                    [midpointLatLng[0], midpointLatLng[1]],
+                    [latlng2[0], latlng2[1]]
+                  ],
+                  pathOptions
+                );
+              }
+              
+              link.line.bindTooltip(linkgroup.name, {sticky : true});
+              link.line.addTo(this.map);
+            }
           }
         }
       });
@@ -342,15 +515,26 @@ export class MapComponent implements AfterViewChecked, OnInit {
       showCoverageOnHover: false
     });
     this.addHoverFunction(this.markerClusterGroup);
+
+    this.footerUrl = this.mapSetting.footer_file;
+
+    let mapName = "ChameleonMap"
+    if (this.mapSetting && this.mapSetting.map_name) {
+      mapName = this.mapSetting.map_name;
+    }
+    this.onboardingComponent.showOnboardingIfNeeded(mapName);
   }
 
   private getFirstMenuId() {
-    if (!isNaN(this._menus[0].id)) {
-      this.defaultMenuId = this._menus[0].id;
-    } else {
-      this.defaultMenuId = 0;
-    }
-    this.selectedTagMenu = this.defaultMenuId;
+    // if (!isNaN(this._menus[0].id)) {
+    //   this.defaultMenuId = this._menus[0].id;
+    // } else {
+    //   this.defaultMenuId = 0;
+    // }
+    // this.selectedMenu = this.defaultMenuId;
+    // let chosenMenu = this.getMenuById(this.selectedMenu)
+    // if (!chosenMenu) { return; }
+    // chosenMenu.expanded = true;
   }
 
   private markerPreConfigure() {
@@ -481,10 +665,29 @@ export class MapComponent implements AfterViewChecked, OnInit {
     return false;
   }
 
+  private getMenuGroup(id: number): MenuGroup | undefined {
+    for (const group of this.menugroups) {
+      if (group.id === id) {
+        return group;
+      }
+    }
+    return undefined;
+  }
+
   private insertMarkersByMenu(selectedTagsMenuId: number) {
+    if (!this._locations || !this._tags) {
+      return
+    }
+
+    let selectedMenu = this.getMenuById(this.selectedMenu);
+    if (!selectedMenu) {
+      return
+    }
+    let selectedMenuGroup = this.getMenuGroup(selectedMenu.group)
+
     this.resetMarkers();
 
-    this.selectedTagMenu = selectedTagsMenuId;
+    this.selectedMenu = selectedTagsMenuId;
     const menuHierarchy = this.getMenuById(selectedTagsMenuId)?.hierarchy_level;
     const otherMenuTags = this._tags.filter((currentTag: Tag) => {
       const currentTagHierarchy = this.getMenuById(
@@ -506,11 +709,12 @@ export class MapComponent implements AfterViewChecked, OnInit {
     });
 
     this._tags.forEach((tag: Tag) => {
+      let isMenuShown = tag.parent_menu === selectedTagsMenuId || this.isMenuSimultaneousAndSelectedInItsMenuGroup(tag.parent_menu);
       if (
         tag.active &&
         tag.dependenciesActive &&
         tag.visibility &&
-        tag.parent_menu === selectedTagsMenuId
+        isMenuShown
       ) {
         tag.related_locations.forEach((location_id: number) => {
           const location: any = this.getLocationById(location_id);
@@ -520,9 +724,9 @@ export class MapComponent implements AfterViewChecked, OnInit {
               const tagMenu = this.getMenuById(tag.parent_menu);
               if (tagMenu) {
                 if (tagMenu.hierarchy_level > 1) {
-                  if (allOtherMenuLocations.includes(location.id)) {
-                    this.insertLocationOnMap(location, tag.currentColor);
-                  }
+                  // if (allOtherMenuLocations.includes(location.id)) {
+                  this.insertLocationOnMap(location, tag.currentColor);
+                  // }
                 } else {
                   this.insertLocationOnMap(location, tag.currentColor);
                 }
@@ -533,6 +737,18 @@ export class MapComponent implements AfterViewChecked, OnInit {
       }
     });
     if (this.mapSetting.link_feature) this.insertLinks();
+    if (this._kmlShapes.length) this.insertKmlShapes();
+  }
+
+  private insertKmlShapes() {
+    this._kmlShapes.forEach(shape => {
+      if (this.shouldLoadKML(shape)) {
+        if (shape.visibility)
+          this.insertKmlLayer(shape.id);
+      } else {
+        this.removeKmlLayer(shape.id);
+      }
+    });
   }
 
   private isTagInactive(tag: Tag) {
@@ -590,7 +806,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
       if (color != '') location.activeColors = [color];
 
       const pop = L.responsivePopup({ offset: L.point(-3, -11), hasTip: false, closeButton: false }).setContent(location.popup);
-      
+
       location.locationMarker = L.marker(
         [location.latitude, location.longitude],
         { icon: this.generatePinIcon(location.activeColors) }
@@ -602,7 +818,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
         });
 
       this.markerClusterGroup.addLayer(location.locationMarker);
-      this.map.addLayer(this.markerClusterGroup); 
+      this.map.addLayer(this.markerClusterGroup);
     } else {
       location.popup += '</div>';
       location.locationMarker._popup.setContent(location.popup);
@@ -652,9 +868,9 @@ export class MapComponent implements AfterViewChecked, OnInit {
       if (tag.overlayed_popup_content && tag.overlayed_popup_content != null) {
         opp_btn = this.overlayedPopup.getOverlayedPopupButtonForTag(tag);
       }
-      
+
       location.popup +=
-      `
+        `
       <div class="tag-popup-${tag.id}">
         <h3 class="popup-subtitle">
           ${tag.name} ${opp_btn}
@@ -711,8 +927,8 @@ export class MapComponent implements AfterViewChecked, OnInit {
       gradient = gradient
         .split(
           ' ' +
-            (basePercentage * colors.length - basePercentage).toString() +
-            '%'
+          (basePercentage * colors.length - basePercentage).toString() +
+          '%'
         )
         .join(' ' + (100 - basePercentage - increaseBorders).toString() + '%');
 
@@ -745,7 +961,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
         maxLocationId = location.id;
       }
     }
-    
+
     return maxLocationId;
   }
 
@@ -807,18 +1023,23 @@ export class MapComponent implements AfterViewChecked, OnInit {
   }
 
   private resetlinks() {
-    for (const link of this._links) {
-      if (link.line != null) {
-        link.line.remove(this.map);
+    if (this._links) {
+      for (const link of this._links) {
+        if (link.line != null) {
+          link.line.remove(this.map);
+        }
       }
     }
+
   }
 
   private insertLinkByLinkGroup(lg: LinksGroup) {
     if (lg) {
       lg.visibility = true;
       for (const link of this._links) {
-        if (link.links_group == lg.id) {
+        const elementLinksGroup = this.getLinksGroupById(link.links_group);
+        if (!elementLinksGroup) return;
+        if (link.links_group == lg.id || this.isMenuSimultaneousAndSelectedInItsMenuGroup(elementLinksGroup.parent_menu)) {
           const loc1 = this.getLocationById(link.location_1);
           const loc2 = this.getLocationById(link.location_2);
           if (loc1 && loc2 && loc1.onMap && loc2.onMap) {
@@ -836,7 +1057,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
         const location = this.getLocationById(relatedLocationId);
         if (location) {
           if (
-            tag.parent_menu == this.selectedTagMenu &&
+            tag.parent_menu == this.selectedMenu &&
             this.locationIsShowingTag(location, tag)
           ) {
             this.removeColorFromLocationMarker(location, tag.color);
@@ -920,6 +1141,21 @@ export class MapComponent implements AfterViewChecked, OnInit {
     }
   }
 
+
+  private removeKmlLayer(kmlID: number) {
+    const layer = this.kmlLayers[kmlID];
+    if (layer) {
+      this.map.removeLayer(layer);
+    }
+  }
+
+  private insertKmlLayer(kmlID: number) {
+    const layer = this.kmlLayers[kmlID];
+    if (layer) {
+      this.map.addLayer(layer);
+    }
+  }
+
   private checkDependenciesAndPopups(tag: Tag) {
     if (this.anyClusterIsActive(tag)) {
       tag.dependenciesActive = true;
@@ -983,6 +1219,13 @@ export class MapComponent implements AfterViewChecked, OnInit {
     this.putTagBackOnPopup(event.tag);
   }
 
+  public onShapeRemoval(event: any) {
+    this.removeKmlLayer(event.shape.id);
+  }
+
+  public onShapeReactivated(event: any) {
+    this.insertKmlLayer(event.shape.id);
+  }
 
   public onLinkRemoval(event: any) {
     this.hideLinksByLinkGroup(event.selectedLG);
@@ -993,7 +1236,20 @@ export class MapComponent implements AfterViewChecked, OnInit {
   }
 
   public onButtonClicked(event: any) {
-    this.currentMenu = event.clickedMenu;
+    this.currentMenuGroup = event.clickedMenu;
+  }
+
+  public showHowToHelpMessage(id: number) {
+    this.overlayedPopup.activateByLocation(this.getLocationById(id))
+  }
+
+  private checkOrientation() {
+    // Consider portrait mode as orientation 0 or 180
+    this.showRotateMessage = window.orientation === 0 || window.orientation === 180;
+  }
+
+  closeMessage() {
+    this.showRotateMessage = false;
   }
 }
 

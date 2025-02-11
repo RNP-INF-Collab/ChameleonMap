@@ -1,0 +1,73 @@
+.centered-tooltip, .step-tooltip {
+  background-color: rgba(0, 0, 0, 0.8); 
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999 !important;
+  display: none;
+}
+
+.enabled {
+  display: flex !important;
+}
+
+.centered-tooltip {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center it both horizontally and vertically */
+  width: 300px; /* Fixed width */
+}
+
+.step-tooltip {
+  position: absolute;
+  width: 300px;
+  min-height: 50px;
+}
+
+.quote-centered::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 10px 10px 10px 0; /* Creates a left-pointing triangle */
+  border-style: solid;
+  border-color: transparent rgba(0, 0, 0, 0.8) transparent transparent;
+}
+
+.step-tooltip:not(.quote-centered)::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 15%;
+  transform: translateY(-50%);
+  border-width: 10px 10px 10px 0; /* Creates a left-pointing triangle */
+  border-style: solid;
+  border-color: transparent rgba(0, 0, 0, 0.8) transparent transparent;
+}
+
+.tooltip-text {
+  margin-bottom: 10px;
+}
+
+.tooltip-buttons button {
+  margin: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.tooltip-buttons .continue {
+  background-color: #2758a2;
+  color: white;
+  border: 1px solid black;
+  font-weight: bold;
+  padding: 7px 10px;
+}

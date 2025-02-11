@@ -14,6 +14,17 @@
     transition: all 0.3s ease;
 }
 
-.mat-icon:hover{
-    color: royalblue;
+.collapser.has-tabs {
+    top: 75px !important;
 }
+
+.collapser:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+@media (max-width: 500px) {
+    .collapser {
+        left: 300px;
+    }
+  }

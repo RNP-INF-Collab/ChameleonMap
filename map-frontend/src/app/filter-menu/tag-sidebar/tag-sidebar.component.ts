@@ -6,7 +6,7 @@ import {
   EventEmitter,
   AfterViewInit
 } from '@angular/core';
-import { _MatOptgroupBase } from '@angular/material/core';
+import { MatOptgroup } from '@angular/material/core';
 import { EventEmitterService } from '../../event-emitter.service';
 
 @Component({
@@ -50,7 +50,7 @@ export class TagSidebarComponent {
     const sidebar = document.querySelectorAll<HTMLElement>('.sidebar');
     sidebar[0].setAttribute('style', 'right: -320px;');
     const outer = document.querySelectorAll<HTMLElement>('.outer');
-    outer[0].setAttribute('style', 'pointer-events: none;');
+    outer[0].classList.add('collapsed');
     //outer[0].setAttribute('style', 'box-shadow: none');
   }
 
@@ -59,7 +59,7 @@ export class TagSidebarComponent {
     const sidebar = document.querySelectorAll<HTMLElement>('.sidebar');
     sidebar[0].setAttribute('style', 'right: 0px;');
     const outer = document.querySelectorAll<HTMLElement>('.outer');
-    outer[0].setAttribute('style', 'pointer-events: auto;');
+    outer[0].classList.remove('collapsed');
     //outer[0].setAttribute('style', 'box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);');
   }
 

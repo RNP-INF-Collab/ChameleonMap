@@ -20,6 +20,7 @@ import { MatTableModule } from '@angular/material/table';
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { LinksMenuComponent } from './links-menu/links-menu.component';
 import { MenuChooserComponent } from './menu-chooser/menu-chooser.component';
+import { HelpButtonComponent } from './help-button/help-button.component';
 
 import { OverlayedPopupComponent } from './overlayed-popup/overlayed-popup.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -27,6 +28,8 @@ import { LocationDetailComponent } from './location-detail/location-detail.compo
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
 import { SubMapComponent } from './sub-map/sub-map.component';
 import { ATLASComponent } from './atlas/atlas.component';
+import { FooterComponent } from './footer/footer.component';
+import { TooltipComponent } from './tooltip/tooltip.component';
 
 @NgModule({
   declarations: [
@@ -41,8 +44,11 @@ import { ATLASComponent } from './atlas/atlas.component';
     OverlayedPopupComponent,
     LocationDetailComponent,
     TagDetailComponent,
+    HelpButtonComponent,
     SubMapComponent,
-    ATLASComponent
+    ATLASComponent,
+    FooterComponent,
+    TooltipComponent,
   ],
   imports: [
     BrowserModule,
