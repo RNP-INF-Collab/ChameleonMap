@@ -1,4 +1,3 @@
-import { Reference } from '@angular/compiler/src/render3/r3_ast';
 import { 
   Component, 
   OnInit, 
@@ -7,7 +6,6 @@ import {
   HostListener,
   Input,
 } from '@angular/core';
-import { ɵBrowserAnimationBuilder } from '@angular/platform-browser/animations';
 import * as L from 'leaflet';
 import { LeafletMouseEvent } from 'leaflet';
 import { ATLASComponent } from '../atlas/atlas.component';
@@ -20,6 +18,7 @@ import { ATLASComponent } from '../atlas/atlas.component';
 })
 export class SubMapComponent implements OnInit {
   @ViewChild(ATLASComponent) ATLAS: ATLASComponent;
+  @ViewChild('sub_map') popup_content: ElementRef;
   @ViewChild('phantom_popup_content') phantom_popup_content_html: ElementRef;
   
   public subMap: L.Map;
@@ -58,13 +57,13 @@ export class SubMapComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.initSubMapPropertiesValues();
-    this.initSubMap();
+    // this.initSubMapPropertiesValues();
+    // this.initSubMap();
   }
 
   public restoreDefaultScreenView( map: L.Map = this.subMap , center: any = this.defaultSubMapCenterCoordinates){
-    map.setView(center);
-    map.setZoom(10);
+    // map.setView(center);
+    // map.setZoom(10);
   }
 
   public set keeper( keeper: Location | Tag){
@@ -131,21 +130,21 @@ export class SubMapComponent implements OnInit {
     
     /// Map View
     //  Default View Bounds      
-    this.defaultSubMapCenterCoordinates = new L.LatLng(-14.2350, -51.9253); // Brazil Center
+    // this.defaultSubMapCenterCoordinates = new L.LatLng(-14.2350, -51.9253); // Brazil Center
     // this.defaultSubMapCenterCoordinates = new L.LatLng(0, 0);
     
-    this.defaultViewBounds = new L.LatLngBounds(
-      this.getRealCoord([-10, -10]),
-      this.getRealCoord([10, 10])
-      );
+    // this.defaultViewBounds = new L.LatLngBounds(
+    //   this.getRealCoord([-10, -10]),
+    //   this.getRealCoord([10, 10])
+    //   );
       
-      //  Max View Bounds
-      this.maxViewBounds = this.defaultViewBounds;
+    //   //  Max View Bounds
+    //   this.maxViewBounds = this.defaultViewBounds;
       
-      //  Zoom Limits       
-      this.minZoom = 10;
-      this.maxZoom = 20;
-      this.zoomControlPosition = 'bottomright';
+    //   //  Zoom Limits       
+    //   this.minZoom = 10;
+    //   this.maxZoom = 20;
+    //   this.zoomControlPosition = 'bottomright';
       
   }
       
@@ -153,10 +152,10 @@ export class SubMapComponent implements OnInit {
     // Create Sub Map
     this.subMap = L.map(this.subMapId );
 
-    this.subMap.on('moveend', () => {
-      if(this.isScrollBarActive)
-        this.adjustScrollBarPosition();
-    })
+    // this.subMap.on('moveend', () => {
+    //   if(this.isScrollBarActive)
+    //     this.adjustScrollBarPosition();
+    // })
     
     // this.subMap.on('mousemove', function(e: L.LeafletMouseEvent) {
     //   var mousePosition = e.latlng;
@@ -166,16 +165,16 @@ export class SubMapComponent implements OnInit {
     /// Setting Sub Map 
      // Values Defined in setSubMapPropertiesValues() 
     // this.subMap.fitBounds(this.defaultViewBounds);
-    this.restoreDefaultScreenView();
+    // this.restoreDefaultScreenView();
     // this.subMap.setMaxBounds(this.maxViewBounds);
     // this.subMap.setMaxZoom(this.maxZoom);
-    this.subMap.zoomControl.setPosition( this.zoomControlPosition);
+    // this.subMap.zoomControl.setPosition( this.zoomControlPosition);
     
     // Others
-    this.subMap.zoomControl.remove();
-    this.subMap.scrollWheelZoom.disable();
-    this.subMap.doubleClickZoom.disable();
-    this.subMap.dragging.disable();
+    // this.subMap.zoomControl.remove();
+    // this.subMap.scrollWheelZoom.disable();
+    // this.subMap.doubleClickZoom.disable();
+    // this.subMap.dragging.disable();
     
     // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     //   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

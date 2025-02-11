@@ -5,3 +5,4 @@ djangorestframework==3.12.4
 django-cors-headers==3.7.0
 django-tinymce==3.4.0
 requests>=2.27.1
+pillow==10.4.0

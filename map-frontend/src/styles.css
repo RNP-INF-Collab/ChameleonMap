@@ -1,11 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .popup-title {
-    margin-top: -3px; 
+    margin-top: -3px;
     margin-bottom: -7px;
     font-family: 'Open Sans', sans-serif;
     text-align: left;
@@ -18,7 +26,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 30px; 
+    margin-top: 30px;
     margin-bottom: -10px;
 }
 
@@ -66,14 +74,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .leaflet-popup-content {
-  margin: 13px 8px 0 12px !important;
-} 
- 
+    margin: 13px 8px 0 12px !important;
+}
+
 /*FIREFOX*/
 @supports (-moz-appearance:none) {
-  .leaflet-popup-content {
-    margin: 13px 5px 0 12px !important;
-  }
+    .leaflet-popup-content {
+        margin: 13px 5px 0 12px !important;
+    }
 }
 
 .leaflet-div-icon {
@@ -82,35 +90,36 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .cluster-icon {
-    height: 18px; 
-    width: 18px; 
-    margin-left: -6px; 
-    margin-top: -7px; 
-    background-color: #e7955f; 
-    border-radius: 50%; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+    height: 18px;
+    width: 18px;
+    margin-left: -6px;
+    margin-top: -7px;
+    background-color: #e7955f;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 3px solid #e7955f;
 }
 
 .clustercolored-icon {
-    height: 18px; 
-    width: 18px; 
-    margin-left: -6px; 
-    margin-top: -7px; 
-    background-color: #e7955f; 
-    border-radius: 50%; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+    height: 18px;
+    width: 18px;
+    margin-left: -6px;
+    margin-top: -7px;
+    background-color: #e7955f;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-width: 5px;
     border-style: solid;
 }
 
-.clustercolored-icon:hover, .cluster-icon:hover {
-    height: 20px !important; 
-    width: 20px !important; 
+.clustercolored-icon:hover,
+.cluster-icon:hover {
+    height: 20px !important;
+    width: 20px !important;
 }
 
 .hover-icon {
@@ -123,7 +132,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .opp-open-button {
     cursor: pointer;
 }
-  
+
 .opp-open-button:hover {
     background: linear-gradient(#e9e9e9, #f9f9f9);
 }
@@ -150,4 +159,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .opp-expand-icon:hover {
     filter: none;
+}
+
+.mat-expansion-panel-body {
+    transition: all 0.5s;
+    padding: 0px 24px 0px !important;
+}
+
+.tuto-background {
+    opacity: 0.4;
+}
+
+.tuto-index {
+    z-index: 991;
 }
