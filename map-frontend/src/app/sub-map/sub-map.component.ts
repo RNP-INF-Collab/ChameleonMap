@@ -18,6 +18,7 @@ import { ATLASComponent } from '../atlas/atlas.component';
 })
 export class SubMapComponent implements OnInit {
   @ViewChild(ATLASComponent) ATLAS: ATLASComponent;
+  @ViewChild('sub_map') popup_content: ElementRef;
   @ViewChild('phantom_popup_content') phantom_popup_content_html: ElementRef;
   
   public subMap: L.Map;
@@ -56,66 +57,19 @@ export class SubMapComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.initSubMapPropertiesValues();
-    this.initSubMap();
+    // this.initSubMapPropertiesValues();
+    // this.initSubMap();
   }
 
   public restoreDefaultScreenView( map: L.Map = this.subMap , center: any = this.defaultSubMapCenterCoordinates){
-    map.setView(center);
-    map.setZoom(10);
+    // map.setView(center);
+    // map.setZoom(10);
   }
 
   public set keeper( keeper: Location | Tag){
     this._keeper = keeper;
-    // Remove previous content
-    this.ATLAS.clearData();
-    if(this.wasAlreadyAdded(this._keeperContentMarker, this.subMap))      
-      this._keeperContentMarker.removeFrom(this.subMap);
-    this.restoreDefaultScreenView();
-
-    if(!this.ATLAS.isATLASscript(this._keeper.overlayed_popup_content)){
-      // Add html content marker
-      this._keeperContentMarker = L.marker( this.defaultSubMapCenterCoordinates ,  {
-        draggable: false,
-        autoPan:false
-      }).addTo(this.subMap);
-
-      this._keeperContent = `<div style='padding-left: 1px; padding-right: 1px'>${this._keeper.overlayed_popup_content}</div>`;
-      
-      // Get Real Screen Size occupied by the Overlayed Popup Content
-      this.phantom_popup_content_html.nativeElement.innerHTML = this._keeperContent;
-      this.contentPixelsSize = this.phantom_popup_content_html.nativeElement.getBoundingClientRect();
-      this.phantom_popup_content_html.nativeElement.innerHTML = "";     // Remove phatom object
-      
-      // Set marker options to new content
-      this._keeperContentMarker.setIcon(L.divIcon({
-        html: this._keeperContent,
-        iconSize: [this.contentPixelsSize.width, this.contentPixelsSize.height]
-      }));
-      
-      // Screen View Position
-
-      
-      //  Overlayed Popup Contents Position 
-      this._keeperContentNorthCenterPoint = new L.LatLng(
-        this.subMap.getBounds().getNorth(),
-        this.subMap.getBounds().getCenter().lng
-        );
-        
-        this._keeperContentMarkerPosition = this._keeperContentNorthCenterPoint;
-        this._keeperContentMarkerPosition.lat -= this.convertPixelsHeightToLat(this.contentPixelsSize.height / 2);
-        this._keeperContentMarker.setLatLng( this._keeperContentMarkerPosition );
-        
-        this._keeperContentMarker.options.icon!.options.iconAnchor = [
-          this.contentPixelsSize.width / 2,
-          this.contentPixelsSize.height / 2
-        ];
-        
-        // Scroll Bar
-        this.configScrollBar();
-    }else{
-      this.ATLAS.run(this._keeper.overlayed_popup_content, this.subMap);
-    }
+    // console.log(this._keeper.overlayed_popup_content)
+    this.popup_content.nativeElement.innerHTML = `<div style='height: 1000px'>${this._keeper.overlayed_popup_content}</div>`;
   }
     
     
@@ -124,21 +78,21 @@ export class SubMapComponent implements OnInit {
     
     /// Map View
     //  Default View Bounds      
-    this.defaultSubMapCenterCoordinates = new L.LatLng(-14.2350, -51.9253); // Brazil Center
+    // this.defaultSubMapCenterCoordinates = new L.LatLng(-14.2350, -51.9253); // Brazil Center
     // this.defaultSubMapCenterCoordinates = new L.LatLng(0, 0);
     
-    this.defaultViewBounds = new L.LatLngBounds(
-      this.getRealCoord([-10, -10]),
-      this.getRealCoord([10, 10])
-      );
+    // this.defaultViewBounds = new L.LatLngBounds(
+    //   this.getRealCoord([-10, -10]),
+    //   this.getRealCoord([10, 10])
+    //   );
       
-      //  Max View Bounds
-      this.maxViewBounds = this.defaultViewBounds;
+    //   //  Max View Bounds
+    //   this.maxViewBounds = this.defaultViewBounds;
       
-      //  Zoom Limits       
-      this.minZoom = 10;
-      this.maxZoom = 20;
-      this.zoomControlPosition = 'bottomright';
+    //   //  Zoom Limits       
+    //   this.minZoom = 10;
+    //   this.maxZoom = 20;
+    //   this.zoomControlPosition = 'bottomright';
       
   }
       
@@ -146,10 +100,10 @@ export class SubMapComponent implements OnInit {
     // Create Sub Map
     this.subMap = L.map(this.subMapId );
 
-    this.subMap.on('moveend', () => {
-      if(this.isScrollBarActive)
-        this.adjustScrollBarPosition();
-    })
+    // this.subMap.on('moveend', () => {
+    //   if(this.isScrollBarActive)
+    //     this.adjustScrollBarPosition();
+    // })
     
     // this.subMap.on('mousemove', function(e: L.LeafletMouseEvent) {
     //   var mousePosition = e.latlng;
@@ -159,16 +113,16 @@ export class SubMapComponent implements OnInit {
     /// Setting Sub Map 
      // Values Defined in setSubMapPropertiesValues() 
     // this.subMap.fitBounds(this.defaultViewBounds);
-    this.restoreDefaultScreenView();
+    // this.restoreDefaultScreenView();
     // this.subMap.setMaxBounds(this.maxViewBounds);
     // this.subMap.setMaxZoom(this.maxZoom);
-    this.subMap.zoomControl.setPosition( this.zoomControlPosition);
+    // this.subMap.zoomControl.setPosition( this.zoomControlPosition);
     
     // Others
-    this.subMap.zoomControl.remove();
-    this.subMap.scrollWheelZoom.disable();
-    this.subMap.doubleClickZoom.disable();
-    this.subMap.dragging.disable();
+    // this.subMap.zoomControl.remove();
+    // this.subMap.scrollWheelZoom.disable();
+    // this.subMap.doubleClickZoom.disable();
+    // this.subMap.dragging.disable();
     
     // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     //   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
