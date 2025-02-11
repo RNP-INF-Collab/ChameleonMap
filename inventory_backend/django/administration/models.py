@@ -40,6 +40,7 @@ class Tag(models.Model):
     sidebar_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* Leave blank to use default template</b>", null=True, blank=SET_NULL)
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     active = models.BooleanField(default=True)
+    atlas_feature_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'tag'
@@ -72,6 +73,8 @@ class Location(models.Model):
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     # overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL, widget=forms.Textarea(attrs={'rows':5, 'cols':50}))
     active = models.BooleanField(default=True)
+    atlas_feature_active = models.BooleanField(default=True)
+    
     class Meta:
         db_table = 'location'
         ordering = ['name']
