@@ -15,6 +15,7 @@ declare global {
     readonly hierarchy_level: number;
     readonly active: boolean;
     expanded: boolean;
+    pinned: boolean;
   }
 
   export interface Tag {
