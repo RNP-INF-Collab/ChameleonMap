@@ -13,7 +13,8 @@ import {
 import * as L from 'leaflet';
 import 'leaflet-responsive-popup';
 import '@elfalem/leaflet-curve';
-import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
+import { combineLatest, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ApiService } from '../api.service';
 import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.component';
 import { forkJoin } from 'rxjs';
@@ -171,6 +172,7 @@ export class MapComponent implements OnInit {
         this.menus = results.menus;
         this.menus.forEach(menu => {
           menu.expanded = this.menus.length < 3;
+          menu.pinned = false;
         });
         this.menus.forEach(menu => {
           if (menu.group == this.menugroups[0].id) {
@@ -587,7 +589,7 @@ export class MapComponent implements OnInit {
         }
       });
       this.getFirstMenuId();
-      this.insertMarkersByMenu(this.defaultMenuId);
+      this.insertMarkersByMenu(this.defaultMenuId, true)
       if (typeof this.mapSetting.map_name === 'string')
         document.title = this.mapSetting.map_name;
       if (this.menus && this.locations && this.mapSettings)
@@ -674,7 +676,7 @@ export class MapComponent implements OnInit {
     return undefined;
   }
 
-  private insertMarkersByMenu(selectedTagsMenuId: number) {
+  private insertMarkersByMenu(selectedTagsMenuId: number, reset: boolean) {
     if (!this._locations || !this._tags) {
       return
     }
@@ -685,7 +687,8 @@ export class MapComponent implements OnInit {
     }
     let selectedMenuGroup = this.getMenuGroup(selectedMenu.group)
 
-    this.resetMarkers();
+    if(reset)
+      this.resetMarkers();
 
     this.selectedMenu = selectedTagsMenuId;
     const menuHierarchy = this.getMenuById(selectedTagsMenuId)?.hierarchy_level;
@@ -1206,7 +1209,12 @@ export class MapComponent implements OnInit {
   }
 
   public onMenuCliked(event: any) {
-    this.insertMarkersByMenu(event.selectedTagsMenuId);
+    this.insertMarkersByMenu(event.selectedTagsMenuId, true);
+    this.menus.forEach(menu => {
+      if(menu.pinned){
+        this.insertMarkersByMenu(menu.id, false);
+      }
+    })
   }
 
   public onTagRemoval(event: any) {

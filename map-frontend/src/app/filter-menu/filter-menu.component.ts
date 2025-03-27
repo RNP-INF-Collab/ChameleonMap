@@ -244,6 +244,17 @@ export class FilterMenuComponent {
     event.stopPropagation();
   }
 
+  menuPin(menu: Menu, event: any) {
+    menu.pinned = true;
+    event.stopPropagation();
+  }
+
+  menuUnpin(menu: Menu, event: any) {
+    menu.pinned = false;
+    this.menuClick(this.getMenuById(this.selectedTagsMenuId)!);
+    event.stopPropagation();
+  }
+
   menuCollapse() {
     this.isCollapsed = !this.isCollapsed;
     const menufilter = document.querySelectorAll<HTMLElement>('.scrollbar-box');

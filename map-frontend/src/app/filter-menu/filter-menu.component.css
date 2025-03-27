@@ -50,7 +50,7 @@ mat-expansion-panel  {
 
 .menu-header {
   background-color: rgba(214, 214, 214, 0.26);
-  width: 130%; 
+  width: 117%; 
   margin-left: -25px; 
   cursor: pointer;
   border-bottom: 0.5px solid rgba(214, 214, 214, 0.363);
@@ -198,7 +198,7 @@ mat-expansion-panel  {
 .menu-button-container{
   display: flex;
   align-items: center; 
-  justify-content: center;
+  justify-content: space-evenly;
   /* height: 100%; */
 }
 
@@ -233,4 +233,9 @@ mat-expansion-panel  {
 #menu-button-expand{
   display: inline;
   vertical-align: middle;
+}
+
+.pinned-header {
+  background: rgb(55,60,79);
+  background: linear-gradient(180deg, rgba(30, 71, 236, 0.35) 0%, rgb(121, 119, 219) 100%);
 }
