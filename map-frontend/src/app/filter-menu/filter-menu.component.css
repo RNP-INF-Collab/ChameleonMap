@@ -67,6 +67,7 @@ mat-expansion-panel  {
 
 .menu-text {
   color: black !important;
+  padding-right: 10px;
 }
 
 .menu-text-position {
