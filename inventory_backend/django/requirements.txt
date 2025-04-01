@@ -7,3 +7,4 @@ django-tinymce==3.4.0
 requests>=2.27.1
 pillow==10.4.0
 django-axes~=7.0.0
+django-tenants==3.7.0

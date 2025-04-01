@@ -1,39 +1,18 @@
 #!/bin/sh
 
-## Function to be called if any step of the deployment fails.
-fail_deploy() {
-    if [ -n "$1" ]; then
-        echo "Failing deployment: $1"
-    else
-        echo "Failing deployment"
-    fi
-    exit 1  # proceed no further!
-}
+# 1. Espera o banco ficar disponível (opcional, mas recomendado)
+#    Pode usar algo como um "wait-for" script ou dj-database-url.
+#    Exemplo: wait-for-db.sh
 
-python manage.py migrate || fail_deploy "Migrate Failed"
+# 2. Aplica migrações para o schema público
+python manage.py migrate_schemas --shared
 
-if [[ ${DJANGO_SUPERUSER_USERNAME:-0} == 0 || ${DJANGO_SUPERUSER_PASSWORD:-0} == 0 || ${DJANGO_SUPERUSER_EMAIL:-0} == 0 ]]; then
-  echo "Skipped Superuser creation because required environment variables are missing"
-else
-  echo "Create superuser"
+# 3. Aplica migrações para os schemas de tenants (se existirem)
+# python manage.py migrate_schemas --executor=parallel
 
-  # 2>&1 redirects stderr to stdout; this lets us capture error messages.
-  SUPERUSER_OUTPUT=$(python manage.py createsuperuser --no-input 2>&1)
+# 4. Executa nosso comando customizado que cria tenant+usuário
+python manage.py setup_rnp
+python manage.py setup_ufrgs
 
-  # Assign the exit status to a variable.
-  SUPERUSER_STATUS=$?
-
-  echo "createsuperuser result: $SUPERUSER_STATUS - output: $SUPERUSER_OUTPUT"
-
-  if [ $SUPERUSER_STATUS -ne 0 ]; then
-    # Manage.py createsuperuser did not finish with success:
-
-    if [ "$SUPERUSER_OUTPUT" = "$SUPERUSER_EXISTS_MSG" ]; then
-      # The message it printed in stderr was SUPERUSER_EXISTS_MSG.
-      # This means the superuser already exists, so we continue.
-      echo "Superuser already exists"
-    fi
-  fi
-fi
-
-python manage.py runserver 0.0.0.0:8000
+# 5. Finalmente, roda o servidor
+exec python manage.py runserver 0.0.0.0:8000
