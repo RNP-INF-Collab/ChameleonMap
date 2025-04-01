@@ -14,6 +14,7 @@ RUN apk update; \
 
 # install dependencies
 COPY ./requirements.txt .
+COPY ./commands ./commands
 RUN pip install --upgrade pip
 RUN pip wheel --no-cache-dir --wheel-dir /usr/src/app/wheels -r requirements.txt
 
@@ -47,6 +48,7 @@ WORKDIR $APP_HOME
 # Install dependencies
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
+COPY --from=builder /usr/src/app/commands ./commands
 RUN pip install --no-cache --upgrade pip; \
     pip install --no-cache /wheels/*
 

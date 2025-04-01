@@ -28,10 +28,19 @@ DEBUG = int(os.environ.get('DEBUG') or 0)
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', default='').split(' ')
 
+# Multi-tenant settings
+TENANT_MODEL = "clients.Client"
+TENANT_DOMAIN_MODEL = "clients.Domain"
+
 # Application definition
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+SHARED_APPS = [
+    'django_tenants',
+    'clients',
+    
+]
+
+TENANT_APPS = [
+    'administration.apps.AdministrationConfig',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -39,14 +48,18 @@ INSTALLED_APPS = [
     'colorfield',
     'rest_framework',
     'corsheaders',
-    'administration.apps.AdministrationConfig',
     'tinymce',
+    'django.contrib.auth',
+    'django.contrib.admin',
 ]
+
+INSTALLED_APPS = SHARED_APPS + TENANT_APPS
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -87,7 +100,7 @@ WSGI_APPLICATION = 'inventory_backend.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": 'django.db.backends.postgresql',
+        "ENGINE": 'django_tenants.postgresql_backend',
         "HOST": 'db',
         "PORT": 5432,
         "NAME": os.environ.get("POSTGRES_DB", os.path.join(BASE_DIR, "db.sqlite3")),
@@ -95,6 +108,10 @@ DATABASES = {
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
     }
 }
+
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 
 # Password validation
