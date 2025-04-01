@@ -60,6 +60,14 @@ export class MapComponent implements OnInit {
 
   public linksFeatureOn = false;
   showRotateMessage = false;
+  
+  get hasMenuGroupTabs() {
+    const tabsLength = this.menugroups.length;
+    if (tabsLength == 1) {
+      return !this.mapSetting.hide_menu_group_when_unique;;
+    }
+    return tabsLength > 1;
+  }
 
   private kmlLayers: { [key: number]: L.Layer } = {};
 

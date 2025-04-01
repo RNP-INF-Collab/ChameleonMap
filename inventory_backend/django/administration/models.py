@@ -149,6 +149,10 @@ class Map_configuration(models.Model):
         default=False, 
         help_text="When this field is enabled, the link feature will be displayed on the front-end.",
     )
+    hide_menu_group_when_unique = models.BooleanField(
+        default=True, 
+        help_text="When there is only one Menu Group active, hide the menu groups tabs",
+    )
 
     footer_file = models.ImageField(upload_to='uploads/', blank=True, help_text="Upload a custom footer file.")
     
