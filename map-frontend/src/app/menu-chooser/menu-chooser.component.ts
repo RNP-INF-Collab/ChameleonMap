@@ -20,13 +20,6 @@ export class MenuChooserComponent {
   }
   set linksFeatureOn(value: boolean) {
     this._linksFeatureOn = value;
-    if (this._linksFeatureOn) {
-      if (this._menugroups.length == 0) {
-        this.tabs = this.tabs.concat('Tags')
-        this.onTabClick('Tags') 
-      }
-      this.tabs = this.tabs.concat('Links')
-    }
   }
 
   @Input()

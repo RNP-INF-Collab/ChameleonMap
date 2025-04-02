@@ -33,7 +33,7 @@ export class FilterMenuComponent {
   public headerStyle: 'background:red';
   public isCollapsed = false;
   public _currentMenusPallete: string;
-  public _linksActive: boolean;
+  public _hasMenuGroupTabs: boolean;
   public currentBehaviorOfMultipleTagsVisibilityButton: TagsMenuButtonBehavior = TagsMenuButtonBehavior.CloseAllEyes;
   tagsMenuButtonBehavior = TagsMenuButtonBehavior;
 
@@ -123,11 +123,11 @@ export class FilterMenuComponent {
   }
 
   @Input()
-  get linksActive() {
-    return this._linksActive;
+  get hasMenuGroupTabs() {
+    return this._hasMenuGroupTabs;
   }
-  set linksActive(value) {
-    this._linksActive = value;
+  set hasMenuGroupTabs(value) {
+    this._hasMenuGroupTabs = value;
   }
 
   @Input()
