@@ -158,6 +158,7 @@ mat-expansion-panel  {
   overflow-y: scroll;
   overflow-x: hidden;
   transition: all 0.3s ease;
+  padding-right: 7px;
 }
 
 @media (max-width: 500px) {
