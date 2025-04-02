@@ -173,3 +173,7 @@ body {
 .tuto-index {
     z-index: 991;
 }
+
+.mat-content-hide-toggle {
+    margin-right: 0 !important;
+}
