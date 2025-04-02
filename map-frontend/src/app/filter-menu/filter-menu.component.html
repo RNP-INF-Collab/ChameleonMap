@@ -2,9 +2,9 @@
     <mat-expansion-panel *ngFor="let menu of activeMenus" [expanded]="true" [disabled]="true">
 
         <div *ngIf="selectedTagsMenuId===menu.id; else elseThenIsNotSelectedTagsMenu">
-            <mat-expansion-panel-header [expandedHeight]="'45px'" (click)="menuClick(menu)" style="background: rgba(55, 60, 79, 0.35); width: 117%; margin-left: -25px;">
+            <mat-expansion-panel-header[ expandedHeight]="'45px'" (click)="menuClick(menu)" style="background: rgba(55, 60, 79, 0.35); width: 117%; margin-left: -25px;">
                 <mat-panel-title>
-                    <div class="menu-name">
+                    <div class="menu-name" id="manus">
                         <p style="display: inline-block;" class="menu-text">{{ capitalizeFirstLetter(menu.name) }}</p>
                     </div>                                        
                     <div class="menu-button-container">
