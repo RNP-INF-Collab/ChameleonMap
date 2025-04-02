@@ -17,7 +17,7 @@ class MenuGroup(models.Model):
         return self.name
 
 class Menu(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=2000)
     group = models.ForeignKey('MenuGroup', null=True, on_delete=models.SET_NULL)
     hierarchy_level = models.IntegerField(default=0, help_text="Menus with the same number are considered siblings. Menus with lower numbers are considered parents of the ones with higher numbers. For example, a menu with the number 0 is considered parent of menus with the number 1.")
     active = models.BooleanField(default=True)
@@ -31,7 +31,7 @@ class Menu(models.Model):
         return self.name
 
 class Tag(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=2000)
     related_tags = models.ManyToManyField('Tag', blank=True, through='Tag_relationship')
     related_locations = models.ManyToManyField('Location', blank=True)
     parent_menu = models.ForeignKey('Menu', null=True, on_delete=models.SET_NULL)
@@ -65,12 +65,11 @@ class Tag_relationship(models.Model):
         return self.child_tag.name + '_' + self.parent_tag.name + '_relation'
 
 class Location(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=2000)
     description = HTMLField(null=True, blank=SET_NULL)
     latitude = models.DecimalField(max_digits=24, decimal_places=20, validators=[MinValueValidator(-90), MaxValueValidator(90)])
     longitude = models.DecimalField(max_digits=24, decimal_places=20, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
-    # overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL, widget=forms.Textarea(attrs={'rows':5, 'cols':50}))
     active = models.BooleanField(default=True)
     class Meta:
         db_table = 'location'
