@@ -62,7 +62,7 @@ export class MapComponent implements OnInit {
   showRotateMessage = false;
   
   get hasMenuGroupTabs() {
-    const tabsLength = this.menugroups.length;
+    const tabsLength = this._menugroups.length;
     if (tabsLength == 1) {
       return !this.mapSetting.hide_menu_group_when_unique;;
     }
