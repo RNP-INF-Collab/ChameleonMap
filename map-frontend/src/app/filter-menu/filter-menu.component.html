@@ -1,4 +1,4 @@
-<mat-accordion [multi]="true" [hideToggle]="true" class="scrollbar-box scrollbar-box-chrome" [ngClass]="{'has-tabs': _linksActive || (_menugroups && _menugroups.length > 0)}">
+<mat-accordion [multi]="true" [hideToggle]="true" class="scrollbar-box scrollbar-box-chrome" [ngClass]="{'has-tabs': _hasMenuGroupTabs }">
     <mat-expansion-panel *ngFor="let menu of activeMenus" [expanded]="true" [disabled]="true">
 
         <div *ngIf="selectedTagsMenuId===menu.id; else elseThenIsNotSelectedTagsMenu">
