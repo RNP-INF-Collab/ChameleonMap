@@ -179,6 +179,9 @@ export class MapComponent implements OnInit {
         this.menus = results.menus;
         this.menus.forEach(menu => {
           menu.expanded = this.menus.length < 3;
+          if(menu.hierarchy_level == 0){
+            menu.expanded = true;
+          }
         });
         this.menus.forEach(menu => {
           if (menu.group == this.menugroups[0].id) {

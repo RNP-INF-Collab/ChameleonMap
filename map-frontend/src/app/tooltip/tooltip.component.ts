@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import * as L from 'leaflet';
+import { last } from 'rxjs';
 
 @Component({
   selector: 'app-tooltip',
@@ -19,7 +20,7 @@ export class TooltipComponent {
   private selectedLocation: HTMLElement;
   private expandPopup: HTMLElement;
 
-  public continueText = "Continuar";
+  public continueText = "Next";
 
   public centeredTooltipText = "";
 
@@ -30,17 +31,18 @@ export class TooltipComponent {
   public quoteCentered = true;
 
   @Input() map: L.Map;
+  @Input() menus: Array<Menu>;
 
   public showOnboardingIfNeeded(mapName: String) {
     // Check if the user has visited before using localStorage
     if (localStorage.getItem('firstVisit') == null && window.innerWidth > 500) {
       this.askToStartOnboarding(mapName);
-      localStorage.setItem('firstVisit', 'no');
+      //localStorage.setItem('firstVisit', 'no');
     }
   }
 
   askToStartOnboarding(mapName: String) {
-    this.centeredTooltipText = `Bem-vindo ao ${mapName}. Para iniciar o tutorial, clique em Continuar.`
+    this.centeredTooltipText = `Welcome to ${mapName}. To start the tutorial, click next!.`
     this.centeredTooltipEnabled = true;
   }
 
@@ -63,12 +65,13 @@ export class TooltipComponent {
     this.map.dragging.disable();
     /* Menu tabs */
     if (!this.hasShownTabsTooltip) {
+      console.log(2);
       let tabs = document.getElementById('menu-groups-tabs') as HTMLDivElement;
       if (tabs != null) {
         this.quoteCentered = false;
         this.addTooltipNextTo(
           tabs,
-          'No topo esquerdo, encontram-se os <b>Grupos de Menus</b>. Tratam-se de abas contendo diferentes contextos de visualização. <br>Selecione uma aba, e note que diferentes menus serão exibidos abaixo.',
+          'At the top right, you will find <b>Menu Groups</b>. They are tabs that contain different visualization contexts. <br>Select a tab, and different menus will be shown below.</br>',
           0
         );
         this.hasShownTabsTooltip = true;
@@ -84,7 +87,7 @@ export class TooltipComponent {
       this.quoteCentered = false;
       this.addTooltipNextTo(
         menus,
-        'Cada painel retangular à esquerda constitui um <b>Menu</b>. Trata-se de um agrupamento de itens (tags) relacionados. <br>Os menus podem ser selecionados, habilitando a visualização dos itens relacionados àquele Menu no mapa. <br>O Menu selecionado possuirá uma cor mais escura que os demais.<br>Para ocultar a visibilidade de todos os elementos em menu, pode-se clicar no ícone de olho.'
+        'Each rectangular panel is a <b>Menu</b>. They group related items (tags). <br>Menus can be selected, enabling the visualization of the items that are related to that menu.</br>'
       );
       this.hasShownMenusTooltip = true;
       return;
@@ -95,7 +98,7 @@ export class TooltipComponent {
       let tags = document.getElementById('eye') as HTMLDivElement;
       this.addTooltipNextTo(
         tags,
-        'Cada Menu contém elementos geolocalizados, conhecidos como <b>Tags</b>, que são identificados por sua cor.<br>Cada tag está relacionada com uma ou mais localizações no mapa. Podemos identificar a distribuição das tags no mapa por sua cor.<br>Pode-se também ocultar a visibilidade de uma tag específica ao clicar no ícone de olho ao lado da mesma.'
+        'Each menu contains geolocated items, known as <b>Tags</b>, each identified by name and color.<br> Each tag is related to one or more tags in the map. You can identify them in the map by their color. You can also hide a tag clicking on the eye icon on their left. </br>'
       );
       this.hasShownTagsTooltip = true;
       return;
@@ -107,45 +110,47 @@ export class TooltipComponent {
         this.selectedLocation = location;
         this.addTooltipNextTo(
           location,
-          'No mapa estarão distribuídos pontos geolocalizados, chamados <b>Localizações</b>.<br>Através das cores, pode-se compreender a distribuição das <i>tags</i> no mapa.<br>Ao clicar em uma localização, será aberto um <b>popup</b> com mais detalhes.'
+          'In the map, there are geolocated points, known as <b>Locations</b>.<br>Through their colors you will be able to see which <i>tags</i> they relate to.<br> Clicking a location opens up a <b>popup</b> with further details.<br> That is it! Thanks for your visit!</b>'
         );
+        this.isLastTooltip = true;
+        this.continueText = "End tutorial";
         this.hasShownLocationTooltip = true;
       }
       return;
     }
-    /* Popup */
-    if (!this.hasShownPopupTooltip) {
-      let pos = this.selectedLocation.getBoundingClientRect();
-      this.click(pos.x, pos.y);
-      let popup = this.getOpenOverlayedPopupIcon();
-      if (!popup) {
-        this.onSkipClick();
-        return;
-      }
-      this.expandPopup = popup;
-      this.addTooltipNextTo(
-        popup,
-        'Através do <b>Popup</b>, podemos identificar uma descrição mais detalhada da localização e das respectivas tags representadas neste ponto.<br>Para uma descrição ainda mais detalhada e interativa, em uma maior escala, pode-se clicar no ícone <img src="assets/expand-icon.png" class="opp-open-button opp-open-button-for-location opp-expand-icon">'
-      );
-      this.hasShownPopupTooltip = true;
-      return;
-    }
-    /* Overlayed Popup */
-    if (!this.hasShownOverlayedPopupTooltip) {
-      let pos = this.expandPopup.getBoundingClientRect();
-      this.click(pos.x, pos.y);
-      let popup = document.getElementsByClassName('overlayed-popup-title')[0] as HTMLDivElement;
-      this.isLastTooltip = true;
-      this.continueText = "Finalizar tutorial";
-      this.addTooltipNextTo(
-        popup,
-        'Por fim, este é o <b>Popup Estendido</b>, onde podemos visualizar de forma ampla e detalhada informações sobre a localização desejada.<br>Obrigado por utilizar nosso sistema!',
-        null,
-        false
-      );
-      this.hasShownOverlayedPopupTooltip = true;
-      this.map.dragging.enable();
-    }
+    // /* Popup */
+    // if (!this.hasShownPopupTooltip) {
+    //   let pos = this.selectedLocation.getBoundingClientRect();
+    //   this.click(pos.x, pos.y);
+    //   let popup = this.getOpenOverlayedPopupIcon();
+    //   if (!popup) {
+    //     this.onSkipClick();
+    //     return;
+    //   }
+    //   this.expandPopup = popup;
+    //   this.addTooltipNextTo(
+    //     popup,
+    //     'Through the <b>Popup</b>, you will be able to obtain further information of that location and tag.  <br>That is it! Thank you for your visit! </br>'
+    //   );
+    //   this.hasShownPopupTooltip = true;
+    //   return;
+    // }
+    // /* Overlayed Popup */
+    // if (!this.hasShownOverlayedPopupTooltip) {
+    //   let pos = this.expandPopup.getBoundingClientRect();
+    //   this.click(pos.x, pos.y);
+    //   let popup = document.getElementsByClassName('overlayed-popup-title')[0] as HTMLDivElement;
+    //   this.isLastTooltip = true;
+    //   this.continueText = "Finalizar tutorial";
+    //   this.addTooltipNextTo(
+    //     popup,
+    //     'Por fim, este é o <b>Popup Estendido</b>, onde podemos visualizar de forma ampla e detalhada informações sobre a localização desejada.<br>Obrigado por utilizar nosso sistema!',
+    //     null,
+    //     false
+    //   );
+    //   this.hasShownOverlayedPopupTooltip = true;
+    //   this.map.dragging.enable();
+    // }
   }
 
   click(x: number, y: number) {

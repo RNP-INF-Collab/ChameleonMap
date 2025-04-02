@@ -3,15 +3,15 @@
         {{centeredTooltipText}}
     </div>
     <div class="tooltip-buttons">
-        <button class="skip" (click)="onSkipClick()">Pular</button>
-        <button class="continue" (click)="onContinueClick()">Continuar</button>
+        <button class="skip" (click)="onSkipClick()">Skip</button>
+        <button class="continue" (click)="onContinueClick()">Next</button>
     </div>
 </div>
 
 <div class="step-tooltip" [ngClass]="{ 'enabled': currentStepTooltipEnabled, 'quote-centered': quoteCentered }">
     <div class="tooltip-text"></div>
     <div class="tooltip-buttons" >
-        <button *ngIf="!isLastTooltip" class="skip" (click)="onSkipClick()">Pular</button>
+        <button *ngIf="!isLastTooltip" class="skip" (click)="onSkipClick()">Skip</button>
         <button class="continue" (click)="onContinueClick()">{{ continueText }}</button>
     </div>
 </div>
