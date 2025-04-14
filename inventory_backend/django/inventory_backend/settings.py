@@ -27,41 +27,117 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get('DEBUG') or 0)
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', default='').split(' ')
+# ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', default='').split(' ')
+
+ALLOWED_HOSTS = []
+
+ROOT_URLCONF = 'inventory_backend.urls'
+TENANT_URLCONF = 'clients.urls'
 
 # Multi-tenant settings
 TENANT_MODEL = "clients.Client"
 TENANT_DOMAIN_MODEL = "clients.Domain"
+TENANT_USERS_DOMAIN = "localhost"
+AUTH_USER_MODEL= "clients.TenantUser"
 
 # Application definition
 SHARED_APPS = [
+    # Multi tenancy
     'django_tenants',
+    'tenant_users.permissions',
+    'tenant_users.tenants',
     'clients',
-    
-]
-
-TENANT_APPS = [
-    'administration.apps.AdministrationConfig',
+    # Apps
+    # Django
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Other Dependencies
     'colorfield',
     'rest_framework',
     'corsheaders',
     'tinymce',
     'axes',
-    'django.contrib.auth',
-    'django.contrib.admin',
 ]
 
-INSTALLED_APPS = SHARED_APPS + TENANT_APPS
+TENANT_APPS = [
+    'administration.apps.AdministrationConfig',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'tenant_users.permissions',
+    # 'administration.apps.AdministrationConfig',
+    # 'django.contrib.admin',
+]
+
+HAS_MULTI_TYPE_TENANTS = True
+MULTI_TYPE_DATABASE_FIELD = 'tenancytype'  # or whatever the name you call the database field
+
+TENANT_TYPES = {
+    "public": {
+        "APPS": [
+            'django_tenants',
+            'tenant_users.permissions',
+            'tenant_users.tenants',
+            'clients',
+            'axes',
+            'django.contrib.admin',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'django.contrib.sessions',
+            'django.contrib.messages',
+            'django.contrib.staticfiles',
+            'colorfield',
+            'rest_framework',
+            'corsheaders',
+            'tinymce',
+        ],
+        "URLCONF": ROOT_URLCONF,
+    },
+    "root": {
+        "APPS": [
+            'django_tenants',
+            'tenant_users.permissions',
+            'tenant_users.tenants',
+            # 'clients',
+            'axes',
+            'django.contrib.admin',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'django.contrib.sessions',
+            'django.contrib.messages',
+            'django.contrib.staticfiles',
+            'colorfield',
+            'rest_framework',
+            'corsheaders',
+            'tinymce',
+        ],
+        "URLCONF": ROOT_URLCONF,
+    },
+    "scoped": {
+        "APPS": [
+            'administration.apps.AdministrationConfig',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'tenant_users.permissions',
+        ],
+        "URLCONF": TENANT_URLCONF,
+    }
+}
+
+INSTALLED_APPS = []
+for schema in TENANT_TYPES:
+    INSTALLED_APPS += [app for app in TENANT_TYPES[schema]["APPS"] if app not in INSTALLED_APPS]
+
+# INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django_tenants.middleware.main.TenantMainMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -76,6 +152,7 @@ AXES_COOLOFF_TIME = timedelta(minutes=30)
 AXES_FAIL_RETRY_LIMIT = 5
 AXES_LOCKOUT_PARAMETERS = ["ip_address", ["username", "user_agent"]]
 AXES_CACHE = 'default'
+AXES_ENABLE_ADMIN = True
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -84,14 +161,12 @@ CACHES = {
 }
 AUTHENTICATION_BACKENDS = [
     'axes.backends.AxesStandaloneBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'tenant_users.permissions.backend.UserBackend',
 ]
 
 CORS_ORIGIN_WHITELIST = (
     os.environ.get('CORS_WHITELIST'),
 )
-
-ROOT_URLCONF = 'inventory_backend.urls'
 
 TEMPLATES = [
     {

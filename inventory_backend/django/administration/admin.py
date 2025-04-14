@@ -1,18 +1,26 @@
 from django.contrib import admin
-from .models import *
+from administration.models import *
 from django.utils.html import format_html
 
-@admin.register(MenuGroup)
+
+class TenantAdminSite(admin.AdminSite):
+    site_header = "Map System Admin"
+    site_title = "Map System Portal"
+    index_title = "Welcome to Map System Admin Portal"
+
+tenant_admin_site = TenantAdminSite(name='tenant_admin')
+
+tenant_admin_site.register(MenuGroup)
 class MenuGroupAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
-@admin.register(Menu)
+tenant_admin_site.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
     list_display = ("name", "group", "hierarchy_level", "active")
     list_filter = ("hierarchy_level",)
     search_fields = ['name']
 
-@admin.register(Location)
+tenant_admin_site.register(Location)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ("name", "latitude", "longitude", "active")
     search_fields = ['name']
@@ -22,7 +30,7 @@ class Tag_relationshipInline(admin.TabularInline):
     fk_name = "child_tag"
     search_fields = ['name']
 
-@admin.register(Tag)
+tenant_admin_site.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     inlines = [
         Tag_relationshipInline,
@@ -32,25 +40,25 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = ("parent_menu",)
     search_fields = ['name']
 
-@admin.register(Link)
+tenant_admin_site.register(Link)
 class LinkAdmin(admin.ModelAdmin):
     list_display = ("display_name", "location_1", "location_2", "links_group")
     list_filter = ("links_group",)
     search_fields = ['display_name']
 
-@admin.register(Links_group)
+tenant_admin_site.register(Links_group)
 class Links_groupAdmin(admin.ModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
 
-@admin.register(Kml_shape)
+tenant_admin_site.register(Kml_shape)
 class Kml_shapeAdmin(admin.ModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
 
-@admin.register(Map_configuration)
+tenant_admin_site.register(Map_configuration)
 class Map_configurationAdmin(admin.ModelAdmin):
     model = Map_configuration
 

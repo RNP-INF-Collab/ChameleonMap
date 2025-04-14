@@ -1,14 +1,16 @@
 from django_tenants.models import TenantMixin, DomainMixin
 from django.db import models
+from tenant_users.tenants.models import TenantBase
+from tenant_users.tenants.models import UserProfile
 
-class Client(TenantMixin):
+class Client(TenantBase):
     name = models.CharField(max_length=100)
-    paid_until = models.DateField()
-    on_trial = models.BooleanField(default=True)
     created_on = models.DateField(auto_now_add=True)
-
-    # Possivel adicionar campos extras necessários
-    # no TenantMixin (ex: endereço, plano, etc.)
+    tenancytype = models.CharField(max_length=100, choices=[
+        ('public', 'Public'),
+        ('scoped', 'Scoped'),
+        ('root', 'Root'),
+    ], default='scoped')
 
     def __str__(self):
         return self.name
@@ -19,5 +21,6 @@ class Domain(DomainMixin):
     #   domain : (ex: 'meusite.com')
     #   tenant : relação com Client
     #   is_primary : bool
-    #
-    # Possivel adicionar mais campos caso precise
+
+class TenantUser(UserProfile):
+    name = models.CharField(max_length=100)
