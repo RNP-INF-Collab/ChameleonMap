@@ -47,8 +47,6 @@ services:
       target: development
     volumes:
       - ./map-frontend:/usr/src/app
-    expose:
-      - 4200
 
   map-navigation:
     image: map-navigation
@@ -56,6 +54,6 @@ services:
       context: ./map-navigation-app
       target: development
     volumes:
-      - ./map-frontend-app:/usr/src/app
+      - ./map-navigation-app:/usr/src/app
     expose:
-      - 4201
+      - 80
