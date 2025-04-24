@@ -18,6 +18,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  map-navigation:
+    build:
+      context: ./map-navigation-app
+      target: deployment
+    volumes:
+      - ./map-navigation-app:/usr/src/app
+    expose:
+      - 80
+
   nginx:
     build: ./nginx
     depends_on: 

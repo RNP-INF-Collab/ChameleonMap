@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+.bar {
+    width: 100%;
+    height: 8vh;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    z-index: 999;
+    border-bottom-width: 4px;
+    border-bottom-style: solid;
+    border-image: linear-gradient(to bottom, #212121, #fefefe) 30;
+    justify-content: space-between;
+    min-height: 50px;
+    padding-bottom: 8px;
+  }
+  
+  .button {
+    font-family: 'Quicksand', sans-serif;
+    padding: 0 20px;
+    background-color: rgb(38, 38, 199);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    height: 80%;
+    margin-left: 15%;
+  }
+  
+  #event-logo {
+    height: 100%;
+    margin-right: 15%;
+    margin-left: 15px;
+  }
+
+  iframe {
+      height: calc(81vh);
+  }
+  
+  #loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 10px solid #f3f3f3; /* light gray border */
+    border-top: 10px solid #3498db; /* blue border on top */
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    animation: spin 1s linear infinite; /* spin animation */
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+.logos-frame {
+  position: fixed;
+  top: 92%;
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+}
+  
+.logos {
+  height: 5vh;
+}

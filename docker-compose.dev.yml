@@ -49,3 +49,13 @@ services:
       - ./map-frontend:/usr/src/app
     expose:
       - 4200
+
+  map-navigation:
+    image: map-navigation
+    build:
+      context: ./map-navigation-app
+      target: development
+    volumes:
+      - ./map-frontend-app:/usr/src/app
+    expose:
+      - 4201
