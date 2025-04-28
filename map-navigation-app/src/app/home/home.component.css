@@ -14,7 +14,7 @@
     display: block;
     margin: 0 auto;
     height: 180px;
-    width: 350px;
+    width: 550px;
     z-index: 2;
     border-radius: 10%;
     object-fit: cover;
@@ -27,7 +27,7 @@
     left: 0;
     right: 0;
     height: 120px;
-    background-color: #192297;
+    background-color: #fb7c1c;
     z-index: -1;
 }
   
