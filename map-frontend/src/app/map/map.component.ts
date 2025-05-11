@@ -449,10 +449,10 @@ export class MapComponent implements OnInit {
       this.markerClusterGroup.refreshClusters();
     });
     
-    // this.map.setMaxBounds([
-    //   [-400,0],
-    //   [1152,800]
-    // ]);
+    this.map.setMaxBounds([
+      [0,14500],
+      [4000,0]
+    ]);
 
     L.control
       .zoom({
@@ -473,6 +473,7 @@ export class MapComponent implements OnInit {
     let corner1: L.LatLng;
     let corner2: L.LatLng;
     let imageBounds;
+    let imageBounds2;
 
     let tiles;
     tiles = L.tileLayer(
@@ -488,9 +489,10 @@ export class MapComponent implements OnInit {
     // imageUrl = "https://i.imgur.com/OaGUAED.png" // planta_baixa_sem_fundo_11520
     // imageUrl = "https://i.imgur.com/S7rW5c3.png" // planta_baixa_sem_fundo_estandes_11520
     // imageUrl = "https://i.imgur.com/Ymh1fbQ.png"  // planta_baixa_sem_fundo_estandes_v3_9600
-    imageUrl = "../assets/planta.png" //v11 com dois pinos
-    imageBounds = [[0,0], [1169,2331]]
-    this.insertEventPlan(imageUrl, imageBounds);
+    imageUrl = "../assets/Mapa.png" //v11 com dois pinos
+    imageBounds = [[0,0], [4096,13800]]
+    imageBounds2 = [[0,0], [4216,13744]]
+    this.insertEventPlan(imageUrl, imageBounds, imageBounds2);
 
     this.markerClusterGroup = L.markerClusterGroup({
       iconCreateFunction: function (cluster) {
@@ -525,7 +527,7 @@ export class MapComponent implements OnInit {
     this.onboardingComponent.showOnboardingIfNeeded(mapName);
   }
 
-  private insertEventPlan(imageUrl: string, imageBounds: any) {
+  private insertEventPlan(imageUrl: string, imageBounds: any, img: any) {
     L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
     this.map.fitBounds(imageBounds);
   }
