@@ -440,7 +440,7 @@ export class MapComponent implements OnInit {
         // -15,
         // -59
       ],
-      zoom: 0,
+      zoom: -3,
       // zoom: this.mapSetting.initial_zoom_level + 5,
       zoomControl: false
     });
@@ -479,18 +479,18 @@ export class MapComponent implements OnInit {
     tiles = L.tileLayer(
       '',
       {
-        maxZoom: 20,
-        minZoom: -65,
+        maxZoom: 0,
+        minZoom: -3,
       }
     );
     tiles.addTo(this.map);
-    // imageUrl = "https://i.imgur.com/lulpkOB.png" // planta_baixa
+    // imageUrl = "https://i.imgur.com/lulpkOB" // planta_baixa
     // imageUrl = "https://i.imgur.com/Uz9XPLp.png" // planta_baixa_sem_fundo
     // imageUrl = "https://i.imgur.com/OaGUAED.png" // planta_baixa_sem_fundo_11520
     // imageUrl = "https://i.imgur.com/S7rW5c3.png" // planta_baixa_sem_fundo_estandes_11520
     // imageUrl = "https://i.imgur.com/Ymh1fbQ.png"  // planta_baixa_sem_fundo_estandes_v3_9600
-    imageUrl = "../assets/Mapa.png" //v11 com dois pinos
-    imageBounds = [[0,0], [4096,13800]]
+    imageUrl = "../assets/Mapa11.png" //v11 com dois pinos
+    imageBounds = [[0,0], [4090,14247]]
     imageBounds2 = [[0,0], [4216,13744]]
     this.insertEventPlan(imageUrl, imageBounds, imageBounds2);
 
