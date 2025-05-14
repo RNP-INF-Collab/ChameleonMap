@@ -20,6 +20,7 @@ import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.comp
 import { forkJoin } from 'rxjs';
 import { kml } from '@tmcw/togeojson';
 import { TooltipComponent } from '../tooltip/tooltip.component';
+import { ChameleonButtonComponent } from '../chameleon-button/chameleon-button.component';
 
 @Component({
   selector: 'app-map',
@@ -1261,10 +1262,29 @@ export class MapComponent implements OnInit {
     this.showRotateMessage = false;
   }
 
-  aboutUsButtonClick() {
-    // console.log('Botão clicado!');
-  }
+  public aboutUsButtonClick() {
+    console.log('Chameleon button clicked');
+    
+    let popupContent: string =  `
+    <div>
+      <t2> Developed by INF-UFRGS / RNP
+      
+      <t3> Authors: <\t3>
+      Eduardo Peretto
+      Gabriel Vassoler
+      Gustavo Araújo
+      Leonardo Lauryel
+      Lizandro Granville
+      Luciano Pascoal Gaspary
+      Manoel Narciso Reis Soares Filho
 
+      <t4>Powered by Leaflet<\t4>
+    <\div>
+    `
+    
+    this.overlayedPopup.activateWithPersonalizedContent(popupContent, "About Us")
+    console.log('Popup activated!');
+  }
 }
 
 function getMarkerIcon(
