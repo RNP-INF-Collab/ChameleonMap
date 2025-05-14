@@ -106,6 +106,7 @@ export class TagSidebarComponent {
     this._pinnedMenus.forEach( menu =>
       this.unpinMenuEmitter.emit(menu)
     )
+    this._pinnedMenus = [];
   }
 
   public openPinnedMenu(menu: Menu) {
