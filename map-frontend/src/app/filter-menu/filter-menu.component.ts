@@ -1,10 +1,9 @@
 import {
   Component,
-  OnInit,
   Input,
   Output,
   EventEmitter,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { EventEmitterService } from '../event-emitter.service';
 import { TagSidebarComponent } from './tag-sidebar/tag-sidebar.component';
@@ -219,7 +218,7 @@ export class FilterMenuComponent {
     this.currentBehaviorOfMultipleTagsVisibilityButton = TagsMenuButtonBehavior.OpenAllEyes;
   }
 
-  openAllEyes(menu: Menu, item: any, event: any) {
+  openAllEyes(menu: Menu, item: any, x: any) {
     for (let i = 0; i < this._tags.length; i++) {
       if (this._tags[i].parent_menu == menu.id) {
         if (this._tags[i].visibility == false) {
@@ -244,15 +243,27 @@ export class FilterMenuComponent {
     event.stopPropagation();
   }
 
-  menuPin(menu: Menu, event: any) {
-    menu.pinned = true;
+  pinMenuButtonClicked(menu: Menu, event: any) {
+    this.pinMenu(menu)
+    this.tagSidebar.addPinnedMenu(menu)
+
+    this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
     event.stopPropagation();
   }
 
-  menuUnpin(menu: Menu, event: any) {
-    menu.pinned = false;
-    this.menuClick(this.getMenuById(this.selectedTagsMenuId)!);
+  unpinMenuButtonClicked(menu: Menu, event: any) {
+    this.unpinMenu(menu);
+    this.tagSidebar.removePinnedMenu(menu);
+    this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
     event.stopPropagation();
+  }
+
+  pinMenu(menu: Menu){
+    menu.pinned = true;
+  }
+
+  unpinMenu(menu: Menu){
+    menu.pinned = false;
   }
 
   menuCollapse() {

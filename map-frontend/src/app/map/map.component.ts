@@ -435,7 +435,8 @@ export class MapComponent implements OnInit {
       ],
       zoom: this.mapSetting.initial_zoom_level + 3,
       // zoom: this.mapSetting.initial_zoom_level + 5,
-      zoomControl: false
+      zoomControl: false,
+      attributionControl: false
     });
 
     this.map.on('zoom', () => {
@@ -1259,6 +1260,11 @@ export class MapComponent implements OnInit {
   closeMessage() {
     this.showRotateMessage = false;
   }
+
+  aboutUsButtonClick() {
+    // console.log('Botão clicado!');
+  }
+
 }
 
 function getMarkerIcon(

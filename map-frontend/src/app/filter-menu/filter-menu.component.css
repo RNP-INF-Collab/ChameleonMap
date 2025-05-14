@@ -14,11 +14,13 @@ mat-expansion-panel  {
 .mat-side{
   font-size: 30px;
   position: relative !important;
-	margin-top: 10px;
-  padding-right: 5px;
-  padding-bottom: 5px;
   transition: all 0.5s;
   cursor: pointer;
+  
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .noselect {
@@ -58,7 +60,13 @@ mat-expansion-panel  {
 }
 
 .menu-header:hover {
-  background-color: rgba(168, 177, 189, 0.212) !important;
+  background-color: rgba(168, 177, 189, 0.212);
+}
+
+.selected-menu-header {
+  background: rgba(55, 60, 79, 0.35) !important; 
+  width: 117%; 
+  margin-left: -25px;
 }
 
 .menu-body {
@@ -216,26 +224,34 @@ mat-expansion-panel  {
   font-size: 15px;
 }
 
-#menu-button-close-all{
-  font-size: 22px;
-  vertical-align: middle;
-}
+
 
 .letter-overlay:hover {
   color: RoyalBlue;
 }
 
+
+#menu-button-lock-all{
+  font-size: 22px;
+  padding-left: 2px;
+}
+
 #menu-button-open-all{
   font-size: 22px;
-  vertical-align: middle;
 }
 
 #menu-button-expand{
-  display: inline;
-  vertical-align: middle;
+  font-size: 40px;
 }
 
 .pinned-header {
-  background: rgb(55,60,79);
-  background: linear-gradient(180deg, rgba(30, 71, 236, 0.35) 0%, rgb(121, 119, 219) 100%);
+  position: relative;
+  background-image: !important
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><text x='0' y='20' font-size='20' fill='white'>★</text></svg>"),
+
+    linear-gradient(135deg, rgba(100, 100, 100, 0.4) 0%, rgba(100, 100, 100, 0.4) 25%, transparent 25%, transparent 100%);
+  
+  background-repeat: no-repeat;
+  background-position: 0.5rem center, 0 0;
+  background-size: 30px 30px, 60px 100%;
 }
