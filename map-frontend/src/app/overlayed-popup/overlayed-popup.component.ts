@@ -56,7 +56,8 @@ export class OverlayedPopupComponent {
     this.setCurrentKeeperByButtonId(buttonId);
     this.setNewTabButtonLink();
 
-    this.overlayedPopupContainer.nativeElement.classList.remove('hidden');
+    const popup = this.overlayedPopupContainer.nativeElement;
+    popup.classList.add('visible');
     this._isActive = true;
   }
 
@@ -70,12 +71,15 @@ export class OverlayedPopupComponent {
 
       this.setNewTabButtonLink();
 
-      this.overlayedPopupContainer.nativeElement.classList.remove('hidden');
+      const popup = this.overlayedPopupContainer.nativeElement;
+      popup.classList.add('visible');
       this._isActive = true;
     }
   }
 
   public desactivate() {
+    const popup = this.overlayedPopupContainer.nativeElement;
+    popup.classList.remove('visible');
     this.overlayedPopupContainer.nativeElement.classList.add('hidden');
     this._isActive = false;
   }

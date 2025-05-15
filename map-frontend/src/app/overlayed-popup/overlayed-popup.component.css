@@ -74,3 +74,18 @@
 #opp-content {
   height: calc(100vh - 15%);
 }
+
+/* Animating */
+#overlayed-popup-container {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  z-index: 1000;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+
+#overlayed-popup-container.visible {
+  visibility: visible;
+  opacity: 1;
+}

@@ -72,6 +72,8 @@ export class MapComponent implements OnInit {
 
   private kmlLayers: { [key: number]: L.Layer } = {};
 
+  private shouldBypassSummarizedPopup = true;
+
   @HostListener('document:click', ['$event'])
   clickout(event: any) {
     if (event.target.classList.contains("opp-open-button")) {
@@ -824,17 +826,22 @@ export class MapComponent implements OnInit {
       location.onMap = true;
       if (color != '') location.activeColors = [color];
 
-      const pop = L.responsivePopup({ offset: L.point(-3, -11), hasTip: false, closeButton: false }).setContent(location.popup);
 
       location.locationMarker = L.marker(
         [location.latitude, location.longitude],
         { icon: this.generatePinIcon(location.activeColors) }
       )
-        .bindPopup(pop)
         .bindTooltip(location.name, {
           offset: L.point(-3, -18),
           direction: 'top'
         });
+
+      if (this.shouldBypassSummarizedPopup) {
+        this.addOnClickCallback(location);
+      } else {
+        const pop = L.responsivePopup({ offset: L.point(-3, -11), hasTip: false, closeButton: false }).setContent(location.popup);
+        location.locationMarker = location.locationMarker.bindPopup(pop)
+      }
 
       this.markerClusterGroup.addLayer(location.locationMarker);
       this.map.addLayer(this.markerClusterGroup);
@@ -847,6 +854,13 @@ export class MapComponent implements OnInit {
       );
     }
     this.addHoverFunction(location.locationMarker);
+  }
+
+  private addOnClickCallback(location: Location) {
+    location.locationMarker.on('click',  (ev: any) => {
+      console.log("onClickCallback")
+      this.overlayedPopup.activateByLocation(location);
+    });
   }
 
   private addHoverFunction(marker: any) {
