@@ -29,6 +29,7 @@ export class OverlayedPopupComponent {
   private _tags: Array<Tag>;
 
   // Control
+  public enableOpenInNewTabButton = false
   private _isActive: boolean;
 
   // Parent Methods
@@ -69,7 +70,9 @@ export class OverlayedPopupComponent {
       this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${this.getPopupTitle()}</div>`;
       this.subMap.keeper = this._currentKeeper;
 
-      this.setNewTabButtonLink();
+      if (this.enableOpenInNewTabButton) {
+        this.setNewTabButtonLink();
+      }
 
       const popup = this.overlayedPopupContainer.nativeElement;
       popup.classList.add('visible');

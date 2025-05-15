@@ -51,7 +51,6 @@ export class MapframeComponent implements OnInit, OnDestroy {
     this.zone.run(() => {
       this.isLoading = false
     })
-    console.log("Stopped loading")
   }
 
   private updateMapSource(id: number) {
