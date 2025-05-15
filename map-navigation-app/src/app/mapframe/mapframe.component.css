@@ -39,9 +39,18 @@
   iframe {
       height: calc(81vh);
   }
+
+  #mapframe.blurred {
+    filter: blur(4px);
+  }
+
+  #mapframe {
+    transition: filter 0.1s ease;
+  }  
   
   #loader {
     position: fixed;
+    z-index: 9999;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

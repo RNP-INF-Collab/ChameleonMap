@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Sources } from 'sources';
 
@@ -9,17 +10,24 @@ import { Sources } from 'sources';
 })
 
 export class MapframeComponent implements OnInit, OnDestroy {
-  /* Change the Maps URL here */
   private mapsURLS = Sources
 
-  /* Loader timeout in miliseconds */
-  private loaderTimeOut: number = 3500
+  private loaderTimeOut: number = 2000
 
   private idSubscriber: any;
 
-  public isLoading: boolean = false;
+  public mapSource: SafeResourceUrl;
 
-  constructor(private route: ActivatedRoute) {}
+  public isLoading: boolean = true;
+
+  constructor(
+    private route: ActivatedRoute, 
+    private sanitizer: DomSanitizer,
+    private zone: NgZone
+  ) {
+      const rawUrl = '/'; 
+      this.mapSource = this.sanitizer.bypassSecurityTrustResourceUrl(rawUrl);
+  }
 
   ngOnInit() {
     this.setupLoading();
@@ -34,46 +42,19 @@ export class MapframeComponent implements OnInit, OnDestroy {
   }
 
   private setupLoading() {
-    console.log("setup loader")
-    this.hideMapFrame();
-    window.addEventListener('load', this.stopLoading);
-    setTimeout(this.stopLoading, this.loaderTimeOut)
+    const boundStopLoading = this.stopLoading.bind(this);
+    window.addEventListener('load', boundStopLoading);
+    setTimeout(boundStopLoading, this.loaderTimeOut);
   }
   
   private stopLoading() {
-    console.log("called")
-
-    // Hide loader
-    let loader = document.getElementById("loader")
-    if (loader) {
-      console.log("Hiding loader")
-      loader.hidden = true
-    } else {
-      console.log("Loader not found")
-    }
-
-    // Show map
-    let mapFrame = document.getElementById("mapframe")
-    if (mapFrame) {
-      console.log("Showing map frame")
-      mapFrame.hidden = false
-    }
-  }
-
-  private hideMapFrame() {
-    let mapFrame = document.getElementById("mapframe")
-    if (mapFrame) {
-      console.log("Hiding map frame")
-      mapFrame.hidden = true
-    }
+    this.zone.run(() => {
+      this.isLoading = false
+    })
+    console.log("Stopped loading")
   }
 
   private updateMapSource(id: number) {
-    let mapFrame = document.getElementById("mapframe")
-    if (this.mapsURLS[id] && mapFrame) {
-      mapFrame.setAttribute("src", this.mapsURLS[id])
-    } else {
-      console.log("iFrame not found")
-    }
+    this.mapSource = this.sanitizer.bypassSecurityTrustResourceUrl(this.mapsURLS[id]);
   }
 }
