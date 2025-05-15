@@ -40,6 +40,7 @@ class Tag(models.Model):
     sidebar_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* Leave blank to use default template</b>", null=True, blank=SET_NULL)
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     active = models.BooleanField(default=True)
+    atlas_feature_active = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'tag'
@@ -71,6 +72,8 @@ class Location(models.Model):
     longitude = models.DecimalField(max_digits=24, decimal_places=20, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     active = models.BooleanField(default=True)
+    atlas_feature_active = models.BooleanField(default=True)
+    
     class Meta:
         db_table = 'location'
         ordering = ['name']

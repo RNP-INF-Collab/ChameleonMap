@@ -68,8 +68,60 @@ export class SubMapComponent implements OnInit {
 
   public set keeper( keeper: Location | Tag){
     this._keeper = keeper;
-    // console.log(this._keeper.overlayed_popup_content)
-    this.popup_content.nativeElement.innerHTML = `<div style='height: 1000px'>${this._keeper.overlayed_popup_content}</div>`;
+    // Remove previous content
+    this.ATLAS.clearData();
+    if(this.wasAlreadyAdded(this._keeperContentMarker, this.subMap))      
+      this._keeperContentMarker.removeFrom(this.subMap);
+    this.restoreDefaultScreenView();
+
+    let isAtlasScript: Boolean = keeper.atlas_feature_active
+    if(isAtlasScript){
+      isAtlasScript = this.ATLAS.isATLASscript(this._keeper.overlayed_popup_content)
+    }
+
+    if(!isAtlasScript){
+      // Add html content marker
+      this._keeperContentMarker = L.marker( this.defaultSubMapCenterCoordinates ,  {
+        draggable: false,
+        autoPan:false
+      }).addTo(this.subMap);
+
+      this._keeperContent = `<div style='padding-left: 1px; padding-right: 1px'>${this._keeper.overlayed_popup_content}</div>`;
+      
+      // Get Real Screen Size occupied by the Overlayed Popup Content
+      this.phantom_popup_content_html.nativeElement.innerHTML = this._keeperContent;
+      this.contentPixelsSize = this.phantom_popup_content_html.nativeElement.getBoundingClientRect();
+      this.phantom_popup_content_html.nativeElement.innerHTML = "";     // Remove phatom object
+      
+      // Set marker options to new content
+      this._keeperContentMarker.setIcon(L.divIcon({
+        html: this._keeperContent,
+        iconSize: [this.contentPixelsSize.width, this.contentPixelsSize.height]
+      }));
+      
+      // Screen View Position
+
+      
+      //  Overlayed Popup Contents Position 
+      this._keeperContentNorthCenterPoint = new L.LatLng(
+        this.subMap.getBounds().getNorth(),
+        this.subMap.getBounds().getCenter().lng
+        );
+        
+        this._keeperContentMarkerPosition = this._keeperContentNorthCenterPoint;
+        this._keeperContentMarkerPosition.lat -= this.convertPixelsHeightToLat(this.contentPixelsSize.height / 2);
+        this._keeperContentMarker.setLatLng( this._keeperContentMarkerPosition );
+        
+        this._keeperContentMarker.options.icon!.options.iconAnchor = [
+          this.contentPixelsSize.width / 2,
+          this.contentPixelsSize.height / 2
+        ];
+        
+        // Scroll Bar
+        this.configScrollBar();
+    }else{
+      this.ATLAS.run(this._keeper.overlayed_popup_content, this.subMap);
+    }
   }
     
     

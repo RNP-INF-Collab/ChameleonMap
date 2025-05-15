@@ -14,7 +14,7 @@ class MenuAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "latitude", "longitude", "active")
+    list_display = ("name", "latitude", "longitude", "active", "atlas_feature_active")
     search_fields = ['name']
 
 class Tag_relationshipInline(admin.TabularInline):
@@ -27,7 +27,7 @@ class TagAdmin(admin.ModelAdmin):
     inlines = [
         Tag_relationshipInline,
     ]
-    list_display = ("name", "parent_menu", "active")
+    list_display = ("name", "parent_menu", "active", "atlas_feature_active")
     filter_horizontal = ('related_locations',)
     list_filter = ("parent_menu",)
     search_fields = ['name']

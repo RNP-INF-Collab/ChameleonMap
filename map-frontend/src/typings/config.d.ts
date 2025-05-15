@@ -26,6 +26,7 @@ declare global {
     readonly parent_menu: number;
     related_locations: Array<number>;
     readonly active: boolean;
+    readonly atlas_feature_active: boolean;
     readonly sidebar_content: string;
     readonly overlayed_popup_content: string;
 
@@ -44,6 +45,7 @@ declare global {
     readonly description: string;
     readonly overlayed_popup_content: string;
     readonly active: boolean;
+    readonly atlas_feature_active: boolean;
 
     onMap: boolean;
     activeColors: Array<string>;
