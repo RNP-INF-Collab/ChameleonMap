@@ -69,7 +69,7 @@ export class SubMapComponent implements OnInit {
   public set keeper( keeper: Location | Tag){
     this._keeper = keeper;
     // console.log(this._keeper.overlayed_popup_content)
-    this.popup_content.nativeElement.innerHTML = `<div style='height: 1000px'>${this._keeper.overlayed_popup_content}</div>`;
+    this.popup_content.nativeElement.innerHTML = `<div style=''>${this._keeper.overlayed_popup_content}</div>`;
   }
     
     
