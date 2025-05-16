@@ -80,6 +80,23 @@ export class OverlayedPopupComponent {
     }
   }
 
+  public activateWithPersonalizedContent(content: string, title: string) {
+    if (location !== null) {
+      // this._currentKeeperType = 'location';
+      // this._currentKeeper = this.getLocationById(location.id);
+
+      this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${title}</div>`;
+      // this.subMap.keeper = this._currentKeeper;
+      this.subMap.setContentDirectly(content)
+      // this.setNewTabButtonLink();
+
+      const popup = this.overlayedPopupContainer.nativeElement;
+      popup.classList.add('visible');
+      popup.classList.remove('hidden');
+      this._isActive = true;
+    }
+  }
+
   public desactivate() {
     const popup = this.overlayedPopupContainer.nativeElement;
     popup.classList.remove('visible');
