@@ -113,7 +113,7 @@ export class OverlayedPopupComponent {
     }
 
     // Set title
-    this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${this.getPopupTitle()} <span style="font-size: smaller; font-weight: normal;">(Dados obtidos de: <a href="https://sos-rs.com/">SOS-RS</a>)</span></div>`;
+    this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${this.getPopupTitle()}</div>`;
 
     // Set Content
     this.subMap.keeper = this._currentKeeper;
