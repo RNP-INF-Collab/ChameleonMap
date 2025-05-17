@@ -235,7 +235,6 @@ mat-expansion-panel  {
 #menu-button-expand{
   display: inline;
   vertical-align: middle;
-  font-size: 40px;
 }
 
 .pinned-header {

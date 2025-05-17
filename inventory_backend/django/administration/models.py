@@ -67,8 +67,8 @@ class Tag_relationship(models.Model):
 class Location(models.Model):
     name = models.CharField(max_length=2000)
     description = HTMLField(null=True, blank=SET_NULL)
-    latitude = models.DecimalField(max_digits=24, decimal_places=20, )
-    longitude = models.DecimalField(max_digits=24, decimal_places=20, )
+    latitude = models.IntegerField()
+    longitude = models.IntegerField()
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     active = models.BooleanField(default=True)
     class Meta:

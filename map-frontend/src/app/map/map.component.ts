@@ -483,7 +483,7 @@ export class MapComponent implements OnInit {
     tiles = L.tileLayer(
       '',
       {
-        maxZoom: 0,
+        maxZoom: -2,
         minZoom: -3,
       }
     );
@@ -493,8 +493,8 @@ export class MapComponent implements OnInit {
     // imageUrl = "https://i.imgur.com/OaGUAED.png" // planta_baixa_sem_fundo_11520
     // imageUrl = "https://i.imgur.com/S7rW5c3.png" // planta_baixa_sem_fundo_estandes_11520
     // imageUrl = "https://i.imgur.com/Ymh1fbQ.png"  // planta_baixa_sem_fundo_estandes_v3_9600
-    imageUrl = "../assets/Mapa_600dpi.png" //v11 com dois pinos
-    imageBounds = [[0,0], [4090,14188]]
+    imageUrl = "../assets/Mapa_v3.png" //v11 com dois pinos
+    imageBounds = [[0,0], [4090,14000]]
     imageBounds2 = [[0,0], [4216,13744]]
     this.insertEventPlan(imageUrl, imageBounds, imageBounds2);
 
@@ -1343,8 +1343,8 @@ export class MapComponent implements OnInit {
         <hr style="margin: 30px auto; width: 60%;">
         <footer style="text-align: center; font-size: 0.9em;">
           <p>
-            <strong><a href="https://github.com/seu-usuario/seu-repositorio" target="_blank">ChameleonMap</a> ®</strong><br>
-            Powered by <a href="https://leafletjs.com/" target="_blank">Leaflet</a> and <a href="https://www.openstreetmap.org/" target="_blank">OpenStreetMap</a>
+            <strong><span>ChameleonMap</span> ®</strong><br>
+            Powered by <span>Leaflet</span> and <span href="https://www.openstreetmap.org/" target="_blank">OpenStreetMap</span>
           </p>
         </footer>
       </div>
