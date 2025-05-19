@@ -40,7 +40,7 @@
             <div *ngFor="let tag of tags">
                 <div *ngIf="tag.active && tag.dependenciesActive">
     
-                    <div id="tag-list" class="tag-list" *ngIf="tag.parent_menu === menu.id" (click)="invokeTagSidebar(tag)">
+                    <div id="tag-list" class="tag-list" *ngIf="tag.parent_menu === menu.id" (click)="openFirstLocationFromTag(tag)">
     
                         <div id="tag-name" *ngIf="tag.dependenciesActive && tag.visibility" class="tag-name" >{{tag.name}}</div>
                         <div *ngIf="!tag.visibility" class="tag-name tag-name-disabled">{{tag.name}}</div>

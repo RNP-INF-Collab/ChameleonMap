@@ -329,6 +329,14 @@ export class FilterMenuComponent {
     this.tagSidebar.selectTag(tag, _selectedLocations);
   }
 
+  openFirstLocationFromTag(tag: Tag) {
+    let locationsCount = tag.related_locations.length
+    if (locationsCount > 0) {
+      const location: any = this.getLocationById(tag.related_locations[0]);
+      location.locationMarker.fireEvent('click')
+    }
+  }
+
   checkActiveMenuTagsVisibilityStatus() {
     if (!this.tags) { return }
 
