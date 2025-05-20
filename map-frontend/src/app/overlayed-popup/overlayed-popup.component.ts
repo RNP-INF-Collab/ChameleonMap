@@ -21,7 +21,7 @@ export class OverlayedPopupComponent {
   @ViewChild('overlayed_popup_conteiner') overlayedPopupContainer: ElementRef;
   @ViewChild('newtab_button') newtabButton: ElementRef;
   @ViewChild('opp_title') overlayedPopupTitle: ElementRef;
-
+  
   // Data
   private _currentKeeper: Location | Tag;
   private _currentKeeperType: string;
