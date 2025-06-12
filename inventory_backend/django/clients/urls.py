@@ -1,10 +1,12 @@
-from administration.admin import tenant_admin_site
 from django.urls import include, path
-from rest_framework import routers
-from administration.views import *
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.auth import views as auth_views
+
+from rest_framework import routers
+
+from administration.views import *
+from administration.admin import tenant_admin_site
+from utils.password_reset_urls import password_reset_patterns
 
 router = routers.DefaultRouter()
 router.register(
@@ -43,17 +45,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('import/', include("importer.urls")),
     path('atlas/', include("atlas_builder.urls")),
-    path(
-        'password_reset/',
-        auth_views.PasswordResetView.as_view(
-            subject_template_name='registration/password_reset_subject_en.txt',
-            html_email_template_name='registration/password_reset_email_en.html'
-        ),
-        name='password_reset'
-    ),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    *password_reset_patterns,
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
