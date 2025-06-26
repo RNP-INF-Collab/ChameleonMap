@@ -68,8 +68,6 @@ TENANT_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'tenant_users.permissions',
-    # 'administration.apps.AdministrationConfig',
-    # 'django.contrib.admin',
 ]
 
 HAS_MULTI_TYPE_TENANTS = True
@@ -101,7 +99,6 @@ TENANT_TYPES = {
             'django_tenants',
             'tenant_users.permissions',
             'tenant_users.tenants',
-            # 'clients',
             'axes',
             'django.contrib.admin',
             'django.contrib.auth',
@@ -130,8 +127,6 @@ TENANT_TYPES = {
 INSTALLED_APPS = []
 for schema in TENANT_TYPES:
     INSTALLED_APPS += [app for app in TENANT_TYPES[schema]["APPS"] if app not in INSTALLED_APPS]
-
-# INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 MIDDLEWARE = [
     'django_tenants.middleware.main.TenantMainMiddleware',

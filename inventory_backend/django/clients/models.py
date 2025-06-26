@@ -17,10 +17,6 @@ class Client(TenantBase):
 
 class Domain(DomainMixin):
     pass
-    # O DomainMixin já possui os campos:
-    #   domain : (ex: 'meusite.com')
-    #   tenant : relação com Client
-    #   is_primary : bool
 
 class TenantUser(UserProfile):
     name = models.CharField(max_length=100)

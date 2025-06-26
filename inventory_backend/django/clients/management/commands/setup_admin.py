@@ -9,10 +9,9 @@ from django_tenants.utils import (
 from os import environ
 
 class Command(BaseCommand):
-    help = "Cria tenant e usuário para admin, caso ainda não existam."
+    help = "Creates tenant and admin user if they do not already exist."
 
     def handle(self, *args, **options):
-        # 1. Cria o tenant (schema admin) se não existir
         if Client.objects.filter(schema_name='public').exists():
             self.stdout.write(self.style.WARNING("Tenant 'admin' already exists."))
             return
@@ -21,6 +20,7 @@ class Command(BaseCommand):
         superuser_username = environ.get('DJANGO_SUPERUSER_USERNAME')
         superuser_password = environ.get('DJANGO_SUPERUSER_PASSWORD')
         base_domain = environ.get('DJANGO_BASE_DOMAIN')
+
         if not superuser_email or not superuser_username or not superuser_password or not base_domain:
             self.stdout.write(self.style.WARNING("Django environment variables missing"))
             return
@@ -55,5 +55,5 @@ class Command(BaseCommand):
         profile.set_password(superuser_password)
         profile.save(update_fields=["password"])
 
-        self.stdout.write(self.style.SUCCESS("Tenant 'admin' criado com sucesso!"))
+        self.stdout.write(self.style.SUCCESS("Tenant 'admin' created successfully!"))
         

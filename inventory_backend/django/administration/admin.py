@@ -4,9 +4,9 @@ from django.utils.html import format_html
 
 
 class TenantAdminSite(admin.AdminSite):
-    site_header = "Map System Admin"
-    site_title = "Map System Portal"
-    index_title = "Welcome to Map System Admin Portal"
+    site_header = "ChameleonMap Admin"
+    site_title = "ChameleonMap Portal"
+    index_title = "Welcome to ChameleonMap Admin Portal"
 
 tenant_admin_site = TenantAdminSite(name='tenant_admin')
 
