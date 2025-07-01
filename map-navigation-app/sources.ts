@@ -1,5 +1,7 @@
 export const Sources = [
-    "http://mapas.rnp.br/",
-    "/",
+    "https://mapas.rnp.br/",
+    "https://mapatestbeds.rnp.br/",
+    "https://mapa.observatorioblockchain.org.br/",
+    "https://cybersecmap.rnp.br/",
     
 ]
