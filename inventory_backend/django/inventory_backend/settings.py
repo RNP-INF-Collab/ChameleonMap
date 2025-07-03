@@ -76,6 +76,7 @@ MULTI_TYPE_DATABASE_FIELD = 'tenancytype'  # or whatever the name you call the d
 TENANT_TYPES = {
     "public": {
         "APPS": [
+            'unfold',
             'django_tenants',
             'tenant_users.permissions',
             'tenant_users.tenants',
