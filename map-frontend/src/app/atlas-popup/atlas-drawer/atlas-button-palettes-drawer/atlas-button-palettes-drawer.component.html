@@ -1,0 +1,34 @@
+<!-- <mat-accordion *ngIf ="true" [multi]="true" [hideToggle]="true" class="scrollbar-box scrollbar-box-chrome"> -->
+<mat-accordion *ngIf ="true" [multi]="true" [hideToggle]="true" >
+    <mat-expansion-panel *ngIf="layersNames.length > 1" [expanded]="true" [disabled]="true">
+        <mat-expansion-panel-header (click)="printT('layer menu clicked')" [expandedHeight]="'45px'" style="background: rgba(168, 177, 189, 0.349); width: 117%; margin-left: -25px;">
+            <mat-panel-title>
+                <div class="menu-name">
+                    <p style="display: inline-block;" class="menu-text">Layers</p>
+                </div>                                        
+                <div class="menu-button-container">
+                    <div class="menu-button">
+                        <mat-icon id="menu-button-expand" (click)="layersPaletteExpansionToggle($event.target, $event)" class="mat-side noselect" [ngClass]="{'mat-side-rot': layersPaletteExpanded}">keyboard_arrow_down</mat-icon>
+                    </div>
+                </div>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *ngIf="layersPaletteExpanded === true">
+            <div *ngFor="let layerName of layersNames.slice().reverse()">
+                <div class="tag-list" *ngIf="true" (click)="printT('new layer clicked')">    
+                    <div *ngIf="true" class="tag-name" >{{layerName}}</div>
+                    <div *ngIf="false" class="tag-name tag-name-disabled">{{layerName}}</div>
+
+                    <mat-icon>                            
+                        <div *ngIf="getCurrentLayerName() === layerName ; else elseNotCurrentLayer" class="material-icons">radio_button_checked</div>
+                        <ng-template #elseNotCurrentLayer>
+                            <div (click)="changeCurrentLayer(layerName)"class="material-icons">radio_button_unchecked</div>
+                        </ng-template>
+                    </mat-icon>
+                </div>
+            </div>
+        </div>
+    </mat-expansion-panel>
+    <!-- here paste the rest of code!!!!!!!!!!!!!!!/ -->
+</mat-accordion>

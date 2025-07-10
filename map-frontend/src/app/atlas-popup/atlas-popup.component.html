@@ -11,7 +11,10 @@
         <div class="overlayed-popup-content">
             <div id = "opp-content" #opp_content></div>
         </div>
-        <app-sub-map [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById"></app-sub-map>
+        <!-- <app-sub-map [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById"></app-sub-map> -->
+        <app-sub-map [externalDataManager]="externalDataManager" [atlasIconBuilder]="atlasIconBuilder" [isActive]="isActive" (pushLocationTitleEvent)="receiveTitleForPushing($event)"></app-sub-map>
+        <!-- <app-sub-map [locations]="locations" [tags]="tags" [getLocationByName]="getLocationByName" [getTagById]="getTagById" [atlasIconBuilder]="atlasIconBuilder"></app-sub-map> -->
         
     </div>
+    <app-atlas-icon-builder [externalDataManager]="externalDataManager"></app-atlas-icon-builder>
 </div>

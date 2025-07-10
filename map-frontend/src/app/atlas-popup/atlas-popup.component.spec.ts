@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OverlayedPopupComponent } from './overlayed-popup.component';
+import { AtlasPopupComponent } from './atlas-popup.component';
 
 describe('OverlayedPopupComponent', () => {
-  let component: OverlayedPopupComponent;
-  let fixture: ComponentFixture<OverlayedPopupComponent>;
+  let component: AtlasPopupComponent;
+  let fixture: ComponentFixture<AtlasPopupComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OverlayedPopupComponent]
+      declarations: [AtlasPopupComponent]
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OverlayedPopupComponent);
+    fixture = TestBed.createComponent(AtlasPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -21,12 +21,17 @@ import { SafeHtmlPipe } from './safe-html.pipe';
 import { LinksMenuComponent } from './links-menu/links-menu.component';
 import { MenuChooserComponent } from './menu-chooser/menu-chooser.component';
 
-import { OverlayedPopupComponent } from './overlayed-popup/overlayed-popup.component';
+// import { OverlayedPopupComponent } from './overlayed-popup/overlayed-popup.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LocationDetailComponent } from './location-detail/location-detail.component';
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
-import { SubMapComponent } from './sub-map/sub-map.component';
-import { ATLASComponent } from './atlas/atlas.component';
+// import { SubMapComponent } from './sub-map/sub-map.component';
+import { SubMapComponent } from './atlas-popup/sub-map/sub-map.component';
+// import { ATLASComponent } from './atlas/atlas.component';
+import { AtlasDrawerComponent } from './atlas-popup/atlas-drawer/atlas-drawer.component';
+import { AtlasIconBuilder } from './atlas-popup/atlas-icon-builder/atlas-icon-builder.component';
+import { AtlasPopupComponent } from './atlas-popup/atlas-popup.component';
+import { AtlasButtonPalettesDrawerComponent } from './atlas-popup/atlas-drawer/atlas-button-palettes-drawer/atlas-button-palettes-drawer.component';
 
 @NgModule({
   declarations: [
@@ -38,11 +43,16 @@ import { ATLASComponent } from './atlas/atlas.component';
     SafeHtmlPipe,
     LinksMenuComponent,
     MenuChooserComponent,
-    OverlayedPopupComponent,
+    // OverlayedPopupComponent,
     LocationDetailComponent,
     TagDetailComponent,
     SubMapComponent,
-    ATLASComponent
+    // ATLASComponent
+    TagDetailComponent,
+    AtlasDrawerComponent,
+    AtlasIconBuilder,
+    AtlasPopupComponent,
+    AtlasButtonPalettesDrawerComponent
   ],
   imports: [
     BrowserModule,

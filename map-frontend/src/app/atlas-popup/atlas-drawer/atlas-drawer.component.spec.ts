@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ATLASComponent } from './atlas.component';
+import { AtlasDrawerComponent } from './atlas-drawer.component';
 
-describe('ATLASComponent', () => {
-  let component: ATLASComponent;
-  let fixture: ComponentFixture<ATLASComponent>;
+describe('AtlasDrawer', () => {
+  let component: AtlasDrawerComponent;
+  let fixture: ComponentFixture<AtlasDrawerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ATLASComponent ]
+      declarations: [ AtlasDrawerComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ATLASComponent);
+    fixture = TestBed.createComponent(AtlasDrawerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

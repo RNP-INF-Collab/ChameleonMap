@@ -1,0 +1,1 @@
+<app-atlas-button-palettes-drawer *ngIf="isActive" [layersNames]="topologyData.layersNames" [currentLayer]="topologyData.currentLayer" [buttonPalettes]="buttonPalettes" (scriptEmitter)="interpreteAtlasScript($event)" (currentLayerChange)="changeLayer($event)"></app-atlas-button-palettes-drawer>

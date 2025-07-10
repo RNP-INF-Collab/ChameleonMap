@@ -6,12 +6,16 @@ import {
   ElementRef, 
   HostListener,
   Input,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { ɵBrowserAnimationBuilder } from '@angular/platform-browser/animations';
 import * as L from 'leaflet';
 import { LeafletMouseEvent } from 'leaflet';
-import { ATLASComponent } from '../atlas/atlas.component';
-// import { ScrollBar } from 'leaflet-scroll-bar';
+import { AtlasDrawerComponent } from '../atlas-drawer/atlas-drawer.component';
+import { AtlasIconBuilder } from '../atlas-icon-builder/atlas-icon-builder.component';
+import { DrawerSettings } from '../atlas-drawer/drawing-parameters';
+import { AtlasExternalDataManager as AtlasExternalDataManager } from '../atlas-external-references-manager';
 
 @Component({
   selector: 'app-sub-map',
@@ -19,7 +23,7 @@ import { ATLASComponent } from '../atlas/atlas.component';
   styleUrls: ['./sub-map.component.css']
 })
 export class SubMapComponent implements OnInit {
-  @ViewChild(ATLASComponent) ATLAS: ATLASComponent;
+  @ViewChild(AtlasDrawerComponent) ATLAS: AtlasDrawerComponent;
   @ViewChild('phantom_popup_content') phantom_popup_content_html: ElementRef;
   
   public subMap: L.Map;
@@ -50,10 +54,16 @@ export class SubMapComponent implements OnInit {
   private scrollBarScreenTranslateInterval: number;
   private scrollHeight: number;
 
-  @Input() locations: any;
-  @Input() tags: any;
-  @Input() getLocationById: any;
-  @Input() getTagById: any;
+  
+  // Parent data
+  @Input() externalDataManager: AtlasExternalDataManager;
+  @Input() atlasIconBuilder: AtlasIconBuilder // !!! being passed twice. think how to optimize
+  @Input() isActive: boolean
+  @Output() pushLocationTitleEvent = new EventEmitter<Location>()
+
+  sendTitleForPushing(location: Location){
+    this.pushLocationTitleEvent.emit(location)
+  }
 
   constructor() { }
 
@@ -64,18 +74,19 @@ export class SubMapComponent implements OnInit {
 
   public restoreDefaultScreenView( map: L.Map = this.subMap , center: any = this.defaultSubMapCenterCoordinates){
     map.setView(center);
-    map.setZoom(10);
+    map.setZoom(DrawerSettings.INITIAL_ZOOM);
   }
 
   public set keeper( keeper: Location | Tag){
     this._keeper = keeper;
-    // Remove previous content
-    this.ATLAS.clearData();
-    if(this.wasAlreadyAdded(this._keeperContentMarker, this.subMap))      
-      this._keeperContentMarker.removeFrom(this.subMap);
-    this.restoreDefaultScreenView();
-
-    if(!this.ATLAS.isATLASscript(this._keeper.overlayed_popup_content)){
+    
+    if(this.ATLAS.isATLASscript(this._keeper.overlayed_popup_content)){
+      this.ATLAS.run(this._keeper.overlayed_popup_content, this.subMap);
+    }else{
+      // Remove previous content
+      if(this.wasAlreadyAdded(this._keeperContentMarker, this.subMap))      
+        this._keeperContentMarker.removeFrom(this.subMap);
+      this.restoreDefaultScreenView();
       // Add html content marker
       this._keeperContentMarker = L.marker( this.defaultSubMapCenterCoordinates ,  {
         draggable: false,
@@ -115,8 +126,6 @@ export class SubMapComponent implements OnInit {
         
         // Scroll Bar
         this.configScrollBar();
-    }else{
-      this.ATLAS.run(this._keeper.overlayed_popup_content, this.subMap);
     }
   }
     
@@ -126,8 +135,8 @@ export class SubMapComponent implements OnInit {
     
     /// Map View
     //  Default View Bounds      
-    this.defaultSubMapCenterCoordinates = new L.LatLng(-14.2350, -51.9253); // Brazil Center
-    // this.defaultSubMapCenterCoordinates = new L.LatLng(0, 0);
+    // this.defaultSubMapCenterCoordinates = new L.LatLng(-14.2350, -51.9253); // Brazil Center
+    this.defaultSubMapCenterCoordinates = new L.LatLng(0, 0);
     
     this.defaultViewBounds = new L.LatLngBounds(
       this.getRealCoord([-10, -10]),
@@ -138,8 +147,8 @@ export class SubMapComponent implements OnInit {
       this.maxViewBounds = this.defaultViewBounds;
       
       //  Zoom Limits       
-      this.minZoom = 10;
-      this.maxZoom = 20;
+      this.minZoom = 5;
+      this.maxZoom = 10;
       this.zoomControlPosition = 'bottomright';
       
   }
@@ -163,14 +172,15 @@ export class SubMapComponent implements OnInit {
     // this.subMap.fitBounds(this.defaultViewBounds);
     this.restoreDefaultScreenView();
     // this.subMap.setMaxBounds(this.maxViewBounds);
-    // this.subMap.setMaxZoom(this.maxZoom);
+    this.subMap.setMinZoom(this.minZoom);
+    this.subMap.setMaxZoom(this.maxZoom);
     this.subMap.zoomControl.setPosition( this.zoomControlPosition);
     
     // Others
-    this.subMap.zoomControl.remove();
-    this.subMap.scrollWheelZoom.disable();
+    // this.subMap.zoomControl.remove();
+    // this.subMap.scrollWheelZoom.disable();
     this.subMap.doubleClickZoom.disable();
-    this.subMap.dragging.disable();
+    // this.subMap.dragging.disable();
     
     // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     //   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -185,7 +195,7 @@ export class SubMapComponent implements OnInit {
     //     [-10,-10],
     //     [10, 10]
     //   ]  
-    // ),{color: 'red'}).addTo(this.subMap).bringToFront();
+    // ),{color: 'red',}).addTo(this.subMap).bringToFront();
     
     // var marker1: any = L.marker([5, 5], {
     //   draggable: false
@@ -393,34 +403,34 @@ export class SubMapComponent implements OnInit {
     }
   }
 
-    private adjustScrollBarPosition(){
-      const scrollBarCurrentPosition =  this.scrollBar.getLatLng()
-      const scrollBarNewPosition = scrollBarCurrentPosition;
+  private adjustScrollBarPosition(){
+    const scrollBarCurrentPosition =  this.scrollBar.getLatLng()
+    const scrollBarNewPosition = scrollBarCurrentPosition;
 
-      // scrollBarNewPosition.lat = 
-        // this.scrollBarStartCenter
-        // - this.convertPixelsHeightToLat(this.scrollBarScreenTranslateInterval 
-        // * ((this.northBound - this.subMap.getBounds().getNorth()) / this.scrollBarTranslationIntervalAbsolute));
-      // this.scrollBar.setLatLng(scrollBarNewPosition)
-      const latDesloc = this.northBound - this.subMap.getBounds().getNorth();
+    // scrollBarNewPosition.lat = 
+      // this.scrollBarStartCenter
+      // - this.convertPixelsHeightToLat(this.scrollBarScreenTranslateInterval 
+      // * ((this.northBound - this.subMap.getBounds().getNorth()) / this.scrollBarTranslationIntervalAbsolute));
+    // this.scrollBar.setLatLng(scrollBarNewPosition)
+    const latDesloc = this.northBound - this.subMap.getBounds().getNorth();
 
-      scrollBarNewPosition.lat = 
-        this.subMap.getBounds().getNorth()
-        - this.scrollHeight / 2
-        - this.scrollBarScreenTranslateInterval * (latDesloc / this.scrollBarTranslationIntervalAbsolute);
-      
-      this.scrollBar.setLatLng(scrollBarNewPosition);
-    }
-
-    private wasAlreadyAdded(object: any, map:  L.Map):boolean{
-      let wasAlreadyAdded = false;
-
-      map.eachLayer( function(layer) {
-        if(layer === object)
-          wasAlreadyAdded = true;
-      });
-
-      return wasAlreadyAdded;
-    }
+    scrollBarNewPosition.lat = 
+      this.subMap.getBounds().getNorth()
+      - this.scrollHeight / 2
+      - this.scrollBarScreenTranslateInterval * (latDesloc / this.scrollBarTranslationIntervalAbsolute);
+    
+    this.scrollBar.setLatLng(scrollBarNewPosition);
   }
+
+  private wasAlreadyAdded(object: any, map:  L.Map):boolean{
+    let wasAlreadyAdded = false;
+
+    map.eachLayer( function(layer) {
+      if(layer === object)
+        wasAlreadyAdded = true;
+    });
+
+    return wasAlreadyAdded;
+  }
+}
   

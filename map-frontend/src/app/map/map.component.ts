@@ -15,7 +15,8 @@ import 'leaflet-responsive-popup';
 import '@elfalem/leaflet-curve';
 import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
 import { ApiService } from '../api.service';
-import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.component';
+import { AtlasPopupComponent } from '../atlas-popup/atlas-popup.component';
+import { AtlasButtonBuilder } from '../atlas-popup/atlas-button-builder/atlas-button-builder';
 
 @Component({
   selector: 'app-map',
@@ -23,7 +24,7 @@ import { OverlayedPopupComponent } from '../overlayed-popup/overlayed-popup.comp
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements AfterViewChecked, OnInit {
-  @ViewChild(OverlayedPopupComponent) overlayedPopup: OverlayedPopupComponent;
+  @ViewChild(AtlasPopupComponent) overlayedPopup: AtlasPopupComponent;
 
   private _locations: Array<Location>;
   private _menus: Array<Menu>;
@@ -46,6 +47,8 @@ export class MapComponent implements AfterViewChecked, OnInit {
   @HostListener('document:click', ['$event']) 
   clickout(event:any){ 
     if(event.target.classList.contains("opp-open-button")){
+      this.overlayedPopup.activate(event.target);
+    }else if(event.target.classList.contains("atlas-title-button")){
       this.overlayedPopup.activate(event.target);
     }
   }
@@ -372,14 +375,9 @@ export class MapComponent implements AfterViewChecked, OnInit {
                 if (location.popup.length === this.locationHeaderSize) {
                   let overlayedPopupButton = '';
 
-                  if (
-                    location.overlayed_popup_content &&
-                    location.overlayed_popup_content !== null
-                  ) {
-                    overlayedPopupButton =
-                      this.overlayedPopup.getOverlayedPopupButtonForLocation(
-                        location
-                      );
+                  if(location.overlayed_popup_content
+                  && location.overlayed_popup_content !== null){
+                    overlayedPopupButton = AtlasButtonBuilder.getOverlayedPopupButtonForLocation(location);
                   }
 
                   location.popup +=
@@ -650,7 +648,7 @@ export class MapComponent implements AfterViewChecked, OnInit {
     let opp_btn = '';
     if (tag.description) {
       if (tag.overlayed_popup_content && tag.overlayed_popup_content != null) {
-        opp_btn = this.overlayedPopup.getOverlayedPopupButtonForTag(tag);
+        opp_btn = AtlasButtonBuilder.getOverlayedPopupButtonForTag(tag);
       }
       
       location.popup +=

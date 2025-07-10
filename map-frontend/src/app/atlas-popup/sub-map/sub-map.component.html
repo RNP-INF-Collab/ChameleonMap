@@ -1,0 +1,13 @@
+<div class='sub-map-container'>
+    <div class='sub-map-frame'>
+        <div id="sub-map">
+            <app-atlas-drawer [isActive]="isActive" [externalDataManager]="externalDataManager" [defaultSubMapCenterCoordinates]="defaultSubMapCenterCoordinates" [atlasIconBuilder]="atlasIconBuilder" (pushLocationTitleEvent)="sendTitleForPushing($event)"></app-atlas-drawer>
+        </div>
+        <div class='phantom-content-container'>
+            <div id="phantom-popup-content" #phantom_popup_content></div>
+        </div>
+    </div>
+</div>
+<!-- <app-atlas-drawer [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById" [defaultSubMapCenterCoordinates]="defaultSubMapCenterCoordinates"></app-atlas-drawer> -->
+<!-- <app-atlas-drawer [externalDataManager]="externalDataManager" [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById" [defaultSubMapCenterCoordinates]="defaultSubMapCenterCoordinates" [atlasIconBuilder]="atlasIconBuilder"></app-atlas-drawer> -->
+<!-- <app-atlas [locations]="locations" [tags]="tags" [getLocationById]="getLocationById" [getTagById]="getTagById" [restoreDefaultScreenView]="restoreDefaultScreenView" [defaultSubMapCenterCoordinates]="defaultSubMapCenterCoordinates"></app-atlas> -->
