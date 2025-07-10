@@ -17,6 +17,7 @@ import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
 import { ApiService } from '../api.service';
 import { AtlasPopupComponent } from '../atlas-popup/atlas-popup.component';
 import { AtlasButtonBuilder } from '../atlas-popup/atlas-button-builder/atlas-button-builder';
+import { AboutButtonsComponent } from '../about-buttons/about-buttons.component';
 
 @Component({
   selector: 'app-map',
