@@ -14,6 +14,7 @@ import { SubMapComponent } from './sub-map/sub-map.component';
 import { AtlasButtonBuilder } from './atlas-button-builder/atlas-button-builder';
 import { AtlasIconBuilder } from './atlas-icon-builder/atlas-icon-builder.component';
 import { AtlasExternalDataManager as AtlasExternalDataManager } from './atlas-external-references-manager';
+import { AtlasKeeper } from './atlas-structures/AtlasKeeper';
 
 @Component({
   selector: 'app-atlas-popup',
@@ -31,7 +32,7 @@ export class AtlasPopupComponent implements OnInit {
   @ViewChild('opp_title') overlayedPopupTitle: ElementRef;
 
   // Data
-  private _currentKeeper: Location | Tag;
+  private _currentKeeper: Location | Tag | AtlasKeeper;
   private _currentKeeperType: string;  
   public externalDataManager: AtlasExternalDataManager = new AtlasExternalDataManager();
 
@@ -71,6 +72,17 @@ export class AtlasPopupComponent implements OnInit {
     
     this.overlayedPopupContainer.nativeElement.classList.remove('hidden');
     this._isActive = true;
+  }  
+  
+  public activateSpecialKeeper(keeper: AtlasKeeper){    
+    // const buttonId: string = buttonClickedEvent.id;
+    
+    // this.setCurrentKeeperByButtonId(buttonId);
+    this.setCurrentSpecialKeeper(keeper)
+    // this.setNewTabButtonLink();
+    
+    this.overlayedPopupContainer.nativeElement.classList.remove('hidden');
+    this._isActive = true;
   }
   
   public desactivate(){
@@ -97,6 +109,18 @@ export class AtlasPopupComponent implements OnInit {
         this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${this._currentKeeper.name}</div>`;
         break;
     }
+
+    // Set Content
+    this.subMap.keeper = this._currentKeeper;
+  }
+
+  private setCurrentSpecialKeeper(keeper: AtlasKeeper){
+    this._currentKeeperType = 'special';
+    this._currentKeeper = keeper;
+
+    // Set title
+    this.overlayedPopupTitle.nativeElement.innerHTML = ''
+    this.overlayedPopupTitle.nativeElement.innerHTML = `<div>${keeper.name}</div>`;
 
     // Set Content
     this.subMap.keeper = this._currentKeeper;

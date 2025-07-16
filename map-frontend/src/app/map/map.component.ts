@@ -17,6 +17,7 @@ import { CombineLatestOperator } from 'rxjs/internal/observable/combineLatest';
 import { ApiService } from '../api.service';
 import { AtlasPopupComponent } from '../atlas-popup/atlas-popup.component';
 import { AtlasButtonBuilder } from '../atlas-popup/atlas-button-builder/atlas-button-builder';
+import { AtlasKeeper } from '../atlas-popup/atlas-structures/AtlasKeeper';
 
 @Component({
   selector: 'app-map',
@@ -265,6 +266,9 @@ export class MapComponent implements AfterViewChecked, OnInit {
       // zoom: this.mapSetting.initial_zoom_level + 5,
       zoomControl: false
     });
+
+    this.map.attributionControl.setPrefix(false);
+    this.map.attributionControl.remove();
 
     this.map.on('zoom', () => {
       this.markerClusterGroup.refreshClusters();
@@ -992,6 +996,11 @@ export class MapComponent implements AfterViewChecked, OnInit {
 
   public onButtonClicked(event: any) {
     this.currentMenu = event.clickedMenu;
+  }
+
+  public chameleonButtonClick(atlasKeeper: AtlasKeeper) {    
+    console.log(atlasKeeper.name)
+    this.overlayedPopup.activateSpecialKeeper(atlasKeeper)
   }
 }
 

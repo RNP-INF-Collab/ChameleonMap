@@ -16,6 +16,7 @@ import { AtlasDrawerComponent } from '../atlas-drawer/atlas-drawer.component';
 import { AtlasIconBuilder } from '../atlas-icon-builder/atlas-icon-builder.component';
 import { DrawerSettings } from '../atlas-drawer/drawing-parameters';
 import { AtlasExternalDataManager as AtlasExternalDataManager } from '../atlas-external-references-manager';
+import { AtlasKeeper } from '../atlas-structures/AtlasKeeper';
 
 @Component({
   selector: 'app-sub-map',
@@ -37,7 +38,7 @@ export class SubMapComponent implements OnInit {
   private maxZoom: number;
   private zoomControlPosition: L.ControlPosition;
   
-  private _keeper: Location | Tag;
+  private _keeper: Location | Tag | AtlasKeeper;
   private _keeperContent: any;
   private _keeperContentContainer: L.Popup;
   private _keeperContentMarker: L.Marker;
@@ -77,7 +78,7 @@ export class SubMapComponent implements OnInit {
     map.setZoom(DrawerSettings.INITIAL_ZOOM);
   }
 
-  public set keeper( keeper: Location | Tag){
+  public set keeper( keeper: Location | Tag | AtlasKeeper){
     this._keeper = keeper;
     
     if(this.ATLAS.isATLASscript(this._keeper.overlayed_popup_content)){
@@ -125,7 +126,7 @@ export class SubMapComponent implements OnInit {
         ];
         
         // Scroll Bar
-        this.configScrollBar();
+        // this.configScrollBar();
     }
   }
     
@@ -177,10 +178,14 @@ export class SubMapComponent implements OnInit {
     this.subMap.zoomControl.setPosition( this.zoomControlPosition);
     
     // Others
-    // this.subMap.zoomControl.remove();
-    // this.subMap.scrollWheelZoom.disable();
+    this.subMap.zoomControl.remove();
+    this.subMap.scrollWheelZoom.disable();
     this.subMap.doubleClickZoom.disable();
-    // this.subMap.dragging.disable();
+    this.subMap.dragging.disable();
+
+    // Water mark
+    this.subMap.attributionControl.setPrefix(false);
+    this.subMap.attributionControl.remove();
     
     // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     //   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

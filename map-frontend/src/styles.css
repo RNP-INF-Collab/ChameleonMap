@@ -151,3 +151,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .opp-expand-icon:hover {
     filter: none;
 }
+
+.leaflet-control-zoom {
+    bottom: 45px !important;  
+    top: auto !important;  
+}
