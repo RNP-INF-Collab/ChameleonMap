@@ -18,6 +18,7 @@ import { ApiService } from '../api.service';
 import { AtlasPopupComponent } from '../atlas-popup/atlas-popup.component';
 import { AtlasButtonBuilder } from '../atlas-popup/atlas-button-builder/atlas-button-builder';
 import { AtlasKeeper } from '../atlas-popup/atlas-structures/AtlasKeeper';
+import { AboutButtonsComponent } from '../about-buttons/about-buttons.component';
 
 @Component({
   selector: 'app-map',

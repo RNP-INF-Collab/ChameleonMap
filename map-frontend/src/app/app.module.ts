@@ -33,6 +33,7 @@ import { AtlasIconBuilder } from './atlas-popup/atlas-icon-builder/atlas-icon-bu
 import { AtlasPopupComponent } from './atlas-popup/atlas-popup.component';
 import { AtlasButtonPalettesDrawerComponent } from './atlas-popup/atlas-drawer/atlas-button-palettes-drawer/atlas-button-palettes-drawer.component';
 import { ChameleonButtonComponent } from './chameleon-button/chameleon-button.component';
+import { AboutButtonsComponent } from './about-buttons/about-buttons.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { ChameleonButtonComponent } from './chameleon-button/chameleon-button.co
     AtlasPopupComponent,
     AtlasButtonPalettesDrawerComponent,
     ChameleonButtonComponent,
+    AboutButtonsComponent,
   ],
   imports: [
     BrowserModule,
