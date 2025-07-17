@@ -34,6 +34,14 @@ ALLOWED_HOSTS = []
 ROOT_URLCONF = 'inventory_backend.urls'
 TENANT_URLCONF = 'clients.urls'
 
+# Unfold
+UNFOLD = { 
+    "SITE_TITLE": "ChameleonMap Portal",
+    "SITE_HEADER": "ChameleonMap Admin",
+    "SITE_SUBHEADER": "Welcome to ChameleonMap Admin Portal",
+    "SITE_URL": "/admin",
+}
+
 # Multi-tenant settings
 TENANT_MODEL = "clients.Client"
 TENANT_DOMAIN_MODEL = "clients.Domain"
