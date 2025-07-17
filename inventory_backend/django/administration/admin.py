@@ -1,7 +1,7 @@
 from django.contrib import admin
 from administration.models import *
 from django.utils.html import format_html
-
+from unfold.admin import ModelAdmin
 
 class TenantAdminSite(admin.AdminSite):
     site_header = "ChameleonMap Admin"
@@ -11,17 +11,17 @@ class TenantAdminSite(admin.AdminSite):
 tenant_admin_site = TenantAdminSite(name='tenant_admin')
 
 tenant_admin_site.register(MenuGroup)
-class MenuGroupAdmin(admin.ModelAdmin):
+class MenuGroupAdmin(ModelAdmin):
     list_display = ("name",)
 
 tenant_admin_site.register(Menu)
-class MenuAdmin(admin.ModelAdmin):
+class MenuAdmin(ModelAdmin):
     list_display = ("name", "group", "hierarchy_level", "active")
     list_filter = ("hierarchy_level",)
     search_fields = ['name']
 
 tenant_admin_site.register(Location)
-class LocationAdmin(admin.ModelAdmin):
+class LocationAdmin(ModelAdmin):
     list_display = ("name", "latitude", "longitude", "active")
     search_fields = ['name']
 
@@ -31,7 +31,7 @@ class Tag_relationshipInline(admin.TabularInline):
     search_fields = ['name']
 
 tenant_admin_site.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(ModelAdmin):
     inlines = [
         Tag_relationshipInline,
     ]
@@ -41,25 +41,25 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 tenant_admin_site.register(Link)
-class LinkAdmin(admin.ModelAdmin):
+class LinkAdmin(ModelAdmin):
     list_display = ("display_name", "location_1", "location_2", "links_group")
     list_filter = ("links_group",)
     search_fields = ['display_name']
 
 tenant_admin_site.register(Links_group)
-class Links_groupAdmin(admin.ModelAdmin):
+class Links_groupAdmin(ModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
 
 tenant_admin_site.register(Kml_shape)
-class Kml_shapeAdmin(admin.ModelAdmin):
+class Kml_shapeAdmin(ModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
 
 tenant_admin_site.register(Map_configuration)
-class Map_configurationAdmin(admin.ModelAdmin):
+class Map_configurationAdmin(ModelAdmin):
     model = Map_configuration
 
     def edit(self, obj):

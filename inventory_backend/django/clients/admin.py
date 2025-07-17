@@ -6,9 +6,10 @@ from django.contrib import admin
 from django.core.exceptions import ObjectDoesNotExist
 from django_tenants.utils import tenant_context
 from tenant_users.permissions.models import UserTenantPermissions
+from unfold.admin import ModelAdmin
 
 @admin.register(Client)
-class ClientAdmin(TenantAdminMixin, admin.ModelAdmin):
+class ClientAdmin(TenantAdminMixin, ModelAdmin):
     list_display = ('name','owner',)
     def save_model(self, request, obj, form, change):
         try: # Schema already exists, then edit
@@ -22,13 +23,13 @@ class ClientAdmin(TenantAdminMixin, admin.ModelAdmin):
             tenant, domain = provision_tenant(obj.name, obj.slug, obj.owner, is_staff=True, schema_name = obj.schema_name, tenant_type=obj.tenancytype)
 
 @admin.register(Domain)
-class DomainAdmin(TenantAdminMixin, admin.ModelAdmin):
+class DomainAdmin(TenantAdminMixin, ModelAdmin):
     list_display = ('domain','tenant',)
     def has_add_permission(self, request, obj=None):
         return False
 
 @admin.register(TenantUser)
-class TenantUserAdmin(TenantAdminMixin, admin.ModelAdmin):
+class TenantUserAdmin(TenantAdminMixin, ModelAdmin):
     list_display = ('email','name',)
     exclude = ('password',)
     def save_model(self, request, obj, form, change):
@@ -51,5 +52,5 @@ def grant_privileges(user_obj):
                 user_obj.save()
 
 @admin.register(UserTenantPermissions)
-class UserTenantPermissionsAdmin(TenantAdminMixin, admin.ModelAdmin):
+class UserTenantPermissionsAdmin(TenantAdminMixin, ModelAdmin):
     pass

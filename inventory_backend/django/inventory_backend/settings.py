@@ -40,42 +40,13 @@ TENANT_DOMAIN_MODEL = "clients.Domain"
 TENANT_USERS_DOMAIN = "localhost"
 AUTH_USER_MODEL= "clients.TenantUser"
 
-# Application definition
-SHARED_APPS = [
-    # Multi tenancy
-    'django_tenants',
-    'tenant_users.permissions',
-    'tenant_users.tenants',
-    'clients',
-    # Apps
-    # Django
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Other Dependencies
-    'colorfield',
-    'rest_framework',
-    'corsheaders',
-    'tinymce',
-    'axes',
-]
-
-TENANT_APPS = [
-    'administration.apps.AdministrationConfig',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'tenant_users.permissions',
-]
-
 HAS_MULTI_TYPE_TENANTS = True
-MULTI_TYPE_DATABASE_FIELD = 'tenancytype'  # or whatever the name you call the database field
+MULTI_TYPE_DATABASE_FIELD = 'tenancytype'
 
 TENANT_TYPES = {
     "public": {
         "APPS": [
+            'unfold',
             'django_tenants',
             'tenant_users.permissions',
             'tenant_users.tenants',
@@ -96,6 +67,7 @@ TENANT_TYPES = {
     },
     "root": {
         "APPS": [
+            'unfold',
             'django_tenants',
             'tenant_users.permissions',
             'tenant_users.tenants',
@@ -115,6 +87,7 @@ TENANT_TYPES = {
     },
     "scoped": {
         "APPS": [
+            'unfold',
             'administration.apps.AdministrationConfig',
             'django.contrib.auth',
             'django.contrib.contenttypes',
