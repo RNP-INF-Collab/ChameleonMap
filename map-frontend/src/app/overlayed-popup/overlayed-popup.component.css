@@ -1,0 +1,97 @@
+
+.hidden {
+  visibility: hidden;
+}
+
+#fade-background {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgb(54, 50, 50);
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+  z-index: 7000;
+}
+
+#overlayed-popup {  
+  border-radius: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 8%;
+  z-index: 7771;
+  background: #fff;
+  text-align: center;
+}
+
+#overlayed-popup-frame {
+  display: flex;
+  justify-content: center;
+  align-items: center;     
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 3px solid black;
+  height: 100%;
+  z-index: 7772;
+}
+
+.corner-button {
+  float: right;
+  padding: 7px;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  color: gray;
+  font-weight: bold;
+  font-size: 16px;
+  background-color: transparent;
+  padding: 19px 5px 0px 8px;
+}
+
+#opp-close-button {
+  padding-right: 10px;
+}
+
+#opp-close-button:hover{
+  color: rgb(37, 36, 36) ;
+}
+
+#newtab-button:hover{
+  color: rgb(37, 36, 36) ;
+}
+
+#opp-title{
+  font-weight: bold;
+  font-size: 23px;
+  text-align: left;
+  top: 0%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 110%;
+  padding-left: 20px;
+  margin-top: 17px;
+}
+
+#opp-content {
+  height: calc(100vh - 15%);
+}
+
+/* Animating */
+#overlayed-popup-container {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  z-index: 1000;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+}
+
+#overlayed-popup-container.visible {
+  visibility: visible;
+  opacity: 1;
+}

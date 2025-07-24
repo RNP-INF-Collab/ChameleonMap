@@ -14,3 +14,38 @@
     background: #efefef92;
     bottom: 0;
 }
+body, #description {
+    position: relative !important;
+    width: 100vw;
+    height: 100vh;
+    margin-top: 104px;
+    top: 0 !important;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    padding-bottom: 60px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+}
+
+.footer a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+

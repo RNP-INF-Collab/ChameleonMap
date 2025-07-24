@@ -20,14 +20,13 @@ import { MatTableModule } from '@angular/material/table';
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { LinksMenuComponent } from './links-menu/links-menu.component';
 import { MenuChooserComponent } from './menu-chooser/menu-chooser.component';
-
-// import { OverlayedPopupComponent } from './overlayed-popup/overlayed-popup.component';
+import { HelpButtonComponent } from './help-button/help-button.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LocationDetailComponent } from './location-detail/location-detail.component';
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
-// import { SubMapComponent } from './sub-map/sub-map.component';
-import { SubMapComponent } from './atlas-popup/sub-map/sub-map.component';
-// import { ATLASComponent } from './atlas/atlas.component';
+import { FooterComponent } from './footer/footer.component';
+import { TooltipComponent } from './tooltip/tooltip.component';
+import { ChameleonButtonComponent } from './chameleon-button/chameleon-button.component';
 import { AtlasDrawerComponent } from './atlas-popup/atlas-drawer/atlas-drawer.component';
 import { AtlasIconBuilder } from './atlas-popup/atlas-icon-builder/atlas-icon-builder.component';
 import { AtlasPopupComponent } from './atlas-popup/atlas-popup.component';
@@ -43,12 +42,12 @@ import { AtlasButtonPalettesDrawerComponent } from './atlas-popup/atlas-drawer/a
     SafeHtmlPipe,
     LinksMenuComponent,
     MenuChooserComponent,
-    // OverlayedPopupComponent,
     LocationDetailComponent,
     TagDetailComponent,
-    SubMapComponent,
-    // ATLASComponent
-    TagDetailComponent,
+    HelpButtonComponent,
+    FooterComponent,
+    TooltipComponent,
+    ChameleonButtonComponent,
     AtlasDrawerComponent,
     AtlasIconBuilder,
     AtlasPopupComponent,

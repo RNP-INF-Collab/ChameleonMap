@@ -24,6 +24,12 @@
   padding: 3px;
 }
 
+.collapsed {
+  pointer-events: none;
+  height: 0px;
+  display: none;
+}
+
 /* For Google Chrome */
 ::-webkit-scrollbar {
   width: 0px;

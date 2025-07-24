@@ -35,8 +35,9 @@ mat-expansion-panel  {
   transform: rotate(180deg) !important;
 }
 
-.mat-expansion-panel-body{
+.mat-expansion-panel-body {
   transition: all 0.5s;
+  padding: 0px 24px 0px !important;
 }
 
 .mat-icon:hover {
@@ -60,8 +61,13 @@ mat-expansion-panel  {
   background-color: rgba(168, 177, 189, 0.212) !important;
 }
 
+.menu-body {
+  padding-bottom: 20px;
+}
+
 .menu-text {
   color: black !important;
+  padding-right: 10px;
 }
 
 .menu-text-position {
@@ -106,6 +112,14 @@ mat-expansion-panel  {
   border: 1px solid #FFFFFF;
 }
 
+#kml-color-icon {
+  width: 13px;
+  height: 2px;
+  margin-bottom: 3px;
+  position: absolute;
+  border: 1px solid #FFFFFF;
+}
+
 #tag-color-icon:hover {
   width:14px;
   height: 14px;
@@ -137,18 +151,36 @@ mat-expansion-panel  {
   z-index: 400;
   top: 15px;
   left: 15px;
-  max-height: calc(100% - 40px);
+  max-height: calc(100% - 70px);
   width: 312px;
   scrollbar-color: rgba(148, 143, 0, 0) rgba(255, 255, 255, 0);
   float: left;
   overflow-y: scroll;
   overflow-x: hidden;
   transition: all 0.3s ease;
-}
-
+  padding-right: 7px;
+  }
+  
 .links_true{
   top: 75px;
   max-height: calc(100% - 100px);
+}
+
+@media (max-width: 500px) {
+  .scrollbar-box {
+    width: 280px;
+  }
+
+  mat-expansion-panel  {
+    width: 285px;
+  }
+}
+
+
+.has-tabs{
+  top: 75px;
+  max-height: calc(100% - 100px);
+  padding-bottom: 10px;
 }
 
 .scrollbar-box:hover {
@@ -208,4 +240,17 @@ mat-expansion-panel  {
 #menu-button-expand{
   display: inline;
   vertical-align: middle;
+  font-size: 40px;
+}
+
+.pinned-header {
+  position: relative;
+  background-image: 
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><text x='0' y='20' font-size='20' fill='white'>★</text></svg>"),
+
+    linear-gradient(135deg, rgba(100, 100, 100, 0.4) 0%, rgba(100, 100, 100, 0.4) 25%, transparent 25%, transparent 100%);
+  
+  background-repeat: no-repeat;
+  background-position: 0.5rem center, 0 0;
+  background-size: 30px 30px, 60px 100%;
 }

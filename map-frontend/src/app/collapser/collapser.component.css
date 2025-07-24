@@ -2,7 +2,7 @@
     position: absolute;
     z-index: 401;
     top: 15px;
-    left: 325px;
+    left: 332px;
     max-height: calc(100% - 100px);
     color: #a5a7aa;
     background-color: #ededede8;
@@ -17,3 +17,17 @@
 .mat-icon:hover{
     color: royalblue;
 }
+.collapser.has-tabs {
+    top: 75px !important;
+}
+
+.collapser:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+@media (max-width: 500px) {
+    .collapser {
+        left: 300px;
+    }
+  }

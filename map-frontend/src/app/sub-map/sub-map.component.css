@@ -1,0 +1,64 @@
+.sub-map-container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 7773;
+    border-radius: 5px;
+    border-top-left-radius: 0px ;
+    border-top-right-radius: 0px ;
+  }
+  
+  .sub-map-frame {
+    border: 0px solid black;
+    height: 100%;
+    border-radius: 5px;
+    z-index: 7774;
+    border-top-left-radius: 0px ;
+    border-top-right-radius: 0px ;
+    display: flex;
+  }
+  
+  #sub-map {
+    width: 100%;
+    border-radius: 5px;
+    border-top-left-radius: 0px ;
+    border-top-right-radius: 0px ;
+    z-index: 7775;
+    background: white;
+
+    display: flex;
+    justify-content: baseline;  
+    align-items: center;     
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .intern-sub-popup{
+    position: absolute;
+    background-color: red;
+    background: blue;
+  }
+
+  #phantom-content-container {
+    position: absolute;
+    visibility: hidden;
+    z-index: -9999;
+    top: 30;
+    left: 30;
+    right: 30;
+  }
+
+  #phantom-popup-content {
+    position: absolute;
+    visibility: hidden;
+    z-index: -9999;
+    top: 0;
+    left: 0;
+  }
+  
+  #sub-map {
+    overflow-y: scroll;
+  }

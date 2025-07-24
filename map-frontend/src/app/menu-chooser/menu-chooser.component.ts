@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
@@ -6,21 +6,49 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './menu-chooser.component.html',
   styleUrls: ['./menu-chooser.component.css']
 })
-export class MenuChooserComponent implements OnInit {
-  public _currentMenu = 1;
-  constructor() {}
+export class MenuChooserComponent {
+  public _currentMenu: string;
+  public tabs: Array<string> = [];
+  public _linksFeatureOn: boolean;
 
-  ngOnInit(): void {}
+  private _menugroups: Array<MenuGroup>;
+
+  constructor(private cdr: ChangeDetectorRef) { }
+
+  @Input()
+  get linksFeatureOn(): boolean {
+    return this._linksFeatureOn;
+  }
+  set linksFeatureOn(value: boolean) {
+    this._linksFeatureOn = value;
+  }
+
+  @Input()
+  get menugroups(): Array<MenuGroup> {
+    return this._menugroups;
+  }
+
+  set menugroups(value: Array<MenuGroup>) {
+    if (!value) { return }
+    const newTabs = value.reduce((acc: Array<string>, menu) => {
+      if (!acc.includes(menu.name)) {
+        acc.push(menu.name);
+      }
+      return acc;
+    }, []);
+    this._menugroups = value;
+    if (newTabs.length > 0) {
+      this.tabs = this.tabs.concat(newTabs);
+      this.onTabClick(newTabs[0]);
+    }
+    this.cdr.detectChanges();
+  }
 
   @Output()
   buttonClicked = new EventEmitter();
 
-  menu1() {
-    this.buttonClicked.emit({ clickedMenu: 1 });
-    this._currentMenu = 1;
-  }
-  menu2() {
-    this.buttonClicked.emit({ clickedMenu: 2 });
-    this._currentMenu = 2;
+  onTabClick(tab: string) {
+    this.buttonClicked.emit({ clickedMenu: tab });
+    this._currentMenu = tab;
   }
 }
