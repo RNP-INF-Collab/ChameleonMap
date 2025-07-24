@@ -199,26 +199,6 @@ export class MapComponent implements OnInit {
           menu.pinned = false;
         });
 
-
-        // if(this.menugroups?.length){
-        //   this.selectedMenu = this.defaultMenuId = this.menugroups[0].id;
-        // }else{
-        //   this.selectedMenu = this.defaultMenuId = 0;
-        // }
-        // this.menus.forEach(menu => {
-        //   if (menu.group == this.menugroups[0].id) {
-        //     this.selectedMenu = menu.id;
-        //     this.defaultMenuId = menu.id;
-        //     return;
-        //   }
-        // });
-
-        // this.selectedMenu = this.defaultMenuId = 0;
-        
-
-        
-        console.log("\n\n\n\n\n\>>>>>>>>>>>>>>>>>>>>>\n" + this.defaultMenuId + "\n<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n\n\n");
-
         this.locations = results.locations;
         this.tags = results.tags;
         this.tagRelationships = results.tagRelationships;
@@ -382,7 +362,6 @@ export class MapComponent implements OnInit {
 
   private insertLinks() {
     this.resetlinks();
-    console.log(this.currentMenuGroup + " :: " + this.selectedMenu + " -> " + this.getMenuById(this.selectedMenu)?.name)
     if (this._linksGroup && this._links && this._links.length > 0) {
       this.linksFeatureOn = true;
       this._links.forEach((link: Link) => {
@@ -402,7 +381,6 @@ export class MapComponent implements OnInit {
             pointB = values[1];
   
             const pointList = [pointA, pointB];
-            // if (isSimultaneous || (loc1.onMap && loc2.onMap)) {
             if (loc1.onMap && loc2.onMap) {
               const latlngs = [];
   
@@ -1364,7 +1342,6 @@ export class MapComponent implements OnInit {
     `
     
     this.overlayedPopup.activateWithPersonalizedContent(popupContent, "About This Map")
-    console.log('Popup activated!');
   }
 }
 
