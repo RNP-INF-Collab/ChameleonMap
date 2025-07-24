@@ -164,25 +164,61 @@ export class MapComponent implements OnInit {
       kmlShapes: this.api.getKmlShapes()
     }).subscribe({
       next: (results) => {
+        // Reuslts
         this.menugroups = results.menugroups.sort((a: MenuGroup, b: MenuGroup) => a.id - b.id);
-
-        if (this.menugroups.length > 0) {
-          this.currentMenuGroup = this.menugroups[0].name;
-        }
-  
         this.menus = results.menus;
+        
+        // Menu Groups Init
+        let initialGroupMenu: MenuGroup;
+        if (this.menugroups.length > 0) {
+          initialGroupMenu = this.menugroups[0]
+          this.currentMenuGroup = initialGroupMenu.name;
+          
+          this.menugroups.forEach( menuGroup => {
+            const firstMenuInsideGroup = this.menus.find(menu => menu.group === menuGroup.id);
+            if(firstMenuInsideGroup)
+              this.selectedMenusByGroup[menuGroup.name] == firstMenuInsideGroup.id;
+          })
+          
+          
+          if(initialGroupMenu){
+            const firstMenu = this.menus.find(menu => menu.group === initialGroupMenu.id);
+            if(firstMenu){
+              this.defaultMenuId = this.selectedMenu = firstMenu.id
+            }else{
+              this.defaultMenuId = this.selectedMenu = 0
+            }
+          }else{
+            this.defaultMenuId = this.selectedMenu = 0
+          }
+        }
+
+        // Menus Init
         this.menus.forEach(menu => {
           menu.expanded = this.menus.length < 3;
           menu.pinned = false;
         });
-        this.menus.forEach(menu => {
-          if (menu.group == this.menugroups[0].id) {
-            this.selectedMenu = menu.id;
-            this.defaultMenuId = menu.id;
-            return;
-          }
-        });
-  
+
+
+        // if(this.menugroups?.length){
+        //   this.selectedMenu = this.defaultMenuId = this.menugroups[0].id;
+        // }else{
+        //   this.selectedMenu = this.defaultMenuId = 0;
+        // }
+        // this.menus.forEach(menu => {
+        //   if (menu.group == this.menugroups[0].id) {
+        //     this.selectedMenu = menu.id;
+        //     this.defaultMenuId = menu.id;
+        //     return;
+        //   }
+        // });
+
+        // this.selectedMenu = this.defaultMenuId = 0;
+        
+
+        
+        console.log("\n\n\n\n\n\>>>>>>>>>>>>>>>>>>>>>\n" + this.defaultMenuId + "\n<<<<<<<<<<<<<<<<<<<<<<<<\n\n\n\n\n");
+
         this.locations = results.locations;
         this.tags = results.tags;
         this.tagRelationships = results.tagRelationships;
