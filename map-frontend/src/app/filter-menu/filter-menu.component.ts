@@ -266,6 +266,10 @@ export class FilterMenuComponent {
     menu.pinned = false;
   }
 
+  sideBarUnpinMenuButtonClicked(menu: Menu){
+    this.unpinMenuButtonClicked(menu, menu);
+  }
+
   menuCollapse() {
     this.isCollapsed = !this.isCollapsed;
     const menufilter = document.querySelectorAll<HTMLElement>('.scrollbar-box');

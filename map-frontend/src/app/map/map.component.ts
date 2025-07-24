@@ -60,7 +60,6 @@ export class MapComponent implements OnInit {
   public defaultMenuId: number;
 
   public footerUrl = ""
-
   public linksFeatureOn = false;
   showRotateMessage = false;
 

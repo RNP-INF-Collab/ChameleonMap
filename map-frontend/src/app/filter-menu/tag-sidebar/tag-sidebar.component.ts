@@ -104,7 +104,7 @@ export class TagSidebarComponent {
 
   unpinAllPinnedMenus() {
     this._pinnedMenus.forEach( menu =>
-      this.unpinMenuEmitter.emit(menu)
+      this.unpinClickedMenu(menu)
     )
     this._pinnedMenus = [];
   }
