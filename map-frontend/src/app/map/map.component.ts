@@ -307,7 +307,8 @@ export class MapComponent implements OnInit {
     }
     let inCurrentMenuGroup = menu_group.name == this.currentMenuGroup;
     let shouldLoadSimultaneously = !inCurrentMenuGroup && this.isMenuSimultaneousAndSelectedInItsMenuGroup(parent_menu.id, menu_group);
-    return inCurrentMenu || shouldLoadSimultaneously;
+    let isKmlShapeMenuPinned = parent_menu.pinned
+    return inCurrentMenu || shouldLoadSimultaneously || isKmlShapeMenuPinned;
   }
 
   private isMenuSimultaneousAndSelectedInItsMenuGroup(menu_id: number, menu_group: MenuGroup | undefined = undefined) {
@@ -697,17 +698,17 @@ export class MapComponent implements OnInit {
     if (!this._locations || !this._tags) {
       return
     }
-
     let selectedMenu = this.getMenuById(this.selectedMenu);
+
     if (!selectedMenu) {
       return
     }
-    let selectedMenuGroup = this.getMenuGroup(selectedMenu.group)
 
-    if(reset)
+    if(reset){
       this.resetMarkers();
+      this.selectedMenu = selectedTagsMenuId;
+    }
 
-    this.selectedMenu = selectedTagsMenuId;
     const menuHierarchy = this.getMenuById(selectedTagsMenuId)?.hierarchy_level;
     const otherMenuTags = this._tags.filter((currentTag: Tag) => {
       const currentTagHierarchy = this.getMenuById(
