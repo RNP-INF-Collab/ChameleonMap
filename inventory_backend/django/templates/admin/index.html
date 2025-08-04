@@ -1,0 +1,150 @@
+{% extends "admin/index.html" %}
+{% load importer_tags %}
+{% load get_managed_maps %}
+
+{% block content %}
+{{ block.super }}
+
+<!-- <div class="app-administration module">
+    <div class="bg-base-50 mb-6 rounded-default p-3 dark:bg-base-800">
+        <table class="border border-base-400/10 border-spacing-none border-separate rounded-default overflow-hidden shadow-xs w-full dark:border-base-800">
+        <caption class="font-semibold mb-3 text-base-900 text-left dark:text-base-100">
+        </caption>
+        <tbody>
+                {% get_managed_maps as maps %}
+                {% for instance in maps %}
+                <tr class="bg-white dark:bg-base-900 model-instance">
+                    <th scope="row" class="font-normal p-3 text-left border-b border-base-100 dark:border-base-800">
+                        <a href={{ instance.url }}>{{ instance.name }}</a>
+                    </th>
+                    <td class="border-b border-base-100 dark:border-base-800 p-3 text-right">
+                        <a href={{ instance.url }} class="changelink">Manage instance</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    
+</div> -->
+
+<div class="flex flex-col lg:flex-row lg:gap-8">
+    <div class="grow">
+        <div class="bg-base-50 mb-6 rounded-default p-3 dark:bg-base-800">
+            <table class="border border-base-400/10 border-spacing-none border-separate rounded-default overflow-hidden shadow-xs w-full dark:border-base-800">
+                <caption class="font-semibold mb-3 text-base-900 text-left dark:text-base-100">
+                    <a class="section" title="Models in the Permissions application">
+                        Your managed map instances
+                    </a>
+                </caption>
+                <tbody>
+                    {% get_managed_maps as maps %}
+                    {% for instance in maps %}
+                    <tr class="bg-white dark:bg-base-900 model-usertenantpermissions">
+                        <th scope="row" class="font-normal p-3 text-left ">
+                            <a href={{ instance.url }}>{{ instance.name }}</a>
+                        </th>
+                        <td class=" p-3 text-right">
+                            <div class="flex flex-row items-center ml-auto gap-4 justify-end">
+                                <a href={{ instance.url }} class="changelink">Manage instance</a>
+                                <a href={{ instance.url }} class="changelink block leading-none text-base-400 transition-colors dark:text-base-500 " title="Go to instance">
+                                    <span class="material-symbols-outlined">edit_location_alt</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if 'AVAILABLE_IMPORTS'|env == 'infradpdi' %}
+        <div class="bg-base-50 mb-6 rounded-default p-3 dark:bg-base-800">
+            <table class="border border-base-400/10 border-spacing-none border-separate rounded-default overflow-hidden shadow-xs w-full dark:border-base-800">
+                <caption class="font-semibold mb-3 text-base-900 text-left dark:text-base-100">
+                    <a class="section" title="Import data from an API">Import data</a>
+                </caption>
+                <tbody>
+                    <tr class="model-menu bg-white dark:bg-base-900 model-usertenantpermissions">
+                        <th scope="row" class="font-normal p-3 text-left">
+                            <a href="/import/netbox/" onclick="showSpinner()">Import data from Netbox</a>
+                        </th>
+                        <td class=" p-3 text-right">
+                            <div class="flex flex-row items-center ml-auto gap-4 justify-end">
+                                <a href="/import/netbox/" onclick="showSpinner()">Import</a>
+                                <a href={{ instance.url }} class="changelink block leading-none text-base-400 transition-colors dark:text-base-500 " title="Import">
+                                    <span class="material-symbols-outlined">input</span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="lg:w-96"></div>
+</div>
+
+<div class="background-no-go" id="loading-bg"></div>
+<div class="spinner" id="spinner"></div>
+<div class="spinner-text" id="loading-text">Loading, please wait...</div>
+
+<script>
+    function showSpinner() {
+        document.getElementById('loading-text').style.display = 'block';
+        document.getElementById('loading-bg').style.display = 'block';
+        document.getElementById('spinner').style.display = 'block';
+    }
+</script>
+<style>
+    .spinner {
+        display: none;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 2;
+        width: 75px;
+        height: 75px;
+        margin: -30px 0 0 -30px;
+        border: 10px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 10px solid #3498db;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
+
+    .spinner-text {
+        display: none;
+        position: absolute;
+        top: 60%;
+        left: 45%;
+        width: 500px;
+        height: 100px;
+        z-index: 3;
+        font-size: 25px;
+    }
+
+    .background-no-go {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(193, 193, 193, 0.7);
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endif %}
+
+{% endblock %}
