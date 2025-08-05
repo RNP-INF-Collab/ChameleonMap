@@ -39,7 +39,7 @@ UNFOLD = {
     "SITE_HEADER": "ChameleonMap Admin",
     "SITE_SUBHEADER": "Welcome to ChameleonMap Admin Portal",
     "SITE_URL": "/admin",
-    "SITE_LOGO": "https://i.imgur.com/65Yiw9X.png",
+    "SITE_ICON": "https://i.imgur.com/65Yiw9X.png",
     "SITE_FAVICONS": [
         {
             "rel": "icon",
