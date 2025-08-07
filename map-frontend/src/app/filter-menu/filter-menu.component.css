@@ -109,6 +109,11 @@ mat-expansion-panel  {
   color:gray;
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+
 #tag-color-icon {
   width: 13px;
   height: 13px;

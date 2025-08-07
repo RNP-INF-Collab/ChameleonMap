@@ -164,6 +164,13 @@ export class FilterMenuComponent {
           }
         );
     }
+    var isChrome = navigator.userAgent.includes('Chrome');
+    if (isChrome == true){
+      const menufilter = document.querySelectorAll<HTMLElement>('.scrollbar-box');
+      for (let i = 0, len = menufilter.length; i < len; i++) {
+          menufilter[i].setAttribute('style', 'scrollbar-width: thin');
+        }
+    }
   }
 
   LGVisibilityClick(lg: any, event: any) {
