@@ -280,11 +280,16 @@ export class FilterMenuComponent {
   menuCollapse() {
     this.isCollapsed = !this.isCollapsed;
     const menufilter = document.querySelectorAll<HTMLElement>('.scrollbar-box');
+    var isChrome = navigator.userAgent.includes('Chrome');
     for (let i = 0, len = menufilter.length; i < len; i++) {
       if (this.isCollapsed) {
         menufilter[i].setAttribute('style', 'left: -312px;');
       } else {
-        menufilter[i].setAttribute('style', 'left: 15px;');
+        if (isChrome == true){
+          menufilter[i].setAttribute('style', 'left: 15px; scrollbar-width: thin;');
+        } else{
+          menufilter[i].setAttribute('style', 'left: 15px;');
+        }
       }
     }
   }
