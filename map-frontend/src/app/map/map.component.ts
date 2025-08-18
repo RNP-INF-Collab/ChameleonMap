@@ -903,7 +903,7 @@ export class MapComponent implements OnInit {
   }
 
   private generatePinIcon(colors: any) {
-    const size = '24px';
+    const size = '16px';
     const border = '0.1px solid #5c5c5c';
 
     if (colors.length === 1) {
@@ -912,10 +912,10 @@ export class MapComponent implements OnInit {
       width: ${size};
       height: ${size};
       display: block;
-      left: -11px;
-      top: -21px;
+      left: -8px;
+      top: -8px;
       position: relative;
-      border-radius: ${size} ${size} 0;
+      border-radius: ${size} ${size} ${size} ${size};
       transform: rotate(45deg);
       border: ${border};`;
     } else {
@@ -958,20 +958,22 @@ export class MapComponent implements OnInit {
       width: ${size};
       height: ${size};
       display: block;
-      left: -11px;
-      top: -21px;
+      left: -8px;
+      top: -8px;
       position: relative;
-      border-radius: 100% 100% 0;
+      border-radius: 100% 100% 100% 100%;
       transform: rotate(45deg);
       border: 0.1px solid #5c5c5c`;
     }
 
+    var style = 'style="height: 11px; width: 11px; background-color: white; border-radius: 50%; display: flex; margin-left: 20%; margin-top: 20%;"'
+
     const icon = L.divIcon({
       className: 'custom-pin',
-      html: `<span style="${markerHtmlStyles}"><span style="height: 11px; width: 11px; background-color: white; border-radius: 50%; display: flex; margin-left: 20%; margin-top: 20%;"></span></span>`
+      html: `<span style="${markerHtmlStyles}"><span ></span></span>`
     });
 
-    return icon;
+    return icon; 
   }
 
   private getMaxLocationId() {
