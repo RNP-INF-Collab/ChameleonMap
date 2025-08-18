@@ -1,4 +1,4 @@
-import { TagContentType } from '@angular/compiler';
+import { parseHostBindings, STRING_TYPE, TagContentType } from '@angular/compiler';
 import {
   Component,
   OnInit,
@@ -362,6 +362,7 @@ export class MapComponent implements OnInit {
 
   private insertLinks() {
     this.resetlinks();
+    console.log('hee')
     if (this._linksGroup && this._links && this._links.length > 0) {
       this.linksFeatureOn = true;
       this._links.forEach((link: Link) => {
@@ -404,7 +405,6 @@ export class MapComponent implements OnInit {
               const midpointLatLng = [midpointY, midpointX];
   
               latlngs.push(latlng1, midpointLatLng, latlng2);
-  
               const pathOptions = {
                 color: linkgroup.links_color,
                 weight: link.weight,
@@ -412,11 +412,15 @@ export class MapComponent implements OnInit {
                 smoothFactor: 1,
                 stroke: true,
                 dashArray:'',
-                dashOffset: ''
+                dashOffset: '',
+                lineCap: "round" as 'butt' | 'round' | 'square',
               };
               if(link.dashed){
-                pathOptions.dashArray = '10, 10';
+                pathOptions.dashArray = '5,3';
                 pathOptions.dashOffset = '10';
+                pathOptions.weight = 10;
+                pathOptions.smoothFactor = 0;
+                pathOptions.lineCap = "butt" as 'butt' | 'round' | 'square';
               }
               if(link.straight_link){
                 link.line = new L.Polyline([pointA, pointB], pathOptions);
@@ -912,8 +916,8 @@ export class MapComponent implements OnInit {
       width: ${size};
       height: ${size};
       display: block;
-      left: -8px;
-      top: -8px;
+      left: -4px;
+      top: -4px;
       position: relative;
       border-radius: ${size} ${size} ${size} ${size};
       transform: rotate(45deg);
@@ -958,8 +962,8 @@ export class MapComponent implements OnInit {
       width: ${size};
       height: ${size};
       display: block;
-      left: -8px;
-      top: -8px;
+      left: -4px;
+      top: -4px;
       position: relative;
       border-radius: 100% 100% 100% 100%;
       transform: rotate(45deg);
