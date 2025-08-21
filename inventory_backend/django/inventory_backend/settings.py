@@ -27,27 +27,111 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get('DEBUG') or 0)
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', default='').split(' ')
+# ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', default='').split(' ')
+
+ALLOWED_HOSTS = []
+
+ROOT_URLCONF = 'inventory_backend.urls'
+TENANT_URLCONF = 'clients.urls'
+
+# Multi-tenant settings
+TENANT_MODEL = "clients.Client"
+TENANT_DOMAIN_MODEL = "clients.Domain"
+TENANT_USERS_DOMAIN = "localhost"
+AUTH_USER_MODEL= "clients.TenantUser"
 
 # Application definition
-INSTALLED_APPS = [
+SHARED_APPS = [
+    # Multi tenancy
+    'django_tenants',
+    'tenant_users.permissions',
+    'tenant_users.tenants',
+    'clients',
+    # Apps
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Other Dependencies
     'colorfield',
     'rest_framework',
     'corsheaders',
-    'administration.apps.AdministrationConfig',
     'tinymce',
     'axes',
 ]
 
+TENANT_APPS = [
+    'administration.apps.AdministrationConfig',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'tenant_users.permissions',
+]
+
+HAS_MULTI_TYPE_TENANTS = True
+MULTI_TYPE_DATABASE_FIELD = 'tenancytype'  # or whatever the name you call the database field
+
+TENANT_TYPES = {
+    "public": {
+        "APPS": [
+            'django_tenants',
+            'tenant_users.permissions',
+            'tenant_users.tenants',
+            'clients',
+            'axes',
+            'django.contrib.admin',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'django.contrib.sessions',
+            'django.contrib.messages',
+            'django.contrib.staticfiles',
+            'colorfield',
+            'rest_framework',
+            'corsheaders',
+            'tinymce',
+        ],
+        "URLCONF": ROOT_URLCONF,
+    },
+    "root": {
+        "APPS": [
+            'django_tenants',
+            'tenant_users.permissions',
+            'tenant_users.tenants',
+            'axes',
+            'django.contrib.admin',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'django.contrib.sessions',
+            'django.contrib.messages',
+            'django.contrib.staticfiles',
+            'colorfield',
+            'rest_framework',
+            'corsheaders',
+            'tinymce',
+        ],
+        "URLCONF": ROOT_URLCONF,
+    },
+    "scoped": {
+        "APPS": [
+            'administration.apps.AdministrationConfig',
+            'django.contrib.auth',
+            'django.contrib.contenttypes',
+            'tenant_users.permissions',
+        ],
+        "URLCONF": TENANT_URLCONF,
+    }
+}
+
+INSTALLED_APPS = []
+for schema in TENANT_TYPES:
+    INSTALLED_APPS += [app for app in TENANT_TYPES[schema]["APPS"] if app not in INSTALLED_APPS]
+
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,6 +147,7 @@ AXES_COOLOFF_TIME = timedelta(minutes=30)
 AXES_FAIL_RETRY_LIMIT = 5
 AXES_LOCKOUT_PARAMETERS = ["ip_address", ["username", "user_agent"]]
 AXES_CACHE = 'default'
+AXES_ENABLE_ADMIN = True
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -71,14 +156,12 @@ CACHES = {
 }
 AUTHENTICATION_BACKENDS = [
     'axes.backends.AxesStandaloneBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'tenant_users.permissions.backend.UserBackend',
 ]
 
 CORS_ORIGIN_WHITELIST = (
     os.environ.get('CORS_WHITELIST'),
 )
-
-ROOT_URLCONF = 'inventory_backend.urls'
 
 TEMPLATES = [
     {
@@ -107,7 +190,7 @@ WSGI_APPLICATION = 'inventory_backend.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": 'django.db.backends.postgresql',
+        "ENGINE": 'django_tenants.postgresql_backend',
         "HOST": 'db',
         "PORT": 5432,
         "NAME": os.environ.get("POSTGRES_DB", os.path.join(BASE_DIR, "db.sqlite3")),
@@ -115,6 +198,10 @@ DATABASES = {
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "password"),
     }
 }
+
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 
 # Password validation
@@ -176,3 +263,27 @@ TINYMCE_DEFAULT_CONFIG = {
     "alignright alignjustify | outdent indent | "
     "removeformat | help",
 }
+
+# Email settings
+# EMAIL_DUMMY controls whether Django uses the dummy email backend for testing.
+# If EMAIL_DUMMY is True and DEBUG is enabled (development mode), emails will not be sent,
+# and Django will use the dummy backend to simulate email sending.
+# In all other cases (including production), real emails will be sent using the SMTP backend.
+EMAIL_DUMMY = os.environ.get('EMAIL_DUMMY', 'False') == 'True'
+
+if EMAIL_DUMMY and DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@chameleon-map.com.br')
+
+LOGIN_URL = '/admin'
+LOGIN_REDIRECT_URL = '/admin'
+LOGOUT_REDIRECT_URL = '/admin'

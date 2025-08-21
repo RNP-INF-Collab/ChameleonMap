@@ -1,13 +1,28 @@
 {% extends "admin/index.html" %}
 {% load importer_tags %}
-
+{% load get_managed_maps %}
 
 {% block sidebar %}
 {{ block.super }}
+
+<div class="app-administration module">
+    <table>
+        <caption>
+            <a class="section" title="Managed maps">Managed maps</a>
+        </caption>
+        <tbody>
+                {% get_managed_maps as maps %}
+                {% for instance in maps %}
+                <tr class="model-menu">
+                    <th scope="row"><a href={{ instance.url }}>{{ instance.name }}</a></th>
+                    <td><a href={{ instance.url }} class="changelink">Manage instance</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 {% if 'AVAILABLE_IMPORTS'|env == 'infradpdi' %}
-<div class="background-no-go" id="bg"></div>
-<div class="spinner" id="spinner"></div>
-<div class="spinner-text" id="text">Loading, please wait...</div>
 <div class="app-administration module">
     <table>
         <caption>
@@ -21,10 +36,15 @@
         </tbody>
     </table>
 </div>
+
+<div class="background-no-go" id="loading-bg"></div>
+<div class="spinner" id="spinner"></div>
+<div class="spinner-text" id="loading-text">Loading, please wait...</div>
+
 <script>
     function showSpinner(){
-        document.getElementById('text').style.display = 'block';
-        document.getElementById('bg').style.display = 'block';
+        document.getElementById('loading-text').style.display = 'block';
+        document.getElementById('loading-bg').style.display = 'block';
         document.getElementById('spinner').style.display = 'block';
     }
 </script>
@@ -78,4 +98,5 @@
     }
 </style>
 {% endif %}
+
 {% endblock %}
