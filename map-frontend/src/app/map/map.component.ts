@@ -1233,9 +1233,10 @@ export class MapComponent implements OnInit {
   }
 
   public onMenuCliked(event: any) {
-    this.insertMarkersByMenu(event.selectedTagsMenuId, true);
     this.menus.forEach(menu => {
-      if(menu.pinned){
+      if(menu.id == event.selectedTagsMenuId){
+        this.insertMarkersByMenu(event.selectedTagsMenuId, true);
+      }else if(menu.pinned){
         this.insertMarkersByMenu(menu.id, false);
       }
     })
