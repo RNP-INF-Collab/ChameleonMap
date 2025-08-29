@@ -44,10 +44,17 @@ class Links_groupSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class Kml_shapeSerializer(serializers.ModelSerializer):
+    kml_file = serializers.SerializerMethodField()
 
     class Meta:
         model = Kml_shape
         fields = '__all__'
+
+    def get_kml_file(self, obj):
+        if obj.kml_file:
+            # Returns only the relative path
+            return obj.kml_file.url  
+        return None
 
 class Map_configurationSerializer(serializers.ModelSerializer):
 
