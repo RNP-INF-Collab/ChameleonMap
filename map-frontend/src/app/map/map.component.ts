@@ -416,7 +416,7 @@ export class MapComponent implements OnInit {
                 lineCap: "round" as 'butt' | 'round' | 'square',
               };
               if(link.dashed){
-                pathOptions.dashArray = '5,3';
+                pathOptions.dashArray = '3,3';
                 pathOptions.dashOffset = '10';
                 pathOptions.weight = 10;
                 pathOptions.smoothFactor = 0;
@@ -1233,13 +1233,42 @@ export class MapComponent implements OnInit {
   }
 
   public onMenuCliked(event: any) {
-    this.menus.forEach(menu => {
-      if(menu.id == event.selectedTagsMenuId){
-        this.insertMarkersByMenu(event.selectedTagsMenuId, true);
-      }else if(menu.pinned){
-        this.insertMarkersByMenu(menu.id, false);
-      }
-    })
+    this.onMenuIdClicked(event.selectedTagsMenuId)
+  }
+
+  private onMenuIdClicked(menuId: number) {
+    let menu = this.getMenuById(menuId);
+
+    if (!menu) return
+
+    this.specialMenuClickRules(menu);
+    this.insertMarkersByMenu(menuId, true);
+  }
+
+  private specialMenuClickRules(selectedMenu: Menu) {
+
+    if (selectedMenu.name.includes("Ipê")) {
+      this._menus.forEach((menu) => {
+        if (menu.name.includes("Ipê") && selectedMenu.id != menu.id) {
+          let menuGroup = this.getMenuGroup(menu.group)
+          if (!menuGroup) return;
+          this.selectedMenusByGroup[menuGroup.name] = menu.id;
+          this.insertMarkersByMenu(menu.id, true);
+          return;
+        }
+      })
+    }
+    else if (selectedMenu.name.includes("pesquisa avançada")) {
+      this._menus.forEach((menu) => {
+        if (menu.name.includes("pesquisa avançada") && selectedMenu.id != menu.id) {
+          let menuGroup = this.getMenuGroup(menu.group)
+          if (!menuGroup) return;
+          this.selectedMenusByGroup[menuGroup.name] = menu.id;
+          this.insertMarkersByMenu(menu.id, true);
+          return;
+        }
+      })
+    } 
   }
 
   public onTagRemoval(event: any) {
