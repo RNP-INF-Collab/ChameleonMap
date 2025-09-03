@@ -362,7 +362,6 @@ export class MapComponent implements OnInit {
 
   private insertLinks() {
     this.resetlinks();
-    console.log('hee')
     if (this._linksGroup && this._links && this._links.length > 0) {
       this.linksFeatureOn = true;
       this._links.forEach((link: Link) => {
@@ -748,12 +747,12 @@ export class MapComponent implements OnInit {
             if (location.active) {
               const tagMenu = this.getMenuById(tag.parent_menu);
               if (tagMenu) {
-                if (tagMenu.hierarchy_level > 1) {
-                  // if (allOtherMenuLocations.includes(location.id)) {
+                if(reset){
                   this.insertLocationOnMap(location, tag.currentColor);
-                  // }
-                } else {
-                  this.insertLocationOnMap(location, tag.currentColor);
+                }else{
+                  if(selectedTagsMenuId === tag.parent_menu){
+                    this.insertLocationOnMap(location, tag.currentColor);
+                  }
                 }
               }
             }
@@ -1233,11 +1232,12 @@ export class MapComponent implements OnInit {
   }
 
   public onMenuCliked(event: any) {
+    this.insertMarkersByMenu(event.selectedTagsMenuId, true);
     this.menus.forEach(menu => {
-      if(menu.id == event.selectedTagsMenuId){
-        this.insertMarkersByMenu(event.selectedTagsMenuId, true);
-      }else if(menu.pinned){
-        this.insertMarkersByMenu(menu.id, false);
+      if(menu.id != event.selectedTagsMenuId){
+        if(menu.pinned){
+          this.insertMarkersByMenu(menu.id, false);
+        }
       }
     })
   }
