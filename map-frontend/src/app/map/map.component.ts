@@ -369,8 +369,10 @@ export class MapComponent implements OnInit {
         const loc2 = this.getLocationById(link.location_2);
         const linkgroup = this.getLinksGroupById(link.links_group);
         if (linkgroup == undefined) return;
+        let parentMenu = this.getMenuById(linkgroup.parent_menu);
+        let isMenuVisible = parentMenu?.id == this.selectedMenu || parentMenu?.pinned;
         let isSimultaneous = this.isMenuSimultaneousAndSelectedInItsMenuGroup(linkgroup.parent_menu);
-        if (linkgroup.parent_menu == this.selectedMenu || isSimultaneous){
+        if (isMenuVisible || isSimultaneous){
           if (loc1 && loc2) {
             linkgroup.visibility = true;
             let pointA;
@@ -1252,7 +1254,6 @@ export class MapComponent implements OnInit {
   }
 
   private specialMenuClickRules(selectedMenu: Menu) {
-
     if (selectedMenu.name.includes("Ipê")) {
       this._menus.forEach((menu) => {
         if (menu.name.includes("Ipê") && selectedMenu.id != menu.id) {

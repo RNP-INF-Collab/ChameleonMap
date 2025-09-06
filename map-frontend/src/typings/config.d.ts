@@ -16,6 +16,7 @@ declare global {
     readonly active: boolean;
     expanded: boolean;
     pinned: boolean;
+    isEyeVisibilityOpen?: boolean;
   }
 
   export interface Tag {

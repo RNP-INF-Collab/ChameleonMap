@@ -110,6 +110,5 @@ export class TagSidebarComponent {
   }
 
   public openPinnedMenu(menu: Menu) {
-    alert('unpin this menu: ' + menu.name);
   }
 }

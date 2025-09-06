@@ -252,7 +252,7 @@ mat-expansion-panel  {
 .pinned-header {
   position: relative;
   background-image: 
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><text x='0' y='20' font-size='20' fill='white'>★</text></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><text x='0' y='20' font-size='20' fill='white'></text></svg>"),
 
     linear-gradient(135deg, rgba(100, 100, 100, 0.4) 0%, rgba(100, 100, 100, 0.4) 25%, transparent 25%, transparent 100%);
   
