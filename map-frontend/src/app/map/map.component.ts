@@ -1119,7 +1119,8 @@ export class MapComponent implements OnInit {
 
     for (const link of this._links) {
       if (link.location_1 == location.id || link.location_2 == location.id) {
-        link.line.remove(this.map);
+        if (link.line != null)
+          link.line.remove(this.map);
       }
     }
   }
