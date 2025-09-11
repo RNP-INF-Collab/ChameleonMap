@@ -283,9 +283,9 @@ export class FilterMenuComponent {
         }
       })
     }
-    else if (selectedMenu.name.includes("pesquisa avançada")) {
+    else if (selectedMenu.name.includes("CNDs")) {
       this._menus.forEach((menu) => {
-        if (menu.name.includes("pesquisa avançada") && selectedMenu.id != menu.id) {
+        if (menu.name.includes("CNDs") && selectedMenu.id != menu.id) {
           this.toggleMenuPin(menu, event);
           return;
         }

@@ -1265,9 +1265,9 @@ export class MapComponent implements OnInit {
         }
       })
     }
-    else if (selectedMenu.name.includes("pesquisa avançada")) {
+    else if (selectedMenu.name.includes("CNDs")) {
       this._menus.forEach((menu) => {
-        if (menu.name.includes("pesquisa avançada") && selectedMenu.id != menu.id) {
+        if (menu.name.includes("CNDs") && selectedMenu.id != menu.id) {
           let menuGroup = this.getMenuGroup(menu.group)
           if (!menuGroup) return;
           this.selectedMenusByGroup[menuGroup.name] = menu.id;
