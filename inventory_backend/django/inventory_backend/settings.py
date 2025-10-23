@@ -29,7 +29,11 @@ DEBUG = int(os.environ.get('DEBUG') or 0)
 
 # ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', default='').split(' ')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', default='').split(' ')
+
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split()
+CSRF_TRUSTED_ORIGINS = ["https://*.rnp.br"]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ROOT_URLCONF = 'inventory_backend.urls'
 TENANT_URLCONF = 'clients.urls'
@@ -54,7 +58,7 @@ UNFOLD = {
 # Multi-tenant settings
 TENANT_MODEL = "clients.Client"
 TENANT_DOMAIN_MODEL = "clients.Domain"
-TENANT_USERS_DOMAIN = "localhost"
+TENANT_USERS_DOMAIN = "mapa.rnp.br"
 AUTH_USER_MODEL= "clients.TenantUser"
 
 HAS_MULTI_TYPE_TENANTS = True
@@ -261,7 +265,7 @@ TINYMCE_DEFAULT_CONFIG = {
 # In all other cases (including production), real emails will be sent using the SMTP backend.
 EMAIL_DUMMY = os.environ.get('EMAIL_DUMMY', 'False') == 'True'
 
-if EMAIL_DUMMY and DEBUG:
+if False:
     EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
