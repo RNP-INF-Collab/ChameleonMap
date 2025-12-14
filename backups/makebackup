@@ -4,10 +4,10 @@
 set -e
 
 # Variables
-DB_CONTAINER_NAME="chameleonmap-db-1"  # Name of your PostgreSQL container
-DB_NAME="postgres"            # Your database name
-DB_USER="postgres"            # Your database user
-BACKEND_CONTAINER_NAME="chameleonmap-backend-1"  # Name of your backend container
+DB_CONTAINER_NAME="chameleonmap-db-1"  # DB container name
+DB_NAME="postgres"                  # Postgres DB name
+DB_USER="postgres"                  # Postgres user
+BACKEND_CONTAINER_NAME="chameleonmap-backend-1"  # Backend container name
 BACKEND_CONTAINER_USER="dpdadm"
 UPLOADS_PATH="/home/${BACKEND_CONTAINER_USER}/web/media/uploads"  # Path to uploads folder in backend container
 

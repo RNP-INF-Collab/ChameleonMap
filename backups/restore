@@ -4,12 +4,12 @@
 set -e
 
 # Variables
-CONTAINER_NAME="chameleonmap-db-1"  # Name of your PostgreSQL container
-DB_NAME="postgres"                  # Your database name
-DB_USER="postgres"                  # Your database user
-BACKEND_CONTAINER_NAME="chameleonmap-backend-1"  # Name of your backend container
-BACKEND_CONTAIER_USER="dpdadm"
-UPLOADS_DEST_PATH="/home/${BACKEND_CONTAIER_USER}/web/media"  # Destination path for uploads in backend container
+CONTAINER_NAME="chameleonmap-db-1"  # DB container name
+DB_NAME="postgres"                  # Postgres DB name
+DB_USER="postgres"                  # Postgres user
+BACKEND_CONTAINER_NAME="chameleonmap-backend-1"  # Backend container name
+BACKEND_CONTAINER_USER="dpdadm"
+UPLOADS_DEST_PATH="/home/${BACKEND_CONTAINER_USER}/web/media"  # Destination path for uploads in backend container
 BACKUP_FILE=$1
 
 # Validate input
@@ -56,7 +56,7 @@ else
   echo "Warning: uploads folder not found in backup"
 fi
 
-# Clean up temporary files
+# Clean up temp folder
 rm -rf "$TEMP_RESTORE_DIR"
 
 echo "Restore completed from: $BACKUP_FILE"
