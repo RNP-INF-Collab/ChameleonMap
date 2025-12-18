@@ -47,7 +47,7 @@ class Client(TenantBase):
             # If there is a subdomain, get only the main label
             label = slug.split('.', 1)[0]
             if not is_valid_label(label):
-                raise ValidationError({'slug': 'Nome de domínio inválido: deve ter 2-26 caracteres, letras, números, hífen ou acentuados, não só números, não começar/terminar com hífen.'})
+                raise ValidationError({'slug': 'Invalid domain name: it must have 2-26 characters, letters, numbers, hyphens or accented characters, not only numbers, and must not start or end with a hyphen.'})
             self.slug = slug
         super().clean()
 
@@ -71,7 +71,7 @@ class Domain(DomainMixin):
         if domain:
             label = domain.split('.', 1)[0]
             if not is_valid_label(label):
-                raise ValidationError({'domain': 'Nome de domínio inválido: deve ter 2-26 caracteres, letras, números, hífen ou acentuados, não só números, não começar/terminar com hífen.'})
+                raise ValidationError({'domain': 'Invalid domain name: it must have 2-26 characters, letters, numbers, hyphens or accented characters, not only numbers, and must not start or end with a hyphen.'})
         self.domain = domain
         super().clean()
 
