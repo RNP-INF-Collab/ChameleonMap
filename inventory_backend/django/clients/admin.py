@@ -10,7 +10,8 @@ from unfold.admin import ModelAdmin
 
 @admin.register(Client)
 class ClientAdmin(TenantAdminMixin, ModelAdmin):
-    list_display = ('name','owner',)
+    list_display = ('name', 'owner',)
+    fields = ['name', 'slug', 'schema_name', 'owner', 'tenancytype']
     def save_model(self, request, obj, form, change):
         try: # Schema already exists, then edit
             existentClient = Client.objects.get(schema_name=obj.schema_name)
