@@ -83,6 +83,7 @@ class TenantUserAdmin(TenantAdminMixin, ModelAdmin):
     form = TenantUserForm
     list_display = ('email','name',)
     exclude = ('password',)
+    
     def save_model(self, request, obj, form, change):
         # Get tenants where this user is owner (must always be included)
         # Only check if user already exists
@@ -97,29 +98,39 @@ class TenantUserAdmin(TenantAdminMixin, ModelAdmin):
         for tenant in owned_tenants:
             if tenant not in obj.tenants.all():
                 obj.tenants.add(tenant)
-        
-        grant_privileges(obj)
+    
+    def save_related(self, request, form, formsets, change):
+        """Called after save_model and after the form's save_m2m is called"""
+        super().save_related(request, form, formsets, change)
+        # Now that m2m relationships are saved, grant privileges
+        grant_privileges(form.instance)
 
 # Tenant-users only allow logins in the admin from staff users
 # This function add this permission by default to all related tenants
 def grant_privileges(user_obj):
-    tenants = list(user_obj.tenants.all())
-    user_obj.tenants.clear()
-    for tenant in tenants:
+    current_tenants = set(user_obj.tenants.all())
+    
+    # Get all tenants to check for removed ones
+    all_tenants = Client.objects.all()
+    
+    for tenant in all_tenants:
         with tenant_context(tenant):
-            perm, created = UserTenantPermissions.objects.get_or_create(
-                profile=user_obj,
-                defaults={
-                    'is_staff': True,
-                    'is_superuser': True,
-                }
-            )
-            if not created:
-                perm.is_staff = True
-                perm.is_superuser = True
-                perm.save()
-            user_obj.tenants.add(tenant)
-            user_obj.save()
+            if tenant in current_tenants:
+                # User has access to this tenant - ensure permissions exist
+                perm, created = UserTenantPermissions.objects.get_or_create(
+                    profile=user_obj,
+                    defaults={
+                        'is_staff': True,
+                        'is_superuser': True,
+                    }
+                )
+                if not created:
+                    perm.is_staff = True
+                    perm.is_superuser = True
+                    perm.save()
+            else:
+                # User no longer has access to this tenant - remove permissions
+                UserTenantPermissions.objects.filter(profile=user_obj).delete()
 
 @admin.register(UserTenantPermissions)
 class UserTenantPermissionsAdmin(TenantAdminMixin, ModelAdmin):
