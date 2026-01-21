@@ -18,17 +18,19 @@ class TenantUserForm(forms.ModelForm):
         tenants = self.cleaned_data.get('tenants')
         user = self.instance
         
-        # Get tenants where this user is owner
-        owned_tenants = Client.objects.filter(owner=user)
-        
-        # Check if any owned tenant is being removed
-        if owned_tenants.exists():
-            for owned_tenant in owned_tenants:
-                if owned_tenant not in tenants:
-                    raise ValidationError(
-                        f'Cannot remove tenant "{owned_tenant.name}" because this user is the owner. '
-                        f'Please change the owner first before removing access.'
-                    )
+        # Only validate if user already exists (editing, not creating)
+        if user.pk:
+            # Get tenants where this user is owner
+            owned_tenants = Client.objects.filter(owner=user)
+            
+            # Check if any owned tenant is being removed
+            if owned_tenants.exists():
+                for owned_tenant in owned_tenants:
+                    if owned_tenant not in tenants:
+                        raise ValidationError(
+                            f'Cannot remove tenant "{owned_tenant.name}" because this user is the owner. '
+                            f'Please change the owner first before removing access.'
+                        )
         
         return tenants
 
@@ -83,7 +85,11 @@ class TenantUserAdmin(TenantAdminMixin, ModelAdmin):
     exclude = ('password',)
     def save_model(self, request, obj, form, change):
         # Get tenants where this user is owner (must always be included)
-        owned_tenants = Client.objects.filter(owner=obj)
+        # Only check if user already exists
+        if obj.pk:
+            owned_tenants = Client.objects.filter(owner=obj)
+        else:
+            owned_tenants = []
         
         super().save_model(request, obj, form, change)
         
