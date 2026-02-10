@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChameleonMap - Visualização Interativa de Testbeds</title>
+    <meta name="description" content="Sistema de mapeamento interativo para inventários de testbeds e topologias de rede.">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #27ae60;
+            --secondary-accent: #e67e22;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --light-gray: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header / Hero Section */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #219150;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+            margin-left: 10px;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--accent-color);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background-color: var(--light-gray);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        /* Roadmap Section Styles */
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .roadmap-column {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-top: 5px solid #ccc;
+        }
+
+        .roadmap-column h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .roadmap-column ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .roadmap-column li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .roadmap-column li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .status-current { border-top-color: var(--accent-color); }
+        .status-current li::before { color: var(--accent-color); }
+
+        .status-planned { border-top-color: var(--secondary-accent); }
+        .status-planned li::before { color: var(--secondary-accent); }
+
+        .status-community { border-top-color: #95a5a6; }
+        .status-community li::before { color: #95a5a6; }
+
+        .note {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* Contribution Section (Call to Action) */
+        .cta-box {
+            background-color: #fff;
+            border-left: 5px solid var(--accent-color);
+            padding: 2rem;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .cta-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .btn-primary-small {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary-small {
+            background-color: var(--light-gray);
+            color: var(--primary-color);
+            border: 1px solid #ccc;
+        }
+
+        .btn-primary-small:hover { background-color: #34495e; }
+        .btn-secondary-small:hover { background-color: #e2e6ea; }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            header h1 { font-size: 2rem; }
+            .btn { display: block; margin: 10px auto; width: 100%; max-width: 300px; }
+            .btn-outline { margin-left: auto; }
+            .cta-links { flex-direction: column; }
+            .btn-small { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ChameleonMap</h1>
+        <p>Um sistema robusto para visualização interativa, cadastro e gerenciamento de testbeds e inventários de rede.</p>
+        <div>
+            <a href="https://github.com/RNP-INF-Collab/ChameleonMap" class="btn">Ver no GitHub</a>
+            <a href="https://rnp-inf-collab.github.io/ChameleonMap-guide/" class="btn btn-outline">Documentação</a>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <section id="sobre">
+            <h2>O Projeto</h2>
+            <p>
+                O <strong>ChameleonMap</strong> é uma ferramenta open-source desenvolvida para simplificar a complexidade de visualizar infraestruturas de rede geolocalizadas.
+                Originado de uma colaboração entre a RNP e a UFRGS, o sistema permite que administradores criem mapas interativos de seus inventários, facilitando o gerenciamento de recursos e a compreensão da topologia da rede.
+            </p>
+        </section>
+
+        <section id="funcionalidades">
+            <h2>Principais Funcionalidades</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>📍 Visualização Interativa</h3>
+                    <p>Explore a infraestrutura de rede em um mapa dinâmico com suporte a zoom, filtros e navegação fluida.</p>
+                </div>
+                <div class="card">
+                    <h3>🛠️ Gestão de Topologia</h3>
+                    <p>Cadastre e edite nós, conexões e elementos da rede diretamente pela interface administrativa.</p>
+                </div>
+                <div class="card">
+                    <h3>🔍 Filtros Avançados</h3>
+                    <p>Utilize filtros personalizáveis para visualizar apenas as camadas ou tipos de dispositivos que interessam no momento.</p>
+                </div>
+                <div class="card">
+                    <h3>🔄 Integração de Dados</h3>
+                    <p>Gerencie importações de dados e integre o sistema com ambientes externos para manter o inventário sempre atualizado.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tecnologia">
+            <h2>Tecnologias</h2>
+            <p style="text-align: center; margin-bottom: 1rem;">Construído com uma stack moderna para garantir performance e escalabilidade:</p>
+            <div class="tech-stack">
+                <span class="tech-tag">Python (Django)</span>
+                <span class="tech-tag">TypeScript</span>
+                <span class="tech-tag">Docker</span>
+                <span class="tech-tag">PostgreSQL</span>
+                <span class="tech-tag">Leaflet / Mapas</span>
+            </div>
+        </section>
+
+        <section id="roadmap">
+            <h2>Roadmap e Evolução</h2>
+            <p style="margin-bottom: 2rem;">Confira o estado atual do desenvolvimento e como você pode contribuir para o futuro do ChameleonMap.</p>
+            
+            <div class="roadmap-grid">
+                <div class="roadmap-column status-current">
+                    <h3>✅ Disponível Hoje</h3>
+                    <ul>
+                        <li>Visualização geolocalizada de nós e enlaces (Links).</li>
+                        <li>Filtros dinâmicos por camadas e tipos de dispositivos.</li>
+                        <li>Interface administrativa para cadastro manual de topologia.</li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-column status-planned">
+                    <h3>🚧 Planejado/Desenvolvido (2026)</h3>
+                    <p class="note">Funcionalidades prioritárias no roadmap do time principal:</p>
+                    <ul>
+                        <li><strong>Multitenancy:</strong> Utilização do serviço como plataforma em que múltiplos mapas estão em apenas uma instância. (80%)</li>
+                        <li><strong>Internacionalização:</strong> Tradução do mapa e interface para diversas línguas. (0%)</li>
+                        <li><strong>Busca com IA:</strong> Novo campo de pesquisa assistido por Inteligência Artificial. (0%)</li>
+                        <li><strong>Backup:</strong> Funcionalidade para backup seguro de arquivos KML. (70%)</li>
+                        <li><strong>Importação Backend:</strong> Inserção de dados automatizada via CSV. (0%)</li>
+                    </ul>
+                </div>
+
+                <div class="roadmap-column status-community">
+                    <h3>🤝 Características Desejáveis (AJUDE AQUI!)</h3>
+                    <p class="note">Foco em transparência, documentação e interoperabilidade:</p>
+                    <ul>
+                        <li><strong>Documentação Estendida:</strong> Guias completos para desenvolvedores e novos contribuidores.</li>
+                        <li><strong>APIs Públicas:</strong> Disponibilização e documentação de APIs para integrações externas.</li>
+                        <li><strong>Integração GRENML/GrenMap:</strong> Compatibilidade nativa com o padrão GRENML e interoperabilidade com GrenMap.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="contribuicao">
+            <h2>Como Contribuir</h2>
+            <div class="cta-box">
+                <div class="cta-content">
+                    <h3>👋 Junte-se à Comunidade</h3>
+                    <p>O ChameleonMap é um projeto colaborativo e estamos de portas abertas para novas ideias.</p>
+                    <p>Encorajamos fortemente o envio de <strong>Pull Requests</strong>, especialmente para as funcionalidades listadas acima como "Contribuições Desejáveis". Se você tem interesse em implementar algo novo ou corrigir um bug, adoraríamos analisar seu código.</p>
+                    
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                        <p><strong>Tem dúvidas ou quer discutir uma implementação antes de começar?</strong><br>
+                        Nossa equipe está disponível para tirar dúvidas técnicas e alinhar expectativas.</p>
+                    </div>
+                </div>
+                
+                <div class="cta-links">
+                    <a href="https://github.com/RNP-INF-Collab/ChameleonMap/pulls" class="btn-small btn-primary-small">Enviar Pull Request</a>
+                    <a href="https://github.com/RNP-INF-Collab/ChameleonMap/discussions" class="btn-small btn-secondary-small">Iniciar Discussão</a>
+                    <a href="https://github.com/RNP-INF-Collab/ChameleonMap/issues" class="btn-small btn-secondary-small">Reportar Issue</a>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2024 - 2026 ChameleonMap Project.</p>
+        <p>Mantido pela comunidade e colaboradores da <a href="https://www.rnp.br/">RNP</a> e UFRGS.</p>
+    </footer>
+
+</body>
+</html>
