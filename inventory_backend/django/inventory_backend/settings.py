@@ -58,7 +58,7 @@ UNFOLD = {
 # Multi-tenant settings
 TENANT_MODEL = "clients.Client"
 TENANT_DOMAIN_MODEL = "clients.Domain"
-TENANT_USERS_DOMAIN = "mapa.rnp.br"
+TENANT_USERS_DOMAIN = os.environ.get("DJANGO_BASE_DOMAIN", "localhost")
 AUTH_USER_MODEL= "clients.TenantUser"
 
 HAS_MULTI_TYPE_TENANTS = True
