@@ -30,6 +30,7 @@ import { SubMapComponent } from './sub-map/sub-map.component';
 import { ATLASComponent } from './atlas/atlas.component';
 import { FooterComponent } from './footer/footer.component';
 import { TooltipComponent } from './tooltip/tooltip.component';
+import { LanguageChooserComponent } from './language-chooser/language-chooser.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { TooltipComponent } from './tooltip/tooltip.component';
     ATLASComponent,
     FooterComponent,
     TooltipComponent,
+    LanguageChooserComponent
   ],
   imports: [
     BrowserModule,
