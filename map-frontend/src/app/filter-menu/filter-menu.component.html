@@ -16,7 +16,7 @@
                             </ng-template>
 
                             <mat-icon id="menu-button-lock-all" (click)="onMenuPinClicked(menu, $event)" class="mat-side noselect">
-                                {{menu.pinned ? 'lock_open' : 'lock'}}
+                                {{menu.pinned ? 'lock' : 'lock_open'}}
                             </mat-icon>
 
                             <mat-icon id="menu-button-expand" (click)="menuSwitch(menu, $event)" class="mat-side noselect" [ngClass]="{'mat-side-rot': menu.expanded}">
