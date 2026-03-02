@@ -48,6 +48,7 @@ mat-expansion-panel  {
 
 .menu-name{
   width: 80%;
+  line-break: anywhere;
 }
 
 .menu-header {
