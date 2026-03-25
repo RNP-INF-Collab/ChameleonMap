@@ -10,7 +10,7 @@ declare global {
 
   export interface Menu {
     readonly id: number;
-    readonly name: string;
+    name: string;
     readonly group: number;
     readonly hierarchy_level: number;
     readonly active: boolean;
@@ -93,5 +93,18 @@ declare global {
     readonly opacity: number;
     visibility: boolean;
     currentColor: string;
+  }
+
+  export interface MenuNameTranslation{
+    readonly id: number;
+    readonly menu_name: string;
+    readonly language_code: string;
+    readonly menu: number;
+  }
+
+  export interface LanguageOption {
+    code: string;
+    flag: string;
+    name: string;
   }
 }

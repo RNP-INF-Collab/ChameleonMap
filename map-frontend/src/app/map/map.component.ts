@@ -31,12 +31,14 @@ export class MapComponent implements OnInit {
   private _locations: Array<Location>;
   public _menugroups: Array<MenuGroup>;
   private _menus: Array<Menu>;
+  private _menuNameTranslations: Array<MenuNameTranslation>;
   private _tags: Array<Tag>;
   private _tagRelationships: Array<TagRelationship>;
   private _mapSettings: any;
   private _links: Array<Link>;
   private _linksGroup: Array<LinksGroup>;
   private _kmlShapes: Array<KmlShape>;
+  private _currentLanguage: LanguageOption;
   public mapSetting: any = null;
   public map: L.Map;
   private locationHeaderSize = 0;
@@ -82,6 +84,18 @@ export class MapComponent implements OnInit {
   @HostListener('window:orientationchange')
   onOrientationChange() {
     this.checkOrientation();
+  }
+
+  onLanguageChanging(newLanguage: LanguageOption) {
+    this._currentLanguage = newLanguage
+    
+    this._menuNameTranslations.forEach((menuTranslation, index) =>{
+      if(menuTranslation.language_code == this._currentLanguage.code){
+        this.setMenuNameById(menuTranslation.menu_name, menuTranslation.menu)
+      }
+    })
+
+    
   }
 
   get locations() {
@@ -153,6 +167,13 @@ export class MapComponent implements OnInit {
     this._kmlShapes = value;
   }
 
+  get menuNameTranslations() {
+    return this._menuNameTranslations;
+  }
+  set menuNameTranslations(value) {
+    this._menuNameTranslations = value;
+  }
+
   constructor(private api: ApiService) {
     this.checkOrientation();
   }
@@ -167,7 +188,8 @@ export class MapComponent implements OnInit {
       mapSettings: this.api.getSettings(),
       links: this.api.getLinks(),
       linksGroup: this.api.getLinkGroups(),
-      kmlShapes: this.api.getKmlShapes()
+      kmlShapes: this.api.getKmlShapes(),
+      menuNameTranslations: this.api.getMenuNameTranslations()
     }).subscribe({
       next: (results) => {
         this.menugroups = results.menugroups.sort((a: MenuGroup, b: MenuGroup) => a.id - b.id);
@@ -195,6 +217,9 @@ export class MapComponent implements OnInit {
         this.links = results.links;
         this.linksGroup = results.linksGroup;
         this.kmlShapes = results.kmlShapes;
+        this.menuNameTranslations = results.menuNameTranslations;
+        console.log("Result:")
+        console.log(this.menuNameTranslations)
   
         // After all data is set, initialize the map
         this.initializeMap();
@@ -1008,6 +1033,17 @@ export class MapComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  private setMenuNameById(newName:string, menuId: number) {
+    let lengthOfMenus = this._menus.length
+    for(let localIndex = 0 ; localIndex < lengthOfMenus; localIndex++) {
+      if (this._menus[localIndex].id === menuId) {
+        this._menus[localIndex].name = newName
+        return true;
+      }
+    }
+    return false;
   }
 
   private getMenuById(menuId: number) {

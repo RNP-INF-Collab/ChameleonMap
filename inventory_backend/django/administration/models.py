@@ -3,7 +3,7 @@ from django.db.models.deletion import SET_NULL
 from django.core.validators import MaxValueValidator, MinValueValidator, FileExtensionValidator
 from colorfield.fields import ColorField
 from tinymce.models import HTMLField
-# from django import forms
+from .models_constraints import StringConstraints
 
 class MenuGroup(models.Model):
     name = models.CharField(max_length=25)
@@ -16,8 +16,31 @@ class MenuGroup(models.Model):
     def __str__(self):
         return self.name
 
+class MenuNameTranslation(models.Model):
+    
+    class LanguageCode(models.TextChoices):
+        PORTUGUESE_BR = 'pt-BR', '🇧🇷 Portuguese'
+        ENGLISH = 'en-US', '🇺🇸 English'
+        SPANISH = 'es', '🇪🇸 Español'
+        GERMAN = 'de', '🇩🇪 Deutsch'
+        KOREAN = 'ko', '🇰🇷 한국어'
+    
+    menu_name = models.CharField(max_length=StringConstraints.MENU_NAME_MAX_CHAR_NUMBER)
+    language_code = models.CharField(
+        max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
+        choices = LanguageCode.choices,
+        default = LanguageCode.PORTUGUESE_BR,
+        verbose_name = "Language"
+        )
+    menu = models.ForeignKey('Menu', null=True, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'menu_name_translations'
+        unique_together = [('menu', 'language_code')]
+    def __str__(self):
+        return self.menu_name
+
 class Menu(models.Model):
-    name = models.CharField(max_length=2000)
+    name = models.CharField(max_length=StringConstraints.MENU_NAME_MAX_CHAR_NUMBER)
     group = models.ForeignKey('MenuGroup', null=True, on_delete=models.SET_NULL)
     hierarchy_level = models.IntegerField(default=0, help_text="Menus with the same number are considered siblings. Menus with lower numbers are considered parents of the ones with higher numbers. For example, a menu with the number 0 is considered parent of menus with the number 1.")
     active = models.BooleanField(default=True)

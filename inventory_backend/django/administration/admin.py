@@ -14,12 +14,21 @@ tenant_admin_site = TenantAdminSite(name='tenant_admin')
 tenant_admin_site.register(MenuGroup, admin_class=ModelAdmin)
 class MenuGroupAdmin(ModelAdmin):
     list_display = ("name",)
+        
+class MenuNameTranslationInline(admin.TabularInline):
+    model = MenuNameTranslation
+    extra = 0
+    min_num = 0
+    can_delete = True
+    
 
-tenant_admin_site.register(Menu, admin_class=ModelAdmin)
 class MenuAdmin(ModelAdmin):
+    inlines = [MenuNameTranslationInline]
     list_display = ("name", "group", "hierarchy_level", "active")
     list_filter = ("hierarchy_level",)
     search_fields = ['name']
+
+tenant_admin_site.register(Menu, admin_class=MenuAdmin)
 
 tenant_admin_site.register(Location, admin_class=ModelAdmin)
 class LocationAdmin(ModelAdmin):

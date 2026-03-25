@@ -7,6 +7,12 @@ class MenuGroupSerializer(serializers.ModelSerializer):
         model = MenuGroup
         fields = '__all__'
 
+class MenuNameTranslationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MenuNameTranslation
+        fields = '__all__'
+
 class MenuSerializer(serializers.ModelSerializer):
 
     class Meta:
