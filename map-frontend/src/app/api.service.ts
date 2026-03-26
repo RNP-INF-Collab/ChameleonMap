@@ -56,4 +56,7 @@ export class ApiService {
   getMenuNameTranslations() {
     return this.http.get<MenuNameTranslation[]>('/menunametranslation/');
   }
+  getLanguageOptionsList(){
+    return this.http.get<{ languageOptions: string[] }>('/language-options/')
+  }
 }

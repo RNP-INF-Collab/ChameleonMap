@@ -39,6 +39,7 @@ export class MapComponent implements OnInit {
   private _linksGroup: Array<LinksGroup>;
   private _kmlShapes: Array<KmlShape>;
   private _currentLanguage: LanguageOption;
+  private _languageOptionsList: Array<string>;
   public mapSetting: any = null;
   public map: L.Map;
   private locationHeaderSize = 0;
@@ -95,7 +96,7 @@ export class MapComponent implements OnInit {
       }
     })
 
-    
+
   }
 
   get locations() {
@@ -174,6 +175,13 @@ export class MapComponent implements OnInit {
     this._menuNameTranslations = value;
   }
 
+  get languageOptionsList() {
+    return this._languageOptionsList;
+  }
+  set languageOptionsList(value) {
+    this._languageOptionsList = value;
+  }
+
   constructor(private api: ApiService) {
     this.checkOrientation();
   }
@@ -189,7 +197,8 @@ export class MapComponent implements OnInit {
       links: this.api.getLinks(),
       linksGroup: this.api.getLinkGroups(),
       kmlShapes: this.api.getKmlShapes(),
-      menuNameTranslations: this.api.getMenuNameTranslations()
+      menuNameTranslations: this.api.getMenuNameTranslations(),
+      languageOptionsList: this.api.getLanguageOptionsList()
     }).subscribe({
       next: (results) => {
         this.menugroups = results.menugroups.sort((a: MenuGroup, b: MenuGroup) => a.id - b.id);
@@ -218,9 +227,7 @@ export class MapComponent implements OnInit {
         this.linksGroup = results.linksGroup;
         this.kmlShapes = results.kmlShapes;
         this.menuNameTranslations = results.menuNameTranslations;
-        console.log("Result:")
-        console.log(this.menuNameTranslations)
-  
+        this.languageOptionsList = results.languageOptionsList.languageOptions;
         // After all data is set, initialize the map
         this.initializeMap();
       },

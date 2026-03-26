@@ -16,12 +16,20 @@ export class LanguageChooserComponent {
     {code:"kr", flag:"🇰🇷", name:"한국어"}
   ];
   
-  protected currentLanguage: LanguageOption = {code:"pt-br", flag:"🇧🇷", name:"Português"};
+  protected readonly defaultLanguage: LanguageOption = this.languageList[0];
+  protected currentLanguage: LanguageOption;
   protected isHovering = false;
 
   @Output() languageChanged: EventEmitter<LanguageOption> = new EventEmitter<LanguageOption>();
+  @Input() languageOptionsList: Array<string>
 
+  ngOnInit(){
+    console.log(this.languageOptionsList)
+    this.currentLanguage = this.defaultLanguage
+  }
+  
   onMouseEntering(){
+    console.log(this.languageOptionsList)
     this.isHovering = true;
   }
   
@@ -37,4 +45,10 @@ export class LanguageChooserComponent {
     this.languageChanged.emit(language)
   }
 
+  isCurrentLanguage(language:LanguageOption){
+    if(language.code == this.currentLanguage.code)
+      return true
+    else
+      return false
+  }
 }

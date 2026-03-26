@@ -48,6 +48,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('import/', include("importer.urls")),
     path('atlas/', include("atlas_builder.urls")),
+    path('language-options/', ListLanguageOptions.as_view()),
     *password_reset_patterns,
 ]
 
