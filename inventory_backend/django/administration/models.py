@@ -16,20 +16,19 @@ class MenuGroup(models.Model):
     def __str__(self):
         return self.name
 
+class LanguageCode(models.TextChoices):
+    PORTUGUESE_BR = 'pt-BR', '🇧🇷 Portuguese'
+    ENGLISH = 'en-US', '🇺🇸 English'
+    SPANISH = 'es', '🇪🇸 Español'
+    GERMAN = 'de', '🇩🇪 Deutsch'
+    KOREAN = 'ko', '🇰🇷 한국어'
+    
 class MenuNameTranslation(models.Model):
-    
-    class LanguageCode(models.TextChoices):
-        PORTUGUESE_BR = 'pt-BR', '🇧🇷 Portuguese'
-        ENGLISH = 'en-US', '🇺🇸 English'
-        SPANISH = 'es', '🇪🇸 Español'
-        GERMAN = 'de', '🇩🇪 Deutsch'
-        KOREAN = 'ko', '🇰🇷 한국어'
-    
     menu_name = models.CharField(max_length=StringConstraints.MENU_NAME_MAX_CHAR_NUMBER)
     language_code = models.CharField(
         max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
         choices = LanguageCode.choices,
-        default = LanguageCode.PORTUGUESE_BR,
+        default = LanguageCode.ENGLISH,
         verbose_name = "Language"
         )
     menu = models.ForeignKey('Menu', null=True, on_delete=models.CASCADE)
@@ -177,7 +176,12 @@ class Map_configuration(models.Model):
     )
 
     footer_file = models.ImageField(upload_to='uploads/', blank=True, help_text="Upload a custom footer file.")
-    
+    default_content_language = models.CharField(
+        max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
+        choices = LanguageCode.choices,
+        default = LanguageCode.PORTUGUESE_BR,
+        verbose_name = "Default Content Language"
+        )
     def user_directory_path(instance, filename):
         return 'assets/{1}'.format(filename)
 

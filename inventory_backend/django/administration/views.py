@@ -51,9 +51,22 @@ class ListLanguageOptions(APIView):
     http_method_names = ['get']
 
     def get(self, request):
-        languageOptions = (
+        defaultLanguage = (
+            Map_configuration.objects
+            .values_list('default_content_language', flat=True)
+            .first()
+        )
+        
+        languageOptions = list(
             MenuNameTranslation.objects
             .values_list("language_code", flat=True)
             .distinct()
         )
-        return Response({"languageOptions": list(languageOptions)})
+        
+        if defaultLanguage and defaultLanguage not in languageOptions:
+            languageOptions.insert(0, defaultLanguage)
+        elif defaultLanguage and defaultLanguage in languageOptions:
+            languageOptions.remove(defaultLanguage)
+            languageOptions.insert(0, defaultLanguage)
+            
+        return Response({"languageOptions": languageOptions})

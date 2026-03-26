@@ -90,13 +90,17 @@ export class MapComponent implements OnInit {
   onLanguageChanging(newLanguage: LanguageOption) {
     this._currentLanguage = newLanguage
     
-    this._menuNameTranslations.forEach((menuTranslation, index) =>{
-      if(menuTranslation.language_code == this._currentLanguage.code){
-        this.setMenuNameById(menuTranslation.menu_name, menuTranslation.menu)
-      }
-    })
-
-
+    if(this._currentLanguage.code == this._mapSettings[0].default_content_language){
+      this._menus.forEach((menu, index, _menus) => {
+        _menus[index].visibleName = menu.name
+      })
+    }else{
+      this._menuNameTranslations.forEach((menuTranslation, index) =>{
+        if(menuTranslation.language_code == this._currentLanguage.code){
+          this.setMenuVisibleNameById(menuTranslation.menu_name, menuTranslation.menu)
+        }
+      })
+    }
   }
 
   get locations() {
@@ -210,6 +214,7 @@ export class MapComponent implements OnInit {
         this.menus = results.menus;
         this.menus.forEach(menu => {
           menu.expanded = this.menus.length < 3;
+          menu.visibleName = menu.name
         });
         this.menus.forEach(menu => {
           if (menu.group == this.menugroups[0].id) {
@@ -223,6 +228,7 @@ export class MapComponent implements OnInit {
         this.tags = results.tags;
         this.tagRelationships = results.tagRelationships;
         this.mapSettings = results.mapSettings;
+        this._currentLanguage = this._mapSettings.default_content_language 
         this.links = results.links;
         this.linksGroup = results.linksGroup;
         this.kmlShapes = results.kmlShapes;
@@ -1042,11 +1048,11 @@ export class MapComponent implements OnInit {
     return null;
   }
 
-  private setMenuNameById(newName:string, menuId: number) {
+  private setMenuVisibleNameById(newName:string, menuId: number) {
     let lengthOfMenus = this._menus.length
     for(let localIndex = 0 ; localIndex < lengthOfMenus; localIndex++) {
       if (this._menus[localIndex].id === menuId) {
-        this._menus[localIndex].name = newName
+        this._menus[localIndex].visibleName = newName
         return true;
       }
     }

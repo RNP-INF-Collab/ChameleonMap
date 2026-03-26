@@ -10,7 +10,8 @@ declare global {
 
   export interface Menu {
     readonly id: number;
-    name: string;
+    readonly name: string;
+    visibleName: string;
     readonly group: number;
     readonly hierarchy_level: number;
     readonly active: boolean;
