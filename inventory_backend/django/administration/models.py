@@ -4,7 +4,36 @@ from django.core.validators import MaxValueValidator, MinValueValidator, FileExt
 from colorfield.fields import ColorField
 from tinymce.models import HTMLField
 from .models_constraints import StringConstraints
+from .language_codes import LanguageCode 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import  GenericRelation, GenericForeignKey
 
+class TitleTranslation(models.Model):
+    name = models.CharField(max_length=StringConstraints.ELEMENT_TITLE_SIZE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)    
+    object_id = models.PositiveIntegerField()
+    element_object = GenericForeignKey('content_type', 'object_id')
+    language_code = models.CharField(
+        max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
+        choices = LanguageCode.choices,
+        default = LanguageCode.ENGLISH,
+        verbose_name = "Language"
+        )
+    
+    
+    class Meta:
+        db_table = 'titletranslation'
+        verbose_name_plural = "Title Translations" 
+        constraints = [
+            models.UniqueConstraint(
+                fields=['content_type', 'object_id', 'language_code'],
+                name='unique_translation_per_element_language'
+            )
+        ]
+
+    def __str__(self):
+        return self.name
+    
 class MenuGroup(models.Model):
     name = models.CharField(max_length=25)
     simultaneous_context = models.BooleanField(default=False, help_text="When checked, this menu group context will remain active even when other menu groups are seleceted.")
@@ -16,15 +45,9 @@ class MenuGroup(models.Model):
     def __str__(self):
         return self.name
 
-class LanguageCode(models.TextChoices):
-    PORTUGUESE_BR = 'pt-BR', '🇧🇷 Portuguese'
-    ENGLISH = 'en-US', '🇺🇸 English'
-    SPANISH = 'es', '🇪🇸 Español'
-    GERMAN = 'de', '🇩🇪 Deutsch'
-    KOREAN = 'ko', '🇰🇷 한국어'
-    
+
 class MenuNameTranslation(models.Model):
-    menu_name = models.CharField(max_length=StringConstraints.MENU_NAME_MAX_CHAR_NUMBER)
+    menu_name = models.CharField(max_length=StringConstraints.ELEMENT_TITLE_SIZE)
     language_code = models.CharField(
         max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
         choices = LanguageCode.choices,
@@ -33,13 +56,13 @@ class MenuNameTranslation(models.Model):
         )
     menu = models.ForeignKey('Menu', null=True, on_delete=models.CASCADE)
     class Meta:
-        db_table = 'menu_name_translations'
+        db_table = 'menu_name_translation'
         unique_together = [('menu', 'language_code')]
     def __str__(self):
         return self.menu_name
 
 class Menu(models.Model):
-    name = models.CharField(max_length=StringConstraints.MENU_NAME_MAX_CHAR_NUMBER)
+    name = models.CharField(max_length=StringConstraints.ELEMENT_TITLE_SIZE)
     group = models.ForeignKey('MenuGroup', null=True, on_delete=models.SET_NULL)
     hierarchy_level = models.IntegerField(default=0, help_text="Menus with the same number are considered siblings. Menus with lower numbers are considered parents of the ones with higher numbers. For example, a menu with the number 0 is considered parent of menus with the number 1.")
     active = models.BooleanField(default=True)

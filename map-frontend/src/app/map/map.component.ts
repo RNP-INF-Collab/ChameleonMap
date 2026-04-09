@@ -31,7 +31,7 @@ export class MapComponent implements OnInit {
   private _locations: Array<Location>;
   public _menugroups: Array<MenuGroup>;
   private _menus: Array<Menu>;
-  private _menuNameTranslations: Array<MenuNameTranslation>;
+  // private _menuNameTranslations: Array<MenuNameTranslation>;
   private _tags: Array<Tag>;
   private _tagRelationships: Array<TagRelationship>;
   private _mapSettings: any;
@@ -87,21 +87,21 @@ export class MapComponent implements OnInit {
     this.checkOrientation();
   }
 
-  onLanguageChanging(newLanguage: LanguageOption) {
-    this._currentLanguage = newLanguage
+  // onLanguageChanging(newLanguage: LanguageOption) {
+  //   this._currentLanguage = newLanguage
     
-    if(this._currentLanguage.code == this._mapSettings[0].default_content_language){
-      this._menus.forEach((menu, index, _menus) => {
-        _menus[index].visibleName = menu.name
-      })
-    }else{
-      this._menuNameTranslations.forEach((menuTranslation, index) =>{
-        if(menuTranslation.language_code == this._currentLanguage.code){
-          this.setMenuVisibleNameById(menuTranslation.menu_name, menuTranslation.menu)
-        }
-      })
-    }
-  }
+  //   if(this._currentLanguage.code == this._mapSettings[0].default_content_language){
+  //     this._menus.forEach((menu, index, _menus) => {
+  //       _menus[index].visibleName = menu.name
+  //     })
+  //   }else{
+  //     this._menuNameTranslations.forEach((menuTranslation, index) =>{
+  //       if(menuTranslation.language_code == this._currentLanguage.code){
+  //         this.setMenuVisibleNameById(menuTranslation.menu_name, menuTranslation.menu)
+  //       }
+  //     })
+  //   }
+  // }
 
   get locations() {
     return this._locations;
@@ -172,12 +172,12 @@ export class MapComponent implements OnInit {
     this._kmlShapes = value;
   }
 
-  get menuNameTranslations() {
-    return this._menuNameTranslations;
-  }
-  set menuNameTranslations(value) {
-    this._menuNameTranslations = value;
-  }
+  // get menuNameTranslations() {
+  //   return this._menuNameTranslations;
+  // }
+  // set menuNameTranslations(value) {
+  //   this._menuNameTranslations = value;
+  // }
 
   get languageOptionsList() {
     return this._languageOptionsList;
@@ -201,7 +201,6 @@ export class MapComponent implements OnInit {
       links: this.api.getLinks(),
       linksGroup: this.api.getLinkGroups(),
       kmlShapes: this.api.getKmlShapes(),
-      menuNameTranslations: this.api.getMenuNameTranslations(),
       languageOptionsList: this.api.getLanguageOptionsList()
     }).subscribe({
       next: (results) => {
@@ -232,7 +231,6 @@ export class MapComponent implements OnInit {
         this.links = results.links;
         this.linksGroup = results.linksGroup;
         this.kmlShapes = results.kmlShapes;
-        this.menuNameTranslations = results.menuNameTranslations;
         this.languageOptionsList = results.languageOptionsList.languageOptions;
         // After all data is set, initialize the map
         this.initializeMap();

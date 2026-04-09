@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { countries } from 'country-flag-icons'
+import { LanguageService } from '../language.service';
 
 @Component({
   selector: 'app-language-chooser',
@@ -13,23 +14,22 @@ export class LanguageChooserComponent {
     {code:"en-US", flag:"🇺🇸", name:"English"},
     {code:"es", flag:"🇪🇦", name:"Español"},
     {code:"de", flag:"🇩🇪", name:"Deutsch"},
-    {code:"kr", flag:"🇰🇷", name:"한국어"}
+    {code:"ko", flag:"🇰🇷", name:"한국어"}
   ];
   
   protected readonly defaultLanguage: LanguageOption = this.languageList[0];
   protected currentLanguage: LanguageOption;
   protected isHovering = false;
 
-  @Output() languageChanged: EventEmitter<LanguageOption> = new EventEmitter<LanguageOption>();
   @Input() languageOptionsList: Array<string>
 
+  constructor(private languageService: LanguageService){}
+
   ngOnInit(){
-    console.log(this.languageOptionsList)
     this.currentLanguage = this.defaultLanguage
   }
   
   onMouseEntering(){
-    console.log(this.languageOptionsList)
     this.isHovering = true;
   }
   
@@ -42,7 +42,7 @@ export class LanguageChooserComponent {
 
   setLanguage(language: LanguageOption){
     this.currentLanguage = language
-    this.languageChanged.emit(language)
+    this.languageService.setLanguage(language)
   }
 
   isCurrentLanguage(language:LanguageOption){

@@ -31,6 +31,8 @@ import { ATLASComponent } from './atlas/atlas.component';
 import { FooterComponent } from './footer/footer.component';
 import { TooltipComponent } from './tooltip/tooltip.component';
 import { LanguageChooserComponent } from './language-chooser/language-chooser.component';
+import { TranslateTitlePipe } from './translate-field.pipe';
+import { LanguageService } from './language.service';
 
 @NgModule({
   declarations: [
@@ -63,9 +65,10 @@ import { LanguageChooserComponent } from './language-chooser/language-chooser.co
     MatIconModule,
     ScrollingModule,
     MatTableModule,
-    AppRoutingModule
+    AppRoutingModule,
+    TranslateTitlePipe
   ],
-  providers: [ApiService, EventEmitterService],
+  providers: [ApiService, EventEmitterService, LanguageService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

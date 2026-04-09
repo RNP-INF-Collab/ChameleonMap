@@ -11,9 +11,9 @@ class MenuGroupViewSet(ReadOnlyViewSet):
     serializer_class = MenuGroupSerializer
     queryset = MenuGroup.objects.all()
 
-class MenuNameTranslationViewSet(ReadOnlyViewSet):
-    serializer_class = MenuNameTranslationSerializer
-    queryset = MenuNameTranslation.objects.all()
+# class MenuNameTranslationViewSet(ReadOnlyViewSet):
+#     serializer_class = MenuNameTranslationSerializer
+#     queryset = MenuNameTranslation.objects.all()
 
 class MenuViewSet(ReadOnlyViewSet):
     serializer_class = MenuSerializer
@@ -58,7 +58,7 @@ class ListLanguageOptions(APIView):
         )
         
         languageOptions = list(
-            MenuNameTranslation.objects
+            TitleTranslation.objects
             .values_list("language_code", flat=True)
             .distinct()
         )

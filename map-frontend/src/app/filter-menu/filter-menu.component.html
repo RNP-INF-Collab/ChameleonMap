@@ -5,7 +5,7 @@
             <mat-expansion-panel-header [expandedHeight]="'45px'" (click)="menuClick(menu)" style="background: rgba(55, 60, 79, 0.35); width: 117%; margin-left: -25px;">
                 <mat-panel-title>
                     <div class="menu-name">
-                        <p style="display: inline-block;" class="menu-text">{{ capitalizeFirstLetter(menu.visibleName) }}</p>
+                        <p style="display: inline-block;" class="menu-text">{{ capitalizeFirstLetter(menu | translateTitle) }}</p>
                     </div>                                        
                     <div class="menu-button-container">
                         <div class="menu-button">
@@ -27,7 +27,7 @@
             <mat-expansion-panel-header [expandedHeight]="'45px'" (click)="menuClick(menu)" class="menu-header">
                 <mat-panel-title>
                     <div id="menu-name" class="menu-name">
-                        <p class="menu-text">{{ capitalizeFirstLetter(menu.visibleName) }}</p>
+                        <p class="menu-text">{{ capitalizeFirstLetter(menu | translateTitle) }}</p>
                     </div>
                     <div id="menu-button" class="menu-button">
                         <mat-icon (click)="menuSwitch(menu, $event)" class="mat-side noselect" [ngClass]="{'mat-side-rot': menu.expanded}">keyboard_arrow_down</mat-icon>
