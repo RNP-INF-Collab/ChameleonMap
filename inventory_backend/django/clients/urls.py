@@ -16,9 +16,7 @@ router.register(
 router.register(
     'menu', MenuViewSet
 )
-router.register(
-    'menunametranslation', MenuNameTranslationViewSet
-)
+
 router.register(
     'tag', TagViewSet
 )
