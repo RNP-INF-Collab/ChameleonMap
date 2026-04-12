@@ -67,6 +67,7 @@ class Links_groupAdmin(ModelAdmin):
 tenant_admin_site.register(Links_group, admin_class=Links_groupAdmin)
 
 class Kml_shapeAdmin(ModelAdmin):
+    inlines = [TitleTranslationInline]
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
