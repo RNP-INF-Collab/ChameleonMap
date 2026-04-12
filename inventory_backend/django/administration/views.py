@@ -11,10 +11,6 @@ class MenuGroupViewSet(ReadOnlyViewSet):
     serializer_class = MenuGroupSerializer
     queryset = MenuGroup.objects.all()
 
-# class MenuNameTranslationViewSet(ReadOnlyViewSet):
-#     serializer_class = MenuNameTranslationSerializer
-#     queryset = MenuNameTranslation.objects.all()
-
 class MenuViewSet(ReadOnlyViewSet):
     serializer_class = MenuSerializer
     queryset = Menu.objects.all()

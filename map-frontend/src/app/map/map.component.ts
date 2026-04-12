@@ -87,22 +87,6 @@ export class MapComponent implements OnInit {
     this.checkOrientation();
   }
 
-  // onLanguageChanging(newLanguage: LanguageOption) {
-  //   this._currentLanguage = newLanguage
-    
-  //   if(this._currentLanguage.code == this._mapSettings[0].default_content_language){
-  //     this._menus.forEach((menu, index, _menus) => {
-  //       _menus[index].visibleName = menu.name
-  //     })
-  //   }else{
-  //     this._menuNameTranslations.forEach((menuTranslation, index) =>{
-  //       if(menuTranslation.language_code == this._currentLanguage.code){
-  //         this.setMenuVisibleNameById(menuTranslation.menu_name, menuTranslation.menu)
-  //       }
-  //     })
-  //   }
-  // }
-
   get locations() {
     return this._locations;
   }
@@ -171,13 +155,6 @@ export class MapComponent implements OnInit {
   set kmlShapes(value) {
     this._kmlShapes = value;
   }
-
-  // get menuNameTranslations() {
-  //   return this._menuNameTranslations;
-  // }
-  // set menuNameTranslations(value) {
-  //   this._menuNameTranslations = value;
-  // }
 
   get languageOptionsList() {
     return this._languageOptionsList;
