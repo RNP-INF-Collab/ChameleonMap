@@ -39,8 +39,8 @@ router.register(
     'settings', Map_configurationViewSet
 )
 
-
 urlpatterns = [
+    path('tools/', include("tools.urls")),
     path('admin/', tenant_admin_site.urls),
     path('api-auth/', include('rest_framework.urls')),
     path('', include(router.urls)),
