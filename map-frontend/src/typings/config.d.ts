@@ -96,13 +96,6 @@ declare global {
     currentColor: string;
   }
 
-  export interface MenuNameTranslation{
-    readonly id: number;
-    readonly menu_name: string;
-    readonly language_code: string;
-    readonly menu: number;
-  }
-
   export interface LanguageOption {
     code: string;
     flag: string;

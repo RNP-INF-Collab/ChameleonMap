@@ -45,22 +45,6 @@ class MenuGroup(models.Model):
     def __str__(self):
         return self.name
 
-
-class MenuNameTranslation(models.Model):
-    menu_name = models.CharField(max_length=StringConstraints.ELEMENT_TITLE_SIZE)
-    language_code = models.CharField(
-        max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
-        choices = LanguageCode.choices,
-        default = LanguageCode.ENGLISH,
-        verbose_name = "Language"
-        )
-    menu = models.ForeignKey('Menu', null=True, on_delete=models.CASCADE)
-    class Meta:
-        db_table = 'menu_name_translation'
-        unique_together = [('menu', 'language_code')]
-    def __str__(self):
-        return self.menu_name
-
 class Menu(models.Model):
     name = models.CharField(max_length=StringConstraints.ELEMENT_TITLE_SIZE)
     group = models.ForeignKey('MenuGroup', null=True, on_delete=models.SET_NULL)

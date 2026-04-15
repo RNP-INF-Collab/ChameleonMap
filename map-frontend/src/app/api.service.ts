@@ -53,9 +53,6 @@ export class ApiService {
   getKmlShapes() {
     return this.http.get<KmlShape[]>('/kmlshape/');
   }  
-  getMenuNameTranslations() {
-    return this.http.get<MenuNameTranslation[]>('/menunametranslation/');
-  }
   getLanguageOptionsList(){
     return this.http.get<{ languageOptions: string[] }>('/language-options/')
   }

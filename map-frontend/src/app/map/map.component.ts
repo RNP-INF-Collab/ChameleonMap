@@ -31,7 +31,6 @@ export class MapComponent implements OnInit {
   private _locations: Array<Location>;
   public _menugroups: Array<MenuGroup>;
   private _menus: Array<Menu>;
-  // private _menuNameTranslations: Array<MenuNameTranslation>;
   private _tags: Array<Tag>;
   private _tagRelationships: Array<TagRelationship>;
   private _mapSettings: any;
