@@ -10,8 +10,8 @@ import { LanguageService } from '../language.service';
 
 export class LanguageChooserComponent {
   protected languageList: LanguageOption[] = [
-    {code:"pt-BR", flag:"🇧🇷", name:"Português"},
-    {code:"en-US", flag:"🇺🇸", name:"English"},
+    {code:"pt", flag:"🇧🇷", name:"Português"},
+    {code:"en", flag:"🇺🇸", name:"English"},
     {code:"es", flag:"🇪🇦", name:"Español"},
     {code:"de", flag:"🇩🇪", name:"Deutsch"},
     {code:"ko", flag:"🇰🇷", name:"한국어"}
