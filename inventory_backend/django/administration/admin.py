@@ -41,7 +41,6 @@ class TenantAdminSite(UnfoldAdminSite):
     
 tenant_admin_site = TenantAdminSite(name='tenant_admin')
 
-
 class TitleTranslationInline(GenericTabularInline):
     model = TitleTranslation
     extra = 0
@@ -81,18 +80,16 @@ class TitleTranslationInline(GenericTabularInline):
 
         return formset_class            
     
-    
+@admin.register(MenuGroup, site=tenant_admin_site)    
 class MenuGroupAdmin(ModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("name",)
     compressed_fields = True
    
     class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)
-    
-tenant_admin_site.register(MenuGroup, admin_class=MenuGroupAdmin)
-        
-        
+        js = ('admin/js/conditional_translation_inlines.js',)        
+      
+@admin.register(Menu, site=tenant_admin_site)
 class MenuAdmin(ModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("name", "group", "hierarchy_level", "active")
@@ -102,10 +99,7 @@ class MenuAdmin(ModelAdmin):
     class Media:
         js = ('admin/js/conditional_translation_inlines.js',)
 
-            
-tenant_admin_site.register(Menu, admin_class=MenuAdmin)
-
-
+@admin.register(Location, site=tenant_admin_site)          
 class LocationAdmin(ModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("name", "latitude", "longitude", "active")
@@ -113,15 +107,13 @@ class LocationAdmin(ModelAdmin):
     
     class Media:
         js = ('admin/js/conditional_translation_inlines.js',)
-tenant_admin_site.register(Location, admin_class=LocationAdmin)
-
 
 class Tag_relationshipInline(admin.TabularInline):
     model = Tag_relationship
     fk_name = "child_tag"
     search_fields = ['name']
 
-
+@admin.register(Tag, site=tenant_admin_site)
 class TagAdmin(ModelAdmin):
     inlines = [
         Tag_relationshipInline,
@@ -134,10 +126,8 @@ class TagAdmin(ModelAdmin):
     
     class Media:
         js = ('admin/js/conditional_translation_inlines.js',)
-            
-tenant_admin_site.register(Tag, admin_class=TagAdmin)
 
-
+@admin.register(Link, site=tenant_admin_site)
 class LinkAdmin(ModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("display_name", "location_1", "location_2", "links_group")
@@ -146,9 +136,8 @@ class LinkAdmin(ModelAdmin):
     
     class Media:
         js = ('admin/js/conditional_translation_inlines.js',)
-tenant_admin_site.register(Link, admin_class=LinkAdmin)
 
-
+@admin.register(Links_group, site=tenant_admin_site)
 class Links_groupAdmin(ModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("name",)
@@ -157,9 +146,8 @@ class Links_groupAdmin(ModelAdmin):
     
     class Media:
         js = ('admin/js/conditional_translation_inlines.js',)
-tenant_admin_site.register(Links_group, admin_class=Links_groupAdmin)
 
-
+@admin.register(Kml_shape, site=tenant_admin_site)
 class Kml_shapeAdmin(ModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("name",)
@@ -168,9 +156,8 @@ class Kml_shapeAdmin(ModelAdmin):
     
     class Media:
         js = ('admin/js/conditional_translation_inlines.js',)
-tenant_admin_site.register(Kml_shape, admin_class=Kml_shapeAdmin)
 
-
+@admin.register(Map_configuration, site=tenant_admin_site)
 class Map_configurationAdmin(ModelAdmin):
     model = Map_configuration
     filter_horizontal = ('automatic_translation_languages',)
@@ -184,4 +171,3 @@ class Map_configurationAdmin(ModelAdmin):
         return False
     def has_add_permission(self, request, obj=None): 
         return False
-tenant_admin_site.register(Map_configuration, admin_class=Map_configurationAdmin)
