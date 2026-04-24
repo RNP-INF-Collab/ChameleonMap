@@ -5,6 +5,7 @@ from tenant_users.tenants.models import TenantBase, UserProfile
 import re
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
+from administration.models_constraints import StringConstraints
 
 
  # Regex for main label: letters, numbers, hyphen, accented, 2-26 characters, not only numbers, does not start/end with hyphen
@@ -77,3 +78,17 @@ class Domain(DomainMixin):
 
 class TenantUser(UserProfile):
     name = models.CharField(max_length=100)
+    
+class LanguageOption(models.Model):
+    code = models.CharField(max_length = StringConstraints.LANGUAGE_CODE_2_SIZE)
+    name = models.CharField(max_length = StringConstraints.LANGUAGE_NAME_SIZE)
+    
+    class Meta:
+        db_table = 'language_option'
+        verbose_name_plural = "Language Options"
+    
+    def __str__(self):
+        return self.name
+    
+    
+    

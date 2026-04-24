@@ -7,17 +7,17 @@ from .models_constraints import StringConstraints
 from .language_codes import LanguageCode 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import  GenericRelation, GenericForeignKey
-
+from clients.models import LanguageOption
+   
 class TitleTranslation(models.Model):
-    name = models.CharField(max_length=StringConstraints.ELEMENT_TITLE_SIZE)
+    name = models.CharField(max_length = StringConstraints.ELEMENT_TITLE_SIZE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)    
     object_id = models.PositiveIntegerField()
     element_object = GenericForeignKey('content_type', 'object_id')
     language_code = models.CharField(
         max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
         choices = LanguageCode.choices,
-        default = LanguageCode.ENGLISH,
-        verbose_name = "Language"
+        verbose_name = "Language",
         )
     
     
@@ -33,12 +33,14 @@ class TitleTranslation(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class MenuGroup(models.Model):
     name = models.CharField(max_length=25)
+    translatable = models.BooleanField(default=True)
     simultaneous_context = models.BooleanField(default=False, help_text="When checked, this menu group context will remain active even when other menu groups are seleceted.")
     titleTranslations = GenericRelation(TitleTranslation)
-    
+       
     class Meta:
         db_table = 'menugroup'
         verbose_name_plural = "    Menu Groups" 
@@ -48,6 +50,7 @@ class MenuGroup(models.Model):
 
 class Menu(models.Model):
     name = models.CharField(max_length=StringConstraints.ELEMENT_TITLE_SIZE)
+    translatable = models.BooleanField(default=True)
     group = models.ForeignKey('MenuGroup', null=True, on_delete=models.SET_NULL)
     hierarchy_level = models.IntegerField(default=0, help_text="Menus with the same number are considered siblings. Menus with lower numbers are considered parents of the ones with higher numbers. For example, a menu with the number 0 is considered parent of menus with the number 1.")
     active = models.BooleanField(default=True)
@@ -63,6 +66,7 @@ class Menu(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=2000)
+    translatable = models.BooleanField(default=True)
     related_tags = models.ManyToManyField('Tag', blank=True, through='Tag_relationship')
     related_locations = models.ManyToManyField('Location', blank=True)
     parent_menu = models.ForeignKey('Menu', null=True, on_delete=models.SET_NULL)
@@ -99,13 +103,13 @@ class Tag_relationship(models.Model):
 
 class Location(models.Model):
     name = models.CharField(max_length=2000)
+    translatable = models.BooleanField(default=True)
     description = HTMLField(null=True, blank=SET_NULL)
     latitude = models.DecimalField(max_digits=24, decimal_places=20, validators=[MinValueValidator(-90), MaxValueValidator(90)])
     longitude = models.DecimalField(max_digits=24, decimal_places=20, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     active = models.BooleanField(default=True)
     titleTranslations = GenericRelation(TitleTranslation)
-
 
     class Meta:
         db_table = 'location'
@@ -117,6 +121,7 @@ class Location(models.Model):
 
 class Kml_shape(models.Model):
     name = models.CharField(max_length=25)
+    translatable = models.BooleanField(default=True)
     parent_menu = models.ForeignKey('Menu', null=True, on_delete=models.SET_NULL)
     links_color = ColorField(default='#FF0000')
     opacity = models.DecimalField(default=0.6, max_digits=4, decimal_places=3, validators=[MinValueValidator(0), MaxValueValidator(1)],    help_text="Opacity of the link. Min(0)-Max(1)")
@@ -134,6 +139,7 @@ class Kml_shape(models.Model):
 
 class Links_group(models.Model):
     name = models.CharField(max_length=25)
+    translatable = models.BooleanField(default=True)
     links_color = ColorField(default='#FF0000')
     opacity = models.DecimalField(default=0.6, max_digits=4, decimal_places=3, validators=[MinValueValidator(0), MaxValueValidator(1)],    help_text="Opacity of the link. Min(0)-Max(1)")
     sidebar_content = HTMLField(null=True, blank=SET_NULL)
@@ -151,6 +157,7 @@ class Links_group(models.Model):
 
 class Link(models.Model):
     display_name = models.CharField(max_length=25)
+    translatable = models.BooleanField(default=True)
     popup_description = HTMLField(null=True, blank=SET_NULL)
     curvature = models.DecimalField(default=2.0, max_digits=4, decimal_places=3, validators=[MinValueValidator(1), MaxValueValidator(4)],
     help_text="This field controls how curved the link will appear in the front-end. The higher the number, the less the link will be curved. Min(1)-Max(4). Accept decimal values.")
@@ -199,10 +206,19 @@ class Map_configuration(models.Model):
         max_length = StringConstraints.LANGUAGE_CODE_MAX_CHAR_NUMBER,
         choices = LanguageCode.choices,
         default = LanguageCode.PORTUGUESE_BR,
-        verbose_name = "Default Content Language"
+        verbose_name = "Default content language"
         )
+    automatic_translation_languages = models.ManyToManyField(
+        'clients.LanguageOption', 
+        blank = True,
+        help_text= "After the elementios creation, an automatic translation will be added for each selected language."        
+    )
+    
     def user_directory_path(instance, filename):
         return 'assets/{1}'.format(filename)
+    
+    def get_automatic_translation_labels(self):
+        return [LanguageCode[k] for k in self.automatic_translation_languages if k in LanguageCode]
 
     class Meta:
         verbose_name = "Map Settings"
