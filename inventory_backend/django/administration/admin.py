@@ -1,85 +1,12 @@
 from django.contrib import admin
-from administration.models import *
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin
-from unfold.apps import UnfoldAdminSite
-from django.contrib.contenttypes.admin import GenericTabularInline
-from django.template.response import TemplateResponse
-from django.urls import path
-from django.shortcuts import redirect
-from tools.views import createTranslationsForAllTitles
-from django.contrib import messages
+from administration.models import *
+from administration.admin_inlines import Tag_relationshipInline, TitleTranslationInline
+from administration.admin_custom_site import TenantAdminSite
 
-class TenantAdminSite(UnfoldAdminSite):
-    site_header = "ChameleonMap Admin"
-    site_title = "ChameleonMap Portal"
-    index_title = "Welcome to ChameleonMap Admin Portal"
-    
-    def get_urls(self):
-        urls = super().get_urls()
-        custom_urls = [
-            path(
-                "generate-translations/",
-                self.admin_view(self.generate_translations_view),
-                name="generate_translations",
-            ),
-        ]
-        return custom_urls + urls
+tenant_admin_site = TenantAdminSite(name='tenant_admin') 
 
-    def generate_translations_view(self, request):
-        if request.method == "POST":
-            targetLanguage = request.POST.get("targetLanguage")
-            try:
-                createTranslationsForAllTitles(targetLanguage)
-                messages.success(request, f"Translations generated successfully for: {LanguageCode(targetLanguage).label}")
-            except Exception as e:
-                messages.error(request, f"Error generating translations: {str(e)}")
-            return redirect("tenant_admin:generate_translations")
-
-        context = dict(self.each_context(request))
-        return TemplateResponse(request, "admin/generate_translations.html", context)
-    
-tenant_admin_site = TenantAdminSite(name='tenant_admin')
-
-class TitleTranslationInline(GenericTabularInline):
-    model = TitleTranslation
-    extra = 0
-    fields = ['language_code', 'name']
-    collapsible = True
-    class Media:
-        js = ('admin/js/autofill-translation.js',)
-
-    def get_formset(self, request, obj=None, **kwargs):
-        formset_class = super().get_formset(request, obj, **kwargs)
-
-        if obj is not None:
-            existing_langs = set(
-                TitleTranslation.objects.filter(
-                    content_type=ContentType.objects.get_for_model(obj),
-                    object_id=obj.pk
-                ).values_list('language_code', flat=True)
-            )
-            
-            default_language = Map_configuration.objects.first().default_content_language
-            all_choices = list(LanguageCode.choices)
-            available_choices = [
-                (code, label)
-                for code, label in all_choices
-                if code not in existing_langs and code != default_language
-            ]
-
-            OriginalForm = formset_class.form
-
-            class PatchedForm(OriginalForm):
-                def __init__(self_form, *args, **kwargs):
-                    super().__init__(*args, **kwargs)
-                    if not self_form.instance.pk:
-                        self_form.fields['language_code'].choices = [('', '---------')] + available_choices
-                        self_form.fields['language_code'].initial = ''
-            formset_class.form = PatchedForm
-
-        return formset_class            
-    
 @admin.register(MenuGroup, site=tenant_admin_site)    
 class MenuGroupAdmin(ModelAdmin):
     inlines = [TitleTranslationInline]
@@ -107,11 +34,6 @@ class LocationAdmin(ModelAdmin):
     
     class Media:
         js = ('admin/js/conditional_translation_inlines.js',)
-
-class Tag_relationshipInline(admin.TabularInline):
-    model = Tag_relationship
-    fk_name = "child_tag"
-    search_fields = ['name']
 
 @admin.register(Tag, site=tenant_admin_site)
 class TagAdmin(ModelAdmin):
