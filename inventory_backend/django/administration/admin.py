@@ -4,83 +4,57 @@ from unfold.admin import ModelAdmin
 from administration.models import *
 from administration.admin_inlines import Tag_relationshipInline, TitleTranslationInline
 from administration.admin_custom_site import TenantAdminSite
+from administration.admin_translatable_model import TranslatableModelAdmin
 
 tenant_admin_site = TenantAdminSite(name='tenant_admin') 
 
 @admin.register(MenuGroup, site=tenant_admin_site)    
-class MenuGroupAdmin(ModelAdmin):
-    inlines = [TitleTranslationInline]
+class MenuGroupAdmin(TranslatableModelAdmin):
     list_display = ("name",)
     compressed_fields = True
-   
-    class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)        
       
 @admin.register(Menu, site=tenant_admin_site)
-class MenuAdmin(ModelAdmin):
-    inlines = [TitleTranslationInline]
+class MenuAdmin(TranslatableModelAdmin):
     list_display = ("name", "group", "hierarchy_level", "active")
     list_filter = ("hierarchy_level",)
     search_fields = ['name']
     
-    class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)
-
 @admin.register(Location, site=tenant_admin_site)          
-class LocationAdmin(ModelAdmin):
-    inlines = [TitleTranslationInline]
+class LocationAdmin(TranslatableModelAdmin):
     list_display = ("name", "latitude", "longitude", "active")
     search_fields = ['name']
-    
-    class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)
 
 @admin.register(Tag, site=tenant_admin_site)
-class TagAdmin(ModelAdmin):
-    inlines = [
-        Tag_relationshipInline,
-        TitleTranslationInline
-    ]
+class TagAdmin(TranslatableModelAdmin):
+    inlines = [Tag_relationshipInline]
     list_display = ("name", "parent_menu", "active")
     filter_horizontal = ('related_locations',)
     list_filter = ("parent_menu",)
     search_fields = ['name']
     
-    class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)
-
 @admin.register(Link, site=tenant_admin_site)
-class LinkAdmin(ModelAdmin):
+class LinkAdmin(TranslatableModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("display_name", "location_1", "location_2", "links_group")
     list_filter = ("links_group",)
     search_fields = ['display_name']
     
-    class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)
-
 @admin.register(Links_group, site=tenant_admin_site)
-class Links_groupAdmin(ModelAdmin):
+class Links_groupAdmin(TranslatableModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
     
-    class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)
-
 @admin.register(Kml_shape, site=tenant_admin_site)
-class Kml_shapeAdmin(ModelAdmin):
+class Kml_shapeAdmin(TranslatableModelAdmin):
     inlines = [TitleTranslationInline]
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
     
-    class Media:
-        js = ('admin/js/conditional_translation_inlines.js',)
-
 @admin.register(Map_configuration, site=tenant_admin_site)
-class Map_configurationAdmin(ModelAdmin):
+class Map_configurationAdmin(TranslatableModelAdmin):
     model = Map_configuration
     filter_horizontal = ('automatic_translation_languages',)
     compressed_fields = True
