@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin
 from administration.models import *
-from administration.admin_inlines import Tag_relationshipInline, TitleTranslationInline
+from administration.admin_inlines import Tag_relationshipInline, NameTranslationInline
 from administration.admin_custom_site import TenantAdminSite
 from administration.admin_translatable_model import TranslatableModelAdmin
 
@@ -34,21 +34,21 @@ class TagAdmin(TranslatableModelAdmin):
     
 @admin.register(Link, site=tenant_admin_site)
 class LinkAdmin(TranslatableModelAdmin):
-    inlines = [TitleTranslationInline]
+    inlines = [NameTranslationInline]
     list_display = ("display_name", "location_1", "location_2", "links_group")
     list_filter = ("links_group",)
     search_fields = ['display_name']
     
 @admin.register(Links_group, site=tenant_admin_site)
 class Links_groupAdmin(TranslatableModelAdmin):
-    inlines = [TitleTranslationInline]
+    inlines = [NameTranslationInline]
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']
     
 @admin.register(Kml_shape, site=tenant_admin_site)
 class Kml_shapeAdmin(TranslatableModelAdmin):
-    inlines = [TitleTranslationInline]
+    inlines = [NameTranslationInline]
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ['name']

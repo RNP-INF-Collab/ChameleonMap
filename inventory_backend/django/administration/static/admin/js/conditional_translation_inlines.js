@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const translatableCheckbox = document.getElementById('id_translatable');
     
     if(translatableCheckbox) {   
-        const titleTranslationsInlines = document.querySelector('[id*="titletranslation"]');        
+        const titleTranslationsInlines = document.querySelector('[id*="nametranslation"]');        
         
         function redefineTranslationsInputVisibility() {
             if(titleTranslationsInlines){

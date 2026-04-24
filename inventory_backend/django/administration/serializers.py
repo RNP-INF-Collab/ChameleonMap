@@ -4,7 +4,7 @@ from .models import *
 class TranslatableTitleElement:
     def get_translations(self, obj):
         content_type = ContentType.objects.get_for_model(obj)
-        querrySet = TitleTranslation.objects.filter(
+        querrySet = NameTranslation.objects.filter(
             content_type = content_type,
             object_id = obj.id
         )        
@@ -12,7 +12,7 @@ class TranslatableTitleElement:
     
 class TitleTranslationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TitleTranslation
+        model = NameTranslation
         fields = ['language_code', 'name']
         
 class MenuGroupSerializer(TranslatableTitleElement, serializers.ModelSerializer):

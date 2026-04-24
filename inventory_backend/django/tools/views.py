@@ -16,7 +16,7 @@ def requestTranslationsGeneration(request):
     
 def createTranslationsForAllTitles(targetLanguage):
     translatableModels = [Menu, MenuGroup, Tag, Links_group, Link, Location, Kml_shape]
-    translationsTable = TitleTranslation.objects.all().filter(language_code = targetLanguage)
+    translationsTable = NameTranslation.objects.all().filter(language_code = targetLanguage)
     systemLanguage = Map_configuration.objects.first().default_content_language
     
     for model in translatableModels:
@@ -50,7 +50,7 @@ def createTitleTranslation(element, targetLanguageCode, sourceLanguageCode = "au
 
         if(contentType and originalTitle):
             translatedTitle = translateText(originalTitle, targetLanguageCode, sourceLanguageCode)
-            newTranslation = TitleTranslation(name=translatedTitle, language_code = targetLanguageCode, object_id = element.id, content_type=contentType)
+            newTranslation = NameTranslation(name=translatedTitle, language_code = targetLanguageCode, object_id = element.id, content_type=contentType)
             newTranslation.save()
             return True
     return False

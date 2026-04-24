@@ -7,8 +7,8 @@ class Tag_relationshipInline(admin.TabularInline):
     fk_name = "child_tag"
     search_fields = ['name']
     
-class TitleTranslationInline(GenericTabularInline):
-    model = TitleTranslation
+class NameTranslationInline(GenericTabularInline):
+    model = NameTranslation
     extra = 0
     fields = ['language_code', 'name']
     collapsible = True
@@ -20,7 +20,7 @@ class TitleTranslationInline(GenericTabularInline):
 
         if obj is not None:
             existing_langs = set(
-                TitleTranslation.objects.filter(
+                NameTranslation.objects.filter(
                     content_type=ContentType.objects.get_for_model(obj),
                     object_id=obj.pk
                 ).values_list('language_code', flat=True)

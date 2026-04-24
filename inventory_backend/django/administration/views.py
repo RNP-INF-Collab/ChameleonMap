@@ -54,7 +54,7 @@ class ListLanguageOptions(APIView):
         )
         
         languageOptions = list(
-            TitleTranslation.objects
+            NameTranslation.objects
             .values_list("language_code", flat=True)
             .distinct()
         )

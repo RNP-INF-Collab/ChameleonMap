@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import  GenericRelation, GenericForeignKey
 from clients.models import LanguageOption
    
-class TitleTranslation(models.Model):
+class NameTranslation(models.Model):
     name = models.CharField(max_length = StringConstraints.ELEMENT_TITLE_SIZE)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)    
     object_id = models.PositiveIntegerField()
@@ -20,14 +20,13 @@ class TitleTranslation(models.Model):
         verbose_name = "Language",
         )
     
-    
     class Meta:
-        db_table = 'titletranslation'
-        verbose_name_plural = "Title Translations" 
+        db_table = 'nametranslation'
+        verbose_name_plural = "Name Translations" 
         constraints = [
             models.UniqueConstraint(
                 fields=['content_type', 'object_id', 'language_code'],
-                name='unique_translation_per_element_language'
+                name='unique_name_translation_per_element_language'
             )
         ]
 
@@ -39,7 +38,7 @@ class MenuGroup(models.Model):
     name = models.CharField(max_length=25)
     translatable = models.BooleanField(default=True)
     simultaneous_context = models.BooleanField(default=False, help_text="When checked, this menu group context will remain active even when other menu groups are seleceted.")
-    titleTranslations = GenericRelation(TitleTranslation)
+    name_translations = GenericRelation(NameTranslation)
        
     class Meta:
         db_table = 'menugroup'
@@ -54,7 +53,7 @@ class Menu(models.Model):
     group = models.ForeignKey('MenuGroup', null=True, on_delete=models.SET_NULL)
     hierarchy_level = models.IntegerField(default=0, help_text="Menus with the same number are considered siblings. Menus with lower numbers are considered parents of the ones with higher numbers. For example, a menu with the number 0 is considered parent of menus with the number 1.")
     active = models.BooleanField(default=True)
-    titleTranslations = GenericRelation(TitleTranslation)
+    name_translations = GenericRelation(NameTranslation)
 
     class Meta:
         db_table = 'menu'
@@ -75,7 +74,7 @@ class Tag(models.Model):
     sidebar_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* Leave blank to use default template</b>", null=True, blank=SET_NULL)
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     active = models.BooleanField(default=True)
-    titleTranslations = GenericRelation(TitleTranslation)
+    name_translations = GenericRelation(NameTranslation)
 
     class Meta:
         db_table = 'tag'
@@ -90,7 +89,6 @@ class Tag_relationship(models.Model):
     parent_tag = models.ForeignKey('Tag', null=True, on_delete=models.CASCADE, related_name="parent_tag")
     cluster_id = models.IntegerField(null=True, blank=SET_NULL, default=1,
         help_text="Tag clusters are group of parent tags from the tag. To a cluster id be active, all tags in that id must be active. The child tag will be active if at least one of the cluster ids is active.")
-    titleTranslations = GenericRelation(TitleTranslation)
 
     class Meta:
         verbose_name = "Tag to tag relation"
@@ -109,7 +107,7 @@ class Location(models.Model):
     longitude = models.DecimalField(max_digits=24, decimal_places=20, validators=[MinValueValidator(-180), MaxValueValidator(180)])
     overlayed_popup_content = HTMLField(help_text="<b style='font-size: 0.85rem'>* This text will be displayed on 'show more info' popup</b>", null=True, blank=SET_NULL)
     active = models.BooleanField(default=True)
-    titleTranslations = GenericRelation(TitleTranslation)
+    name_translation = GenericRelation(NameTranslation)
 
     class Meta:
         db_table = 'location'
@@ -126,7 +124,7 @@ class Kml_shape(models.Model):
     links_color = ColorField(default='#FF0000')
     opacity = models.DecimalField(default=0.6, max_digits=4, decimal_places=3, validators=[MinValueValidator(0), MaxValueValidator(1)],    help_text="Opacity of the link. Min(0)-Max(1)")
     kml_file = models.FileField(upload_to='uploads/', help_text="Upload a custom KML file (max 30Mb).", validators=[FileExtensionValidator(['kml'])])
-    titleTranslations = GenericRelation(TitleTranslation)
+    name_translation = GenericRelation(NameTranslation)
     
     def user_directory_path(instance, filename):
         return 'assets/{1}'.format(filename)
@@ -144,7 +142,7 @@ class Links_group(models.Model):
     opacity = models.DecimalField(default=0.6, max_digits=4, decimal_places=3, validators=[MinValueValidator(0), MaxValueValidator(1)],    help_text="Opacity of the link. Min(0)-Max(1)")
     sidebar_content = HTMLField(null=True, blank=SET_NULL)
     parent_menu = models.ForeignKey('Menu', null=True, on_delete=models.SET_NULL)
-    titleTranslations = GenericRelation(TitleTranslation)
+    name_translations = GenericRelation(NameTranslation)
 
     class Meta:
         ordering = ['name']
@@ -169,7 +167,7 @@ class Link(models.Model):
     location_2 = models.ForeignKey('Location', null=True, on_delete=models.CASCADE, related_name="location_2")
     links_group = models.ForeignKey('Links_group', null=True, on_delete=models.SET_NULL)
     invert_link = models.BooleanField(default=False, help_text="This field, when active, will invert the curvature of the link.")
-    titleTranslations = GenericRelation(TitleTranslation)
+    name_translations = GenericRelation(NameTranslation)
 
     class Meta:
         db_table = 'link'
