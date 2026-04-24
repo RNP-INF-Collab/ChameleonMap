@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from unfold.apps import UnfoldAdminSite
 from tools.views import createTranslationsForAllTitles
+from administration.language_codes import LanguageCode
 
 class TenantAdminSite(UnfoldAdminSite):
     site_header = "ChameleonMap Admin"
