@@ -19,6 +19,10 @@ import { forkJoin } from 'rxjs';
 import { kml } from '@tmcw/togeojson';
 import { TooltipComponent } from '../tooltip/tooltip.component';
 import { ChameleonButtonComponent } from '../chameleon-button/chameleon-button.component';
+import { TagSidebarComponent } from '../filter-menu/tag-sidebar/tag-sidebar.component';
+import { NgZone } from '@angular/core';
+import { FilterMenuComponent } from '../filter-menu/filter-menu.component';
+
 
 @Component({
   selector: 'app-map',
@@ -28,6 +32,8 @@ import { ChameleonButtonComponent } from '../chameleon-button/chameleon-button.c
 export class MapComponent implements OnInit {
   @ViewChild(OverlayedPopupComponent) overlayedPopup: OverlayedPopupComponent;
   @ViewChild(TooltipComponent) onboardingComponent: TooltipComponent;
+  @ViewChild(TagSidebarComponent) tagSidebar!: TagSidebarComponent;
+  @ViewChild(FilterMenuComponent) filterMenu!: FilterMenuComponent;
 
   private _locations: Array<Location>;
   public _menugroups: Array<MenuGroup>;
@@ -154,7 +160,7 @@ export class MapComponent implements OnInit {
     this._kmlShapes = value;
   }
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private zone: NgZone) {
     this.checkOrientation();
   }
 
@@ -195,6 +201,9 @@ export class MapComponent implements OnInit {
         this.mapSettings = results.mapSettings;
         this.links = results.links;
         this.linksGroup = results.linksGroup;
+        this._linksGroup.forEach(lg => {
+          lg.visibility = true;
+        });
         this.kmlShapes = results.kmlShapes;
   
         // After all data is set, initialize the map
@@ -352,84 +361,128 @@ export class MapComponent implements OnInit {
 
   private insertLinks() {
     this.resetlinks();
+
     if (this._linksGroup && this._links && this._links.length > 0) {
       this.linksFeatureOn = true;
-      this._links.forEach((link: Link) => {
+
+      // 🔥 redes ativas
+      const activeNetworks = this._linksGroup
+        .filter(lg => lg.visibility)
+        .map(lg => lg.name);
+
+      this._links.forEach((link: any) => {
         const loc1 = this.getLocationById(link.location_1);
         const loc2 = this.getLocationById(link.location_2);
-        const linkgroup = this.getLinksGroupById(link.links_group);
-        if (linkgroup == undefined) return;
-        let isSimultaneous = this.isMenuSimultaneousAndSelectedInItsMenuGroup(linkgroup.parent_menu);
-        if (linkgroup.parent_menu == this.selectedMenu || isSimultaneous){
-          if (loc1 && loc2) {
-            linkgroup.visibility = true;
-            let pointA;
-            let pointB;
-            let values;
-            values = this.getOriginAndDestiny(loc1, loc2, link.invert_link);
-            pointA = values[0];
-            pointB = values[1];
-  
-            const pointList = [pointA, pointB];
-            if (isSimultaneous || (loc1.onMap && loc2.onMap)) {
-              const latlngs = [];
-  
-              const latlng1 = [pointA.lat, pointA.lng],
-                latlng2 = [pointB.lat, pointB.lng];
-  
-              const offsetX = latlng2[1] - latlng1[1],
-                offsetY = latlng2[0] - latlng1[0];
-  
-              const r = Math.sqrt(Math.pow(offsetX, 2) + Math.pow(offsetY, 2)),
-                theta = Math.atan2(offsetY, offsetX);
-  
-              const thetaOffset = 3.14 / 10;
-  
-              const r2 = r / 2 / Math.cos(thetaOffset),
-                theta2 = theta + thetaOffset;
-  
-              const midpointX = (r2 * Math.cos(theta2)) / 1.5 + latlng1[1],
-                midpointY = (r2 * Math.sin(theta2)) / 1.5 + latlng1[0];
-  
-              const midpointLatLng = [midpointY, midpointX];
-  
-              latlngs.push(latlng1, midpointLatLng, latlng2);
-  
-              const pathOptions = {
-                color: linkgroup.links_color,
-                weight: link.weight,
-                opacity: linkgroup.opacity, //link.opacity;
-                smoothFactor: 1,
-                stroke: true,
-                dashArray:'',
-                dashOffset: ''
-              };
-              if(link.dashed){
-                pathOptions.dashArray = '10, 10';
-                pathOptions.dashOffset = '10';
-              }
-              if(link.straight_link){
-                link.line = new L.Polyline([pointA, pointB], pathOptions);
-              }else{
-                link.line = L.curve(
-                  [
-                    'M',
-                    [latlng1[0], latlng1[1]],
-                    'S',
-                    [midpointLatLng[0], midpointLatLng[1]],
-                    [latlng2[0], latlng2[1]]
-                  ],
-                  pathOptions
-                );
-              }
-              
-              link.line.bindTooltip(linkgroup.name, {sticky : true});
-              link.line.addTo(this.map);
-            }
-          }
+
+        if (!loc1 || !loc2) return;
+
+        // 🔥 NOVA REGRA DE VISIBILIDADE
+        const shouldShow = link.networks?.some((net: string) =>
+          activeNetworks.includes(net)
+        );
+
+        if (!shouldShow) return;
+
+        // 🔥 cor baseada na primeira network
+        const net = link.networks?.[0];
+        const group = this._linksGroup.find(g => g.name === net);
+
+        const color = group?.links_color || "#999";
+        const opacity = group?.opacity || 0.6;
+
+        let pointA;
+        let pointB;
+
+        const values = this.getOriginAndDestiny(loc1, loc2, link.invert_link);
+        pointA = values[0];
+        pointB = values[1];
+
+        if (!(loc1.onMap && loc2.onMap)) return;
+
+        const latlng1 = [pointA.lat, pointA.lng];
+        const latlng2 = [pointB.lat, pointB.lng];
+
+        const offsetX = latlng2[1] - latlng1[1];
+        const offsetY = latlng2[0] - latlng1[0];
+
+        const r = Math.sqrt(offsetX ** 2 + offsetY ** 2);
+        const theta = Math.atan2(offsetY, offsetX);
+
+        const thetaOffset = Math.PI / 10;
+
+        const r2 = r / 2 / Math.cos(thetaOffset);
+        const theta2 = theta + thetaOffset;
+
+        const midpointX = (r2 * Math.cos(theta2)) / 1.5 + latlng1[1];
+        const midpointY = (r2 * Math.sin(theta2)) / 1.5 + latlng1[0];
+
+        const midpointLatLng = [midpointY, midpointX];
+
+        const pathOptions: any = {
+          color: color,
+          weight: link.weight,
+          opacity: opacity,
+          smoothFactor: 1,
+          stroke: true,
+          dashArray: '',
+          dashOffset: ''
+        };
+
+        if (link.dashed) {
+          pathOptions.dashArray = '10, 10';
+          pathOptions.dashOffset = '10';
         }
+
+        if (link.straight_link) {
+          link.line = new L.Polyline([pointA, pointB], pathOptions);
+        } else {
+          link.line = L.curve(
+            [
+              'M',
+              [latlng1[0], latlng1[1]],
+              'S',
+              [midpointLatLng[0], midpointLatLng[1]],
+              [latlng2[0], latlng2[1]]
+            ],
+            pathOptions
+          );
+        }
+
+        // 🔥 tooltip agora usa network
+        link.line.bindTooltip(
+          link.networks?.join(" ; ") || "",
+          { sticky: true }
+        );
+
+        link.line.on('click', () => {
+          this.zone.run(() => {
+            this.openLinkSidebar(link);
+          });
+        });
+
+        link.line.addTo(this.map);
       });
     }
+  }
+
+  openLinkSidebar(link: any) {
+    const locations = [
+      this.getLocationById(link.location_1),
+      this.getLocationById(link.location_2)
+    ].filter((loc): loc is Location => loc !== null);
+
+    const fakeTag: any = {
+      id: -1,
+      name: link.display_name || 'Link',
+      sidebar_content: null,
+      color: '#999',
+      currentColor: '#999',
+      parent_menu: -1,
+      isLink: true,
+      networks: link.networks
+    };
+
+    this.filterMenu.tagSidebar.selectTag(fakeTag, locations);
   }
 
   private initializeMapOptions() {
@@ -767,7 +820,15 @@ export class MapComponent implements OnInit {
 
   private checkLinksOnMap(location: Location) {
     for (const link of this._links) {
-      if (this.getLinksGroupById(link.links_group)?.visibility) {
+      const activeNetworks = this._linksGroup
+        .filter(lg => lg.visibility)
+        .map(lg => lg.name);
+
+      const shouldShow = link.networks?.some((net: string) =>
+        activeNetworks.some(a => a.toLowerCase() === net.toLowerCase())
+      );
+
+      if (shouldShow) {
         if (link.location_1 == location.id || link.location_2 == location.id) {
           const loc1 = this.getLocationById(link.location_1);
           const loc2 = this.getLocationById(link.location_2);
@@ -1021,17 +1082,6 @@ export class MapComponent implements OnInit {
     return null;
   }
 
-  private hideLinksByLinkGroup(lg: LinksGroup) {
-    if (lg) {
-      lg.visibility = false;
-      for (const link of this._links) {
-        if (link.links_group == lg.id && link.line != null) {
-          link.line.remove(this.map);
-        }
-      }
-    }
-  }
-
   private resetlinks() {
     if (this._links) {
       for (const link of this._links) {
@@ -1041,23 +1091,6 @@ export class MapComponent implements OnInit {
       }
     }
 
-  }
-
-  private insertLinkByLinkGroup(lg: LinksGroup) {
-    if (lg) {
-      lg.visibility = true;
-      for (const link of this._links) {
-        const elementLinksGroup = this.getLinksGroupById(link.links_group);
-        if (!elementLinksGroup) return;
-        if (link.links_group == lg.id || this.isMenuSimultaneousAndSelectedInItsMenuGroup(elementLinksGroup.parent_menu)) {
-          const loc1 = this.getLocationById(link.location_1);
-          const loc2 = this.getLocationById(link.location_2);
-          if (loc1 && loc2 && loc1.onMap && loc2.onMap) {
-            link.line.addTo(this.map);
-          }
-        }
-      }
-    }
   }
 
   private removeMarkerByTag(tag: Tag) {
@@ -1237,12 +1270,32 @@ export class MapComponent implements OnInit {
     this.insertKmlLayer(event.shape.id);
   }
 
+  private updateLinksVisibility() {
+    const activeNetworks = this._linksGroup
+      .filter(lg => lg.visibility)
+      .map(lg => lg.name);
+
+    for (const link of this._links) {
+      if (!link.line) continue;
+
+      const shouldShow = link.networks?.some((net: string) =>
+        activeNetworks.some(a => a.toLowerCase() === net.toLowerCase())
+      );
+
+      if (shouldShow) {
+        link.line.addTo(this.map);
+      } else {
+        link.line.remove(this.map);
+      }
+    }
+  }
+
   public onLinkRemoval(event: any) {
-    this.hideLinksByLinkGroup(event.selectedLG);
+    this.updateLinksVisibility();
   }
 
   public onLinkReactivated(event: any) {
-    this.insertLinkByLinkGroup(event.selectedLG);
+    this.updateLinksVisibility();
   }
 
   public onButtonClicked(event: any) {
@@ -1326,7 +1379,6 @@ export class MapComponent implements OnInit {
     `
     
     this.overlayedPopup.activateWithPersonalizedContent(popupContent, "About This Map")
-    console.log('Popup activated!');
   }
 }
 

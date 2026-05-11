@@ -63,6 +63,20 @@ export class TagSidebarComponent {
     //outer[0].setAttribute('style', 'box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);');
   }
 
+  get isLink(): boolean {
+    return (this._selectedTag as any)?.isLink === true;
+  }
+
+  getNetworks(): string[] {
+    const networks = (this._selectedTag as any)?.networks;
+
+    if (!networks) return [];
+
+    return Array.isArray(networks)
+      ? networks
+      : networks.split(';').map((n: string) => n.trim());
+  }
+
   public selectTag(tag: Tag, related_locations: Array<Location>) {
     if (tag != this._selectedTag || this._selectedTag == undefined) {
       this._selectedTag = tag;
@@ -83,5 +97,29 @@ export class TagSidebarComponent {
     } else {
       this.collapse();
     }
+  }
+
+  hasMultipleNetworks(): boolean {
+    const networks = (this._selectedTag as any)?.networks;
+
+    if (!networks) return false;
+
+    const list = Array.isArray(networks)
+      ? networks
+      : networks.split(';').map((n: string) => n.trim());
+
+    return list.length > 1;
+  }
+
+  getPrimaryNetwork(): string {
+    const networks = (this._selectedTag as any)?.networks;
+
+    if (!networks) return '';
+
+    const list = Array.isArray(networks)
+      ? networks
+      : networks.split(';').map((n: string) => n.trim());
+
+    return list[0] || '';
   }
 }

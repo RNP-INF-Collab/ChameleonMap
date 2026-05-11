@@ -65,7 +65,7 @@ declare global {
     readonly popup_description: string;
     readonly location_1: number;
     readonly location_2: number;
-    readonly links_group: number;
+    readonly networks: string[];
     readonly curvature: number;
     readonly invert_link: boolean;
     readonly straight_link: boolean;
