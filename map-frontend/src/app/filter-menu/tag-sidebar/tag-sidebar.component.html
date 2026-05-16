@@ -16,17 +16,24 @@
                     </li>
                 </ul>
 
-                <div class="networks-title" style="margin-top: 12px;">
-                    Networks:
-                </div>
+            <div
+                class="networks-title"
+                style="margin-top: 12px;"
+                *ngIf="getNetworks().length > 1"
+            >
+                Networks:
+            </div>
 
-                <ul class="networks-list">
-                    <ng-container *ngFor="let net of getNetworks()">
-                        <li *ngIf="net !== getPrimaryNetwork()">
-                            {{ net }}
-                        </li>
-                    </ng-container>
-                </ul>
+            <ul
+                class="networks-list"
+                *ngIf="getNetworks().length > 1"
+            >
+                <ng-container *ngFor="let net of getNetworks()">
+                    <li *ngIf="net !== getPrimaryNetwork()">
+                        {{ net }}
+                    </li>
+                </ng-container>
+            </ul>
             </div>
             <div *ngIf="_hasSbContent" class="sidebar-content" [innerHTML]="_selectedTag.sidebar_content | safeHtml"></div>
             <div class="locations" *ngIf="!isLink">

@@ -383,12 +383,11 @@ export class MapComponent implements OnInit {
 
         if (!shouldShow) return;
 
-        // 🔥 cor baseada na primeira network
-        const net = link.networks?.[0];
-        const group = this._linksGroup.find(g => g.name === net);
-
-        const color = group?.links_color || "#999";
-        const opacity = group?.opacity || 0.6;
+        const groups = link.networks
+          ?.map((net: string) =>
+            this._linksGroup.find(g => g.name === net)
+          )
+          .filter((group: any) => group && group.visibility);
 
         let pointA;
         let pointB;
@@ -418,41 +417,88 @@ export class MapComponent implements OnInit {
 
         const midpointLatLng = [midpointY, midpointX];
 
-        const pathOptions: any = {
-          color: color,
-          weight: link.weight,
-          opacity: opacity,
-          smoothFactor: 1,
-          stroke: true,
-          dashArray: '',
-          dashOffset: ''
-        };
+        // 🔥 apenas 1 instituição → linha normal
+        if (!groups || groups.length === 1) {
+          const group = groups?.[0];
 
-        if (link.dashed) {
-          pathOptions.dashArray = '10, 10';
-          pathOptions.dashOffset = '10';
-        }
+          const pathOptions: any = {
+            color: group?.links_color || '#999',
+            weight: link.weight,
+            opacity: group?.opacity || 0.6,
+            smoothFactor: 1,
+            stroke: true,
+            dashArray: '',
+            dashOffset: ''
+          };
 
-        if (link.straight_link) {
-          link.line = new L.Polyline([pointA, pointB], pathOptions);
+          if (link.dashed) {
+            pathOptions.dashArray = '10 10';
+            pathOptions.dashOffset = '10';
+          }
+
+          if (link.straight_link) {
+            link.line = new L.Polyline([pointA, pointB], pathOptions);
+          } else {
+            link.line = L.curve(
+              [
+                'M',
+                [latlng1[0], latlng1[1]],
+                'S',
+                [midpointLatLng[0], midpointLatLng[1]],
+                [latlng2[0], latlng2[1]]
+              ],
+              pathOptions
+            );
+          }
         } else {
-          link.line = L.curve(
-            [
-              'M',
-              [latlng1[0], latlng1[1]],
-              'S',
-              [midpointLatLng[0], midpointLatLng[1]],
-              [latlng2[0], latlng2[1]]
-            ],
-            pathOptions
-          );
+
+          // 🔥 múltiplas instituições → pontilhado colorido
+          link.line = L.layerGroup();
+
+          groups.forEach((group: any, index: number) => {
+            const pathOptions: any = {
+              color: group.links_color || '#999',
+              weight: link.weight,
+              opacity: group.opacity || 0.6,
+              smoothFactor: 1,
+              stroke: true,
+              dashArray: '12 12',
+              dashOffset: `${index * 12}`
+            };
+
+            let segment;
+
+            if (link.straight_link) {
+              segment = new L.Polyline([pointA, pointB], pathOptions);
+            } else {
+              segment = L.curve(
+                [
+                  'M',
+                  [latlng1[0], latlng1[1]],
+                  'S',
+                  [midpointLatLng[0], midpointLatLng[1]],
+                  [latlng2[0], latlng2[1]]
+                ],
+                pathOptions
+              );
+            }
+
+            link.line.addLayer(segment);
+            segment.on('click', () => {
+              this.zone.run(() => {
+                this.openLinkSidebar(link);
+              });
+            });
+          });
         }
 
         // 🔥 tooltip agora usa network
-        link.line.bindTooltip(
-          link.networks?.join(" ; ") || "",
-          { sticky: true }
-        );
+        if (!(link.line instanceof L.LayerGroup)) {
+          link.line.bindTooltip(
+            link.networks?.join(" ; ") || "",
+            { sticky: true }
+          );
+        }
 
         link.line.on('click', () => {
           this.zone.run(() => {
@@ -1271,23 +1317,7 @@ export class MapComponent implements OnInit {
   }
 
   private updateLinksVisibility() {
-    const activeNetworks = this._linksGroup
-      .filter(lg => lg.visibility)
-      .map(lg => lg.name);
-
-    for (const link of this._links) {
-      if (!link.line) continue;
-
-      const shouldShow = link.networks?.some((net: string) =>
-        activeNetworks.some(a => a.toLowerCase() === net.toLowerCase())
-      );
-
-      if (shouldShow) {
-        link.line.addTo(this.map);
-      } else {
-        link.line.remove(this.map);
-      }
-    }
+    this.insertLinks();
   }
 
   public onLinkRemoval(event: any) {
