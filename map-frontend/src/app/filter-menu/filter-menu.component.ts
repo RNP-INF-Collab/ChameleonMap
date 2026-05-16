@@ -414,9 +414,16 @@ export class FilterMenuComponent {
         }
         return menu.active && menuGroupSelected;
       });
-      if (activeMenus.length > 0) {
-        let newSelectedMenu = this.getMenuById(this.selectedMenusByGroup[this._currentMenusPallete]) || activeMenus[0];
-        this.menuClick(newSelectedMenu);
+      if (
+        activeMenus.length > 0 &&
+        !this.selectedTagsMenuId
+      ) {
+        let newSelectedMenu =
+          this.getMenuById(
+            this.selectedMenusByGroup[this._currentMenusPallete]
+          ) || activeMenus[0];
+
+        this.selectedTagsMenuId = newSelectedMenu.id;
       }
       return activeMenus;
     } else {
@@ -426,5 +433,21 @@ export class FilterMenuComponent {
 
   capitalizeFirstLetter(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  toggleMenuPin(menu: Menu, event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    menu.pinned = !menu.pinned;
+
+    console.log(
+      menu.name,
+      'PINNED:',
+      menu.pinned
+    );
+    this.menuCliked.emit({
+      selectedTagsMenuId: this.selectedTagsMenuId
+    });
   }
 }

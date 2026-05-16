@@ -818,7 +818,7 @@ export class MapComponent implements OnInit {
     });
 
     this._tags.forEach((tag: Tag) => {
-      let isMenuShown = tag.parent_menu === selectedTagsMenuId || this.isMenuSimultaneousAndSelectedInItsMenuGroup(tag.parent_menu);
+      let isMenuShown = this.isMenuVisible(tag.parent_menu);
       if (
         tag.active &&
         tag.dependenciesActive &&
@@ -1126,6 +1126,19 @@ export class MapComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  private isMenuVisible(menuId: number): boolean {
+    const menu = this.getMenuById(menuId);
+
+    if (!menu) {
+      return false;
+    }
+
+    return (
+      menu.id === this.selectedMenu ||
+      menu.pinned === true
+    );
   }
 
   private resetlinks() {
