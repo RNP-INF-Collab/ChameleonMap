@@ -387,7 +387,32 @@ export class MapComponent implements OnInit {
           ?.map((net: string) =>
             this._linksGroup.find(g => g.name === net)
           )
-          .filter((group: any) => group && group.visibility);
+          .filter((group: any) => {
+            if (!group || !group.visibility) {
+              return false;
+            }
+
+            return this._tags.some(tag => {
+              if (
+                !tag.visibility ||
+                tag.name.toLowerCase() !== group.name.toLowerCase()
+              ) {
+                return false;
+              }
+
+              const parentMenu = this.getMenuById(tag.parent_menu);
+
+              if (!parentMenu) {
+                return false;
+              }
+
+              // menu atual OU menu fixado
+              return (
+                tag.parent_menu === this.selectedMenu ||
+                parentMenu.pinned
+              );
+            });
+          });
 
         let pointA;
         let pointB;

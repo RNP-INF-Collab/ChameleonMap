@@ -435,11 +435,6 @@ export class FilterMenuComponent {
 
     menu.pinned = !menu.pinned;
 
-    console.log(
-      menu.name,
-      'PINNED:',
-      menu.pinned
-    );
     this.menuCliked.emit({
       selectedTagsMenuId: this.selectedTagsMenuId
     });
