@@ -1188,12 +1188,25 @@ export class MapComponent implements OnInit {
 
   private removeLocationFromMap(location: Location) {
     this.markerClusterGroup.removeLayer(location.locationMarker);
+
     location.onMap = false;
     location.locationMarker = {};
 
     for (const link of this._links) {
-      if (link.location_1 == location.id || link.location_2 == location.id) {
-        link.line.remove(this.map);
+
+      if (
+        link.location_1 == location.id ||
+        link.location_2 == location.id
+      ) {
+
+        if (
+          link.line &&
+          typeof link.line.remove === 'function'
+        ) {
+
+          link.line.remove(this.map);
+
+        }
       }
     }
   }

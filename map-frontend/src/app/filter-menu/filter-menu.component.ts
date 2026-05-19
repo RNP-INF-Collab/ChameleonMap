@@ -415,15 +415,9 @@ export class FilterMenuComponent {
         return menu.active && menuGroupSelected;
       });
       if (
-        activeMenus.length > 0 &&
-        !this.selectedTagsMenuId
+        activeMenus.length > 0
       ) {
-        let newSelectedMenu =
-          this.getMenuById(
-            this.selectedMenusByGroup[this._currentMenusPallete]
-          ) || activeMenus[0];
-
-        this.selectedTagsMenuId = newSelectedMenu.id;
+        this.menuClick(activeMenus[0]);
       }
       return activeMenus;
     } else {
@@ -446,6 +440,86 @@ export class FilterMenuComponent {
       'PINNED:',
       menu.pinned
     );
+    this.menuCliked.emit({
+      selectedTagsMenuId: this.selectedTagsMenuId
+    });
+  }
+
+  isMenuVisible(menu: Menu): boolean {
+
+    for (let tag of this._tags) {
+
+      if (
+        tag.parent_menu === menu.id &&
+        tag.visibility
+      ) {
+        return true;
+      }
+    }
+
+    for (let shape of this._kmlShapes) {
+
+      if (
+        shape.parent_menu === menu.id &&
+        shape.visibility
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  toggleMenuVisibility(menu: Menu, event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    let hasVisibleItems = false;
+
+    // verifica estado atual
+    for (let tag of this._tags) {
+      if (
+        tag.parent_menu === menu.id &&
+        tag.visibility
+      ) {
+        hasVisibleItems = true;
+        break;
+      }
+    }
+
+    // TAGS
+    for (let tag of this._tags) {
+
+      if (tag.parent_menu !== menu.id) {
+        continue;
+      }
+
+      tag.visibility = !hasVisibleItems;
+
+      if (tag.visibility) {
+        this.insertMarkersByTag(tag);
+      } else {
+        this.removeMarkersByTag(tag);
+      }
+    }
+
+    // KML
+    for (let shape of this._kmlShapes) {
+
+      if (shape.parent_menu !== menu.id) {
+        continue;
+      }
+
+      shape.visibility = !hasVisibleItems;
+
+      if (shape.visibility) {
+        this.insertKmlShape(shape);
+      } else {
+        this.removeKmlShape(shape);
+      }
+    }
+
+    // rerender
     this.menuCliked.emit({
       selectedTagsMenuId: this.selectedTagsMenuId
     });
