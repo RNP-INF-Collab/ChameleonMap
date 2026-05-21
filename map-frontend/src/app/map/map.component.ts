@@ -532,7 +532,7 @@ export class MapComponent implements OnInit {
     setTimeout(() => {
       this.map.setMinZoom(this.fixedZoom);
     }, 100);
-    this.getCoordinatesOnClick()
+    // this.getCoordinatesOnClick()
   }
 
   private getCoordinatesOnClick() {
