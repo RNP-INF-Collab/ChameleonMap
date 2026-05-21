@@ -50,7 +50,7 @@ export class MapComponent implements OnInit {
   private _selectedMenu: number;
   private backgroundWidth: number = 5819;
   private backgroundHeight: number = 3245;
-  private fixedZoom: number = fixedZoom;
+  private fixedZoom: number = -2;
 
   public get selectedMenu(): number {
     return this._selectedMenu;
@@ -458,11 +458,11 @@ export class MapComponent implements OnInit {
     ]);
     this.map.options.maxBoundsViscosity = 0.5;
 
-    L.control
-      .zoom({
-        position: 'bottomright'
-      })
-      .addTo(this.map);
+    // L.control
+    // .zoom({
+      //   position: 'bottomright'
+      // })
+      // .addTo(this.map);
 
     // --- Use in the future for the user to customize a map ---
 
