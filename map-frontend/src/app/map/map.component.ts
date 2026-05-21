@@ -48,6 +48,10 @@ export class MapComponent implements OnInit {
   private error: any;
   public selectedMenusByGroup: { [key: string]: number } = {};
   private _selectedMenu: number;
+  private backgroundWidth: number = 5819;
+  private backgroundHeight: number = 3245;
+  private fixedZoom: number = fixedZoom;
+
   public get selectedMenu(): number {
     return this._selectedMenu;
   }
@@ -437,15 +441,10 @@ export class MapComponent implements OnInit {
   private initializeMapOptions() {
     this.map = L.map('map', {
       crs: L.CRS.Simple,
-      center: [
-        this.mapSetting.initial_latitude,
-        this.mapSetting.initial_longitude
-        // -15,
-        // -59
-      ],
-      zoom: -3,
-      // zoom: this.mapSetting.initial_zoom_level + 5,
+      center: [this.backgroundHeight/2.0, this.backgroundWidth/2.0],
+      zoom: this.fixedZoom,
       zoomControl: false,
+      minZoom: this.fixedZoom,
       attributionControl: false
     });
 
@@ -454,9 +453,10 @@ export class MapComponent implements OnInit {
     });
     
     this.map.setMaxBounds([
-      [0,14500],
-      [4000,0]
+      [0,0],
+      [this.backgroundHeight,this.backgroundWidth]
     ]);
+    this.map.options.maxBoundsViscosity = 0.5;
 
     L.control
       .zoom({
@@ -483,20 +483,14 @@ export class MapComponent implements OnInit {
     tiles = L.tileLayer(
       '',
       {
-        maxZoom: -2,
-        minZoom: -3,
+        maxZoom: this.fixedZoom ,
+        minZoom: this.fixedZoom,
       }
     );
     tiles.addTo(this.map);
-    // imageUrl = "https://i.imgur.com/lulpkOB" // planta_baixa
-    // imageUrl = "https://i.imgur.com/Uz9XPLp.png" // planta_baixa_sem_fundo
-    // imageUrl = "https://i.imgur.com/OaGUAED.png" // planta_baixa_sem_fundo_11520
-    // imageUrl = "https://i.imgur.com/S7rW5c3.png" // planta_baixa_sem_fundo_estandes_11520
-    // imageUrl = "https://i.imgur.com/Ymh1fbQ.png"  // planta_baixa_sem_fundo_estandes_v3_9600
-    imageUrl = "../assets/Mapa_v3.png" //v11 com dois pinos
-    imageBounds = [[0,0], [4090,14000]]
-    imageBounds2 = [[0,0], [4216,13744]]
-    this.insertEventPlan(imageUrl, imageBounds, imageBounds2);
+    imageUrl = "../assets/WRNP2026_MAP_8.png"
+    imageBounds = [[0,0], [this.backgroundHeight,this.backgroundWidth]]
+    this.insertEventPlan(imageUrl, imageBounds);
 
     this.markerClusterGroup = L.markerClusterGroup({
       iconCreateFunction: function (cluster) {
@@ -531,9 +525,14 @@ export class MapComponent implements OnInit {
     this.onboardingComponent.showOnboardingIfNeeded(mapName);
   }
 
-  private insertEventPlan(imageUrl: string, imageBounds: any, img: any) {
+  private insertEventPlan(imageUrl: string, imageBounds: any) {
     L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
-    this.map.fitBounds(imageBounds);
+    this.map.invalidateSize();
+
+    setTimeout(() => {
+      this.map.setMinZoom(this.fixedZoom);
+    }, 100);
+    this.getCoordinatesOnClick()
   }
 
   private getCoordinatesOnClick() {
