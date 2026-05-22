@@ -481,14 +481,17 @@ export class MapComponent implements OnInit {
           link.line = L.layerGroup();
 
           groups.forEach((group: any, index: number) => {
+            const totalGroups = groups.length;
+            const dashSize = 24 / totalGroups;
+
             const pathOptions: any = {
               color: group.links_color || '#999',
               weight: link.weight,
               opacity: group.opacity || 0.6,
               smoothFactor: 1,
               stroke: true,
-              dashArray: '12 12',
-              dashOffset: `${index * 12}`
+              dashArray: `${dashSize} ${24 - dashSize}`,
+              dashOffset: `${index * dashSize}`
             };
 
             let segment;
