@@ -1352,11 +1352,13 @@ export class MapComponent implements OnInit {
   public onTagRemoval(event: any) {
     this.removeTagFromPopups(event.selectedTag);
     this.removeMarkerByTag(event.selectedTag);
+    this.updateLinksVisibility();
   }
 
   public onTagReactivated(event: any) {
     this.insertMarkersByTag(event.tag);
     this.putTagBackOnPopup(event.tag);
+    this.updateLinksVisibility();
   }
 
   public onShapeRemoval(event: any) {
