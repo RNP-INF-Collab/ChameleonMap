@@ -24,8 +24,29 @@ export class TagSidebarComponent {
   public _hasSbContent: boolean;
   public _collapsed = true;
   public _locationsCollapsed = true;
+  public _pinnedMenusCollapsed = false;
+  public _pinnedMenus: Array<Menu>;
 
-  constructor() {}
+  constructor() {
+    this._pinnedMenus = [];
+  }
+
+  @Input() capitalizeFirstLetter: (str: string) => string;
+  @Output() unpinMenuEmitter = new EventEmitter<Menu>(); 
+  @Output() selectMenuEmitter = new EventEmitter<Menu>(); 
+
+  pinnedMenusHeaderClicked() {
+    if (this._pinnedMenusCollapsed) this.showPinnedMenus();
+    else this.collapsePinnedMenus();
+  }
+
+  showPinnedMenus() {
+    this._pinnedMenusCollapsed = false;
+  }
+
+  collapsePinnedMenus() {
+    this._pinnedMenusCollapsed = true;
+  }
 
   menuSwitch() {
     if (this._collapsed) this.show();
@@ -47,20 +68,70 @@ export class TagSidebarComponent {
 
   collapse() {
     this._collapsed = true;
-    const sidebar = document.querySelectorAll<HTMLElement>('.sidebar');
-    sidebar[0].setAttribute('style', 'right: -320px;');
-    const outer = document.querySelectorAll<HTMLElement>('.outer');
-    outer[0].classList.add('collapsed');
-    //outer[0].setAttribute('style', 'box-shadow: none');
+
+    const sidebar =
+      document.querySelectorAll<HTMLElement>(
+        '.right-sidebar'
+      );
+
+    sidebar[0]?.setAttribute(
+      'style',
+      'right: -320px;'
+    );
+
+    const outer =
+      document.querySelectorAll<HTMLElement>(
+        '.right-sidebar-container'
+      );
+
+    outer[0]?.classList.add('collapsed');
   }
 
   show() {
     this._collapsed = false;
-    const sidebar = document.querySelectorAll<HTMLElement>('.sidebar');
-    sidebar[0].setAttribute('style', 'right: 0px;');
-    const outer = document.querySelectorAll<HTMLElement>('.outer');
-    outer[0].classList.remove('collapsed');
-    //outer[0].setAttribute('style', 'box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);');
+
+    const sidebar =
+      document.querySelectorAll<HTMLElement>(
+        '.right-sidebar'
+      );
+
+    sidebar[0]?.setAttribute(
+      'style',
+      'right: 0px;'
+    );
+
+    const outer =
+      document.querySelectorAll<HTMLElement>(
+        '.right-sidebar-container'
+      );
+
+    outer[0]?.classList.remove('collapsed');
+  }
+
+  public addPinnedMenu(menu: Menu){
+    this._pinnedMenus.push(menu)
+  }
+
+  public removePinnedMenu(menu: Menu){
+    const index = this._pinnedMenus.indexOf(menu)
+    this._pinnedMenus.splice(index, 1)
+  }
+
+  public unpinClickedMenu(menu: Menu) {
+    this.removePinnedMenu(menu)
+    this.unpinMenuEmitter.emit(menu)
+  }
+
+
+  unpinAllPinnedMenus() {
+    this._pinnedMenus.forEach( menu =>
+      this.unpinClickedMenu(menu)
+    )
+    this._pinnedMenus = [];
+  }
+
+  public openPinnedMenu(menu: Menu) {
+    alert('unpin this menu: ' + menu.name);
   }
 
   get isLink(): boolean {
@@ -90,6 +161,7 @@ export class TagSidebarComponent {
         this._selectedTag.sidebar_content == '<p></p>'
       );
       this.locationsCollapse();
+      this.collapsePinnedMenus();
       this.show();
     } else if (this._collapsed) {
       /* Collapsing the menu whenever it receives the same tag or its collapsed */

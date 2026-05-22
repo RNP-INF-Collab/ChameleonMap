@@ -150,4 +150,7 @@
 
     </mat-expansion-panel>
 </mat-accordion>
-<app-tag-sidebar></app-tag-sidebar>
+<app-tag-sidebar
+  [capitalizeFirstLetter]="capitalizeFirstLetter"
+  (unpinMenuEmitter)="sideBarUnpinMenuButtonClicked($event)"
+></app-tag-sidebar>

@@ -239,6 +239,33 @@ export class FilterMenuComponent {
     this.currentBehaviorOfMultipleTagsVisibilityButton = TagsMenuButtonBehavior.CloseAllEyes;
   }
 
+  pinMenuButtonClicked(menu: Menu, event: any) {
+    this.pinMenu(menu)
+    this.tagSidebar.addPinnedMenu(menu)
+
+    this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
+    event.stopPropagation();
+  }
+
+  unpinMenuButtonClicked(menu: Menu, event: any) {
+    this.unpinMenu(menu);
+    this.tagSidebar.removePinnedMenu(menu);
+    this.menuCliked.emit({ selectedTagsMenuId: this.selectedTagsMenuId });
+    event.stopPropagation();
+  }
+
+  pinMenu(menu: Menu){
+    menu.pinned = true;
+  }
+
+  unpinMenu(menu: Menu){
+    menu.pinned = false;
+  }
+
+  sideBarUnpinMenuButtonClicked(menu: Menu){
+    this.unpinMenuButtonClicked(menu, menu);
+  }
+
   menuSwitch(menu: Menu, event: any) {
     menu.expanded = !menu.expanded;
     event.stopPropagation();
@@ -433,7 +460,19 @@ export class FilterMenuComponent {
     event.preventDefault();
     event.stopPropagation();
 
-    menu.pinned = !menu.pinned;
+    if (menu.pinned) {
+
+      this.unpinMenu(menu);
+
+      this.tagSidebar.removePinnedMenu(menu);
+
+    } else {
+
+      this.pinMenu(menu);
+
+      this.tagSidebar.addPinnedMenu(menu);
+
+    }
 
     this.menuCliked.emit({
       selectedTagsMenuId: this.selectedTagsMenuId
