@@ -468,7 +468,7 @@ export class MapComponent implements OnInit {
 
     this.mapInitialized = true;
 
-    let maxRadius = 15;
+    let maxRadius = 0;
     if (this.mapSetting.cluster_close_tags === false) {
       maxRadius = 0;
     }
@@ -511,7 +511,7 @@ export class MapComponent implements OnInit {
         return getMarkerIcon(colors, clusterLength);
       },
       maxClusterRadius: maxRadius,
-      disableClusteringAtZoom: 12,
+      disableClusteringAtZoom: this.fixedZoom,
       showCoverageOnHover: false
     });
     this.addHoverFunction(this.markerClusterGroup);
@@ -696,7 +696,7 @@ export class MapComponent implements OnInit {
     return undefined;
   }
 
-  private insertMarkersByMenu(selectedTagsMenuId: number) {
+  private insertMarkersByMenu(selectedTagsMenuId: number) { 
     if (!this._locations || !this._tags) {
       return
     }
@@ -760,6 +760,8 @@ export class MapComponent implements OnInit {
     });
     if (this.mapSetting.link_feature) this.insertLinks();
     if (this._kmlShapes.length) this.insertKmlShapes();
+    this.map.addLayer(this.markerClusterGroup);
+    // this.markerClusterGroup.refreshClusters();
   }
 
   private insertKmlShapes() {
@@ -812,9 +814,13 @@ export class MapComponent implements OnInit {
   }
 
   private resetMarkers() {
+    if (this.map.hasLayer(this.markerClusterGroup)) {
+      this.map.removeLayer(this.markerClusterGroup);
+    }
+    this.markerClusterGroup.clearLayers(); 
     this._locations.forEach((location: Location) => {
       if (location.onMap) {
-        this.markerClusterGroup.removeLayer(location.locationMarker);
+        // this.markerClusterGroup.removeLayer(location.locationMarker);
         location.locationMarker = {};
         location.onMap = false;
         location.activeColors = [];
@@ -845,10 +851,12 @@ export class MapComponent implements OnInit {
       }
 
       this.markerClusterGroup.addLayer(location.locationMarker);
-      this.map.addLayer(this.markerClusterGroup);
+      // this.map.addLayer(this.markerClusterGroup);
     } else {
       location.popup += '</div>';
-      location.locationMarker._popup.setContent(location.popup);
+      if (location.locationMarker._popup) {  // ← só acessa se existir
+        location.locationMarker._popup.setContent(location.popup);
+      }
       if (color != '') location.activeColors.push(color);
       location.locationMarker.setIcon(
         this.generatePinIcon(location.activeColors)
