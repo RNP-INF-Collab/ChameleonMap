@@ -3,5 +3,6 @@ export const Sources = [
     "https://mapatestbeds.rnp.br/",
     "https://mapa.observatorioblockchain.org.br/",
     "https://cybersecmap.rnp.br/",
+    "http://localhost"
     
 ]

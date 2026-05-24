@@ -1,38 +1,54 @@
 <body>
     <div id="main-frame">
       <div class="container">
-        <img src="/home/assets/rnp1.png" alt="WRNP logo" id="event-logo">
+        <img src="/home/assets/header-home-w26.png" alt="WRNP logo" id="home-header">
       </div>
-      <div id="subtitle">Escolha qual mapa visualizar</div>
+      <div id="subtitle">Escolha qual mapa visualizar:</div>
       <div class="collection-frame">
+        <a class="map-frame" id="map2"  routerLink="/map/5" routerLinkActive="active">
+          <div class="map-img-wrapper">
+            <svg class="map-img">
+              <image xlink:href="/home/assets/event-map.svg" class="map-img"/>
+            </svg>
+          </div>
+          <div class="map-title">WRNP 2026</div>
+        </a>
         <a class="map-frame" id="map1"  routerLink="/map/1" routerLinkActive="active">
-          <svg class="map-img">
-            <image xlink:href="/home/assets/projetos-icon.png" class="map-img"/>
-          </svg>
+          <div class="map-img-wrapper">
+            <svg class="map-img">
+              <image xlink:href="/home/assets/projetos-icon.png" class="map-img"/>
+            </svg>
+          </div>
           <div class="map-title">Sistema RNP</div>
         </a>
         <a class="map-frame" id="map1"  routerLink="/map/2" routerLinkActive="active">
-          <svg class="map-img">
-            <image xlink:href="/home/assets/evento-icon.png" class="map-img"/>
-          </svg>
+          <div class="map-img-wrapper">
+            <svg class="map-img">
+              <image xlink:href="/home/assets/evento-icon.png" class="map-img"/>
+            </svg>
+          </div>
           <div class="map-title">Laboratório Multiusuário</div>
         </a>
         <a class="map-frame" id="map1"  routerLink="/map/3" routerLinkActive="active">
-          <svg class="map-img">
-            <image xlink:href="/home/assets/observatorio.png" class="map-img"/>
-          </svg>
+          <div class="map-img-wrapper">
+            <svg class="map-img">
+              <image xlink:href="/home/assets/observatorio.png" class="map-img"/>
+            </svg>
+          </div>
           <div class="map-title">Observatório Blockchain</div>
         </a>
         <a class="map-frame" id="map2"  routerLink="/map/4" routerLinkActive="active">
-          <svg class="map-img">
-            <image xlink:href="/home/assets/blockchain.png" class="map-img"/>
-          </svg>
-          <div class="map-title">Iniciativas de Cybersegurança</div>
+          <div class="map-img-wrapper">
+            <svg class="map-img">
+              <image xlink:href="/home/assets/blockchain.png" class="map-img"/>
+            </svg>
+          </div>
+          <div class="map-title">Iniciativas de Cyberseg.</div>
         </a>
       </div>
     </div>
     <div id="logos-frame">
-      <img src="/home/assets/logos.png" width="70%">
+      <img src="/home/assets/logos-new.png" width="70%">
     </div>
   </body>
   
