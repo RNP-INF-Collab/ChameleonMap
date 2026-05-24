@@ -187,13 +187,19 @@ export class MapComponent implements OnInit {
         this.menus.forEach(menu => {
           menu.expanded = this.menus.length < 3;
         });
-        this.menus.forEach(menu => {
-          if (menu.group == this.menugroups[0].id) {
-            this.selectedMenu = menu.id;
-            this.defaultMenuId = menu.id;
-            return;
-          }
-        });
+        
+        const firstMenu = this.menus.find(menu => menu.group == this.menugroups[0].id);
+        if (firstMenu) {
+          this.selectedMenu = firstMenu.id;
+          this.defaultMenuId = firstMenu.id;
+        }
+        // this.menus.forEach(menu => {
+        //   if (menu.group == this.menugroups[0].id) {
+        //     this.selectedMenu = menu.id;
+        //     this.defaultMenuId = menu.id;
+        //     return;
+        //   }
+        // });
   
         this.locations = results.locations;
         this.tags = results.tags;
