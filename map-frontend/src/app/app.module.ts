@@ -30,6 +30,8 @@ import { SubMapComponent } from './sub-map/sub-map.component';
 import { ATLASComponent } from './atlas/atlas.component';
 import { FooterComponent } from './footer/footer.component';
 import { TooltipComponent } from './tooltip/tooltip.component';
+import { MapDataService } from './map/map-data.service';
+import { PopupContentService } from './map/popup-content.service';
 
 @NgModule({
   declarations: [
@@ -63,7 +65,7 @@ import { TooltipComponent } from './tooltip/tooltip.component';
     MatTableModule,
     AppRoutingModule
   ],
-  providers: [ApiService, EventEmitterService],
+  providers: [ApiService, EventEmitterService, MapDataService, PopupContentService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
