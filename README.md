@@ -3,6 +3,7 @@
 ChameleonMap is a tool for creating and visualizing interactive maps. It allows users to easily explore and understand the network infrastructure, making it easier to identify resources and manage the network inventory.
 
 For more information about ChameleonMap, please consult the following resources:
+- **Technology stack:** [docs/tech-stack.md](docs/tech-stack.md)
 - **Manuals and documentation:** [https://rnp-inf-collab.github.io/ChameleonMap-guide/](https://rnp-inf-collab.github.io/ChameleonMap-guide/)
 - **Installation, functionalities & intended demonstration**: [https://youtu.be/f8eMwwNLlmk](https://youtu.be/f8eMwwNLlmk)
 
