@@ -4,7 +4,7 @@ This document outlines the high-level architecture and request processing workfl
 
 ## Architecture Diagram
 
-![Chameleon Map Architecture](docs/images/arquitetura.png)
+![Chameleon Map Architecture](images/arquitetura.png)
 
 ## Core Components
 
